@@ -136,7 +136,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 // @desc    Delete user
 // @route   DELETE /api/users/:id
 // @access  Private/Admin/Client
-const deleteUser = async (req, res) => {
+export const deleteUser = asyncHandler(async (req, res) => {
     try {
       const user = await User.findById(req.user.id); // Get logged-in user
   
@@ -152,4 +152,5 @@ const deleteUser = async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: "Server error" });
     }
-  };
+  }
+);
