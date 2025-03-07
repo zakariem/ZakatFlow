@@ -1,17 +1,16 @@
 flutter_launcher_icons:
-  image_path: "assets/icons/app.png"
-
   android: true
-  min_sdk_android: 21 # android min sdk min:16, default 21
-
   ios: true
-  remove_alpha_channel_ios: true
+  image_path: "assets/images/app.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
 
 flutter_native_splash:
-  color: "#000000" # Black background for better contrast
-  image: "assets/icons/app.png"
+  color: "#ffffff"
+  image: "assets/images/app.png"
   android: true
   ios: true
-  web: false
-  windows: false
-  macos: false
+
+  android_12:
+    color: "#ffffff"
+    image: "assets/images/app.png"
