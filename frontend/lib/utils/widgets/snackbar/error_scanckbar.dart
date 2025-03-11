@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/theme/app_color.dart';
 
-import '../../theme/app_color.dart';
+class ErrorScanckbar {
+  static void showSnackBar(BuildContext context, String message) {
+    final messenger = ScaffoldMessenger.of(context);
 
-class ErrorScanckbar extends StatelessWidget {
-  const ErrorScanckbar({super.key, required this.error});
-  final String error;
+    // Check if a snackbar is already being shown
+    if (messenger.mounted) {
+      messenger.hideCurrentSnackBar(); // Dismiss the current snackbar first
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return SnackBar(
-      content: Text(error, style: const TextStyle(color: Colors.white)),
-      backgroundColor: AppColors.error,
-      duration: const Duration(seconds: 3),
-      behavior: SnackBarBehavior.floating,
-      margin: const EdgeInsets.all(16.0),
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(color: AppColors.backgroundError),
+        ),
+        backgroundColor: AppColors.error,
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16.0),
+      ),
     );
   }
 }
