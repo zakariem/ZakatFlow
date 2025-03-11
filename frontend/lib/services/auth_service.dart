@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -16,12 +17,13 @@ class AuthService {
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      User user = User.fromJson(data);
+      final Map<String, dynamic> userData = jsonDecode(response.body)["data"];
+      User user = User.fromJson(userData);
       await _saveUserData(user);
       return user;
     } else {
-      throw Exception('Failed to login');
+      final error = jsonDecode(response.body);
+      throw Exception(error['message']);
     }
   }
 
@@ -42,12 +44,16 @@ class AuthService {
       await _saveUserData(user);
       return user;
     } else {
-      throw Exception('Failed to register');
+      final error = jsonDecode(response.body);
+      throw Exception(error['message']);
     }
   }
 
   Future<void> _saveUserData(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    debugPrint(
+      'User: ${user.token} ++++++++++++++++++++++++++++++++++++++++++++++++++',
+    );
     await prefs.setString('userId', user.userId);
     await prefs.setString('fullname', user.fullname);
     await _secureStorage.write(key: 'token', value: user.token);

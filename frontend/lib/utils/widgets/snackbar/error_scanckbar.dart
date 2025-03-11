@@ -5,9 +5,8 @@ class ErrorScanckbar {
   static void showSnackBar(BuildContext context, String message) {
     final messenger = ScaffoldMessenger.of(context);
 
-    // Check if a snackbar is already being shown
     if (messenger.mounted) {
-      messenger.hideCurrentSnackBar(); // Dismiss the current snackbar first
+      messenger.hideCurrentSnackBar();
     }
 
     messenger.showSnackBar(

@@ -31,6 +31,7 @@ class LoginView extends HookConsumerWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (!context.mounted) return;
             ErrorScanckbar.showSnackBar(context, error.toString());
+            ref.read(authProvider.notifier).clearError();
           });
           return _buildLoginForm(context, authVM, ref, screenWidth);
         },
@@ -120,6 +121,7 @@ class LoginView extends HookConsumerWidget {
       toggleVisibility: authVM.toggleObscure,
       validator: ValidationUtils.validatePassword,
       keyboardType: TextInputType.visiblePassword,
+      textInputAction: TextInputAction.done,
     );
   }
 

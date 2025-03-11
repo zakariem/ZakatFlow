@@ -15,7 +15,6 @@ final authProvider = StateNotifierProvider<AuthViewModel, AsyncValue<User?>>((
 class AuthViewModel extends StateNotifier<AsyncValue<User?>> {
   final AuthService _authService;
 
-  // Added variables for UI state management:
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   bool isObscure = true;
   final TextEditingController fullNameController = TextEditingController();
@@ -24,10 +23,8 @@ class AuthViewModel extends StateNotifier<AsyncValue<User?>> {
 
   AuthViewModel(this._authService) : super(const AsyncValue.data(null));
 
-  // Toggles the obscure state of the password field and forces a rebuild.
   void toggleObscure() {
     isObscure = !isObscure;
-    // If the current state is AsyncData, reassigning forces UI update.
     if (state is AsyncData) {
       state = AsyncData(state.value);
     }
@@ -72,7 +69,12 @@ class AuthViewModel extends StateNotifier<AsyncValue<User?>> {
     }
   }
 
-  // Dispose method to clean up resources
+  void clearError() {
+    if (state is AsyncError) {
+      state = const AsyncValue.data(null);
+    }
+  }
+
   @override
   void dispose() {
     fullNameController.dispose();
