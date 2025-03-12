@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
+import 'package:frontend/viewmodels/auth/register_view_model.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../utils/constant/validation_utils.dart';
@@ -6,160 +8,225 @@ import '../../utils/theme/app_color.dart';
 import '../../utils/widgets/auth/auth_field.dart';
 import '../../utils/widgets/loader.dart';
 import '../../utils/widgets/auth/custom_button.dart';
-import '../../viewmodels/auth_view_model.dart';
+import '../home/home_view.dart';
 
 class RegisterView extends HookConsumerWidget {
-  const RegisterView({super.key});
-  static final register = MaterialPageRoute(
-    builder: (context) => RegisterView(),
-  );
+  RegisterView({super.key});
+
+  static Route route() {
+    return MaterialPageRoute(builder: (context) => RegisterView());
+  }
+
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authVM = ref.watch(authProvider.notifier);
-    final authState = ref.watch(authProvider);
+    final registerVM = ref.read(registerProvider.notifier);
+    final authState = ref.watch(registerProvider);
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
+      appBar: AppBar(backgroundColor: AppColors.backgroundLight),
       backgroundColor: AppColors.backgroundLight,
       body: authState.when(
-        data: (user) {
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(screenWidth * 0.1),
-                      child: Form(
-                        key: authVM.formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(height: screenWidth * 0.1),
-                            Text(
-                              'Create Account',
-                              style: GoogleFonts.poppins(
-                                fontSize: screenWidth * 0.08,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                            SizedBox(height: constraints.maxHeight * 0.02),
-                            Text(
-                              'Fill your information below or register \nwith your social account',
-                              style: GoogleFonts.poppins(
-                                fontSize: screenWidth * 0.04,
-                                color: AppColors.textGray,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(height: constraints.maxHeight * 0.05),
-                            AuthField(
-                              controller: authVM.fullNameController,
-                              hintText: 'Full Name',
-                              validator: ValidationUtils.validateFullName,
-                            ),
-                            SizedBox(height: constraints.maxHeight * 0.023),
-                            AuthField(
-                              controller: authVM.emailController,
-                              hintText: 'Email',
-                              validator: ValidationUtils.validateEmail,
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            SizedBox(height: constraints.maxHeight * 0.023),
-                            AuthField(
-                              controller: authVM.passwordController,
-                              hintText: 'Password',
-                              toggleVisibility: authVM.toggleObscure,
-                              isPassword: true,
-                              obscureText: authVM.isObscure,
-                              validator: ValidationUtils.validatePassword,
-                              keyboardType: TextInputType.visiblePassword,
-                            ),
-                            SizedBox(height: constraints.maxHeight * 0.04),
-                            authState.isLoading
-                                ? Loader()
-                                : CustomButton(
-                                  text: 'Sign In',
-                                  onTap: () async {
-                                    final email = authVM.emailController.text;
-                                    final password =
-                                        authVM.passwordController.text;
-
-                                    if (authVM.formKey.currentState!
-                                        .validate()) {
-                                      try {
-                                        await ref
-                                            .read(authProvider.notifier)
-                                            .login(email, password);
-                                      } catch (e) {
-                                        SnackBar(
-                                          content: Text(
-                                            e.toString(),
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          backgroundColor:
-                                              AppColors.accentDarkGold,
-                                          duration: const Duration(seconds: 3),
-                                          behavior: SnackBarBehavior.floating,
-                                          margin: const EdgeInsets.all(16.0),
-                                        );
-                                        debugPrint("Login error: $e");
-                                      }
-                                    }
-                                  },
-                                ),
-
-                            SizedBox(height: constraints.maxHeight * 0.04),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'Don\'t have an account? ',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: screenWidth * 0.04,
-                                    color: AppColors.textGray,
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () {},
-                                  child: Text(
-                                    'Sign Up',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: screenWidth * 0.04,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
+        data: (_) => _buildRegisterForm(context, registerVM, ref, screenWidth),
+        loading: () => const Loader(),
+        error: (error, _) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!context.mounted) return;
+            ErrorScanckbar.showSnackBar(context, error.toString());
+            ref.read(registerProvider.notifier).clearError();
+          });
+          return _buildRegisterForm(context, registerVM, ref, screenWidth);
         },
-        loading: () => Loader(),
-        error:
-            (error, _) => Center(
-              child: Text(
-                error.toString(),
-                style: TextStyle(
-                  color: AppColors.accentDarkGold,
-                  fontSize: 16.0,
+      ),
+    );
+  }
+
+  Widget _buildRegisterForm(
+    BuildContext context,
+    RegisterViewModel registerVM,
+    WidgetRef ref,
+    double screenWidth,
+  ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: screenWidth * 0.1),
+                      _buildTitle(screenWidth),
+                      SizedBox(height: constraints.maxHeight * 0.02),
+                      _buildSubtitle(screenWidth),
+                      SizedBox(height: constraints.maxHeight * 0.05),
+                      _buildFullNameField(registerVM),
+                      SizedBox(height: constraints.maxHeight * 0.023),
+                      _buildEmailField(registerVM),
+                      SizedBox(height: constraints.maxHeight * 0.023),
+                      _buildPasswordField(registerVM),
+                      SizedBox(height: constraints.maxHeight * 0.04),
+                      _buildConfirmPasswordField(registerVM),
+                      SizedBox(height: constraints.maxHeight * 0.04),
+                      _buildSignUpButton(context, registerVM, ref),
+                      SizedBox(height: constraints.maxHeight * 0.04),
+                      _buildSignUpPrompt(screenWidth, context),
+                    ],
+                  ),
                 ),
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildTitle(double screenWidth) {
+    return Text(
+      'Create Account',
+      style: GoogleFonts.poppins(
+        fontSize: screenWidth * 0.08,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textPrimary,
       ),
+    );
+  }
+
+  Widget _buildSubtitle(double screenWidth) {
+    return Text(
+      'Fill your information below to continue',
+      style: GoogleFonts.poppins(
+        fontSize: screenWidth * 0.04,
+        color: AppColors.textGray,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildFullNameField(RegisterViewModel registerVM) {
+    return AuthField(
+      controller: registerVM.fullNameController,
+      hintText: 'Full Name',
+      validator: ValidationUtils.validateFullName,
+    );
+  }
+
+  Widget _buildEmailField(RegisterViewModel registerVM) {
+    return AuthField(
+      controller: registerVM.emailController,
+      hintText: 'Email',
+      validator: ValidationUtils.validateEmail,
+      keyboardType: TextInputType.emailAddress,
+    );
+  }
+
+  Widget _buildPasswordField(RegisterViewModel registerVM) {
+    return AuthField(
+      controller: registerVM.passwordController,
+      hintText: 'Password',
+      isPassword: true,
+      obscureText: registerVM.isObscure,
+      toggleVisibility: registerVM.toggleObscure,
+      validator: ValidationUtils.validatePassword,
+      keyboardType: TextInputType.visiblePassword,
+    );
+  }
+
+  Widget _buildConfirmPasswordField(RegisterViewModel registerVM) {
+    return AuthField(
+      controller: registerVM.confirmPasswordController,
+      hintText: 'Confirm Password',
+      isPassword: true,
+      obscureText: registerVM.isObscure,
+      toggleVisibility: registerVM.toggleObscure,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your password';
+        }
+        if (value != registerVM.passwordController.text) {
+          return 'Passwords do not match';
+        }
+        return null;
+      },
+      keyboardType: TextInputType.visiblePassword,
+      textInputAction: TextInputAction.done,
+    );
+  }
+
+  Widget _buildSignUpButton(
+    BuildContext context,
+    RegisterViewModel registerVM,
+    WidgetRef ref,
+  ) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final isLoading = ref.watch(registerProvider).isLoading;
+        return isLoading
+            ? const Loader()
+            : CustomButton(
+              text: 'Register',
+              onTap: () async {
+                if (formKey.currentState?.validate() ?? false) {
+                  try {
+                    final error = await ref
+                        .read(registerProvider.notifier)
+                        .register(context);
+                    if (error != null) {
+                      if (!context.mounted) return;
+                      ErrorScanckbar.showSnackBar(context, error.toString());
+                    } else {
+                      if (!context.mounted) return;
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeView(),
+                        ),
+                        (route) => false,
+                      );
+                    }
+                  } catch (error) {
+                    if (!context.mounted) return;
+                    ErrorScanckbar.showSnackBar(context, error.toString());
+                    debugPrint("Register error: $error");
+                  }
+                }
+              },
+            );
+      },
+    );
+  }
+
+  Widget _buildSignUpPrompt(double screenWidth, BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Already have an account? ',
+          style: GoogleFonts.poppins(
+            fontSize: screenWidth * 0.04,
+            color: AppColors.textGray,
+          ),
+        ),
+        InkWell(
+          onTap: () => Navigator.pop(context),
+          child: Text(
+            'Sign In',
+            style: GoogleFonts.poppins(
+              fontSize: screenWidth * 0.04,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

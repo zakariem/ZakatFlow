@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
@@ -10,20 +11,29 @@ class AuthService {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   Future<User> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse(ApiConstants.login),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.login),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> userData = jsonDecode(response.body)["data"];
-      User user = User.fromJson(userData);
-      await _saveUserData(user);
-      return user;
-    } else {
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData.containsKey("data")) {
+          final Map<String, dynamic> userData = responseData["data"];
+          User user = User.fromJson(userData);
+          debugPrint('User: $user');
+          await _saveUserData(user);
+          return user;
+        }
+      }
+
       final error = jsonDecode(response.body);
-      throw Exception(error['message']);
+      throw Exception(error['message'] ?? 'Unknown error occurred');
+    } catch (e, stackTrace) {
+      debugPrint("Login Error: $e\nStackTrace: $stackTrace");
+      throw Exception("Failed to login. Please try again.");
     }
   }
 
@@ -32,20 +42,25 @@ class AuthService {
       Uri.parse(ApiConstants.register),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
+        'fullName': fullname,
         'email': email,
         'password': password,
-        'fullname': fullname,
       }),
     );
 
     if (response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      User user = User.fromJson(data);
-      await _saveUserData(user);
-      return user;
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      if (responseData.containsKey("data")) {
+        final Map<String, dynamic> userData = responseData["data"];
+        User user = User.fromJson(userData);
+        await _saveUserData(user);
+        return user;
+      } else {
+        throw Exception('Unexpected response structure.');
+      }
     } else {
       final error = jsonDecode(response.body);
-      throw Exception(error['message']);
+      throw Exception(error['message'] ?? 'Unknown error occurred');
     }
   }
 
@@ -65,9 +80,17 @@ class AuthService {
     String? fullname = prefs.getString('fullname');
     String? token = await _secureStorage.read(key: 'token');
 
-    if (userId != null && fullname != null && token != null) {
+    if (token != null &&
+        !JwtDecoder.isExpired(token) &&
+        userId != null &&
+        fullname != null) {
       return User(userId: userId, fullname: fullname, token: token);
     }
+
+    await _secureStorage.delete(key: 'token');
+    await prefs.remove('userId');
+    await prefs.remove('fullname');
+
     return null;
   }
 

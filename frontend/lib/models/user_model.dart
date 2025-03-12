@@ -12,4 +12,8 @@ class User {
       token: json['token'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {'userId': userId, 'fullname': fullname, 'token': token};
+  }
 }

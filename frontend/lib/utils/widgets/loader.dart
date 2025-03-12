@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/theme/app_color.dart';
 
 class Loader extends StatelessWidget {
   const Loader({super.key});
@@ -14,8 +15,6 @@ class LoaderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Loader(),
-    );
+    return Scaffold(backgroundColor: AppColors.backgroundLight, body: Loader());
   }
 }
