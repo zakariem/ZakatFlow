@@ -6,7 +6,9 @@ class Loader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: CircularProgressIndicator());
+    return const Center(
+      child: CircularProgressIndicator(color: AppColors.accentLightGold),
+    );
   }
 }
 
@@ -15,6 +17,9 @@ class LoaderPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: AppColors.backgroundLight, body: Loader());
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      body: const Loader(),
+    );
   }
 }
