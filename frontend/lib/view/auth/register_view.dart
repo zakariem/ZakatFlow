@@ -67,10 +67,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           ),
         );
       } else {
-        ErrorScanckbar.showSnackBar(
-          context,
-          state.error?.toString() ?? 'An error occurred',
-        );
+        ErrorScanckbar.showSnackBar(context, state.error.toString());
       }
     }
   }

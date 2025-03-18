@@ -55,7 +55,7 @@ class AdminMainScreen extends ConsumerWidget {
         items: _navItems,
         selectedItemColor: AppColors.primaryGold,
         unselectedItemColor: AppColors.textGray,
-        backgroundColor: AppColors.backgroundDark,
+        backgroundColor: AppColors.backgroundLight,
         onTap: (index) {
           ref.read(adminNavigationProvider.notifier).state = index;
         },

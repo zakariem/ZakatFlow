@@ -51,10 +51,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         );
       } else {
-        ErrorScanckbar.showSnackBar(
-          context,
-          state.error?.toString() ?? 'An error occurred',
-        );
+        ErrorScanckbar.showSnackBar(context, state.error.toString());
       }
     }
   }

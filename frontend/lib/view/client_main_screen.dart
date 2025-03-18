@@ -20,11 +20,23 @@ class ClientMainScreen extends ConsumerWidget {
   ];
 
   static final List<BottomNavigationBarItem> _navItems = const [
-    BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home 🏠'),
-    BottomNavigationBarItem(icon: Icon(Icons.calculate), label: 'Calculate 🧮'),
-    BottomNavigationBarItem(icon: Icon(Icons.credit_card), label: 'Donate 💳'),
-    BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History 📜'),
-    BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile 👤'),
+    BottomNavigationBarItem(icon: Icon(Icons.home, size: 28), label: 'Home'),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.calculate, size: 28),
+      label: 'Calculate',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.credit_card, size: 28),
+      label: 'Donate',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.history, size: 28),
+      label: 'History',
+    ),
+    BottomNavigationBarItem(
+      icon: Icon(Icons.person, size: 28),
+      label: 'Profile',
+    ),
   ];
 
   @override
@@ -32,13 +44,16 @@ class ClientMainScreen extends ConsumerWidget {
     final currentIndex = ref.watch(clientNavigationProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
       body: _screens[currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: AppColors.primaryBlack,
+        backgroundColor: AppColors.backgroundLight,
         currentIndex: currentIndex,
-        selectedItemColor: AppColors.primaryGold,
+        selectedItemColor: AppColors.buttonPrimary,
         unselectedItemColor: AppColors.textGray,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
         items: _navItems,
         onTap: (index) {
           ref.read(clientNavigationProvider.notifier).state = index;

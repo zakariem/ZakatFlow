@@ -9,13 +9,13 @@ import '../../services/auth_service.dart';
 class AuthState {
   final User? user;
   final bool isLoading;
-  final String? error;
+  final String error;
   final bool isAdmin;
 
   const AuthState({
     this.user,
     this.isLoading = false,
-    this.error,
+    this.error = '',
     this.isAdmin = false,
   });
 
@@ -28,7 +28,7 @@ class AuthState {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      error: error ?? this.error,
       isAdmin: isAdmin ?? user?.isAdmin ?? this.isAdmin,
     );
   }
@@ -42,17 +42,15 @@ class AuthViewModel extends StateNotifier<AuthState> {
     : super(const AuthState());
 
   Future<void> login(String email, String password) async {
-    await _handleAuth(() async => await _authService.login(email, password));
+    await _handleAuth(() => _authService.login(email, password));
   }
 
-  Future<void> register(String email, String password, String fullname) async {
-    await _handleAuth(
-      () async => await _authService.register(email, password, fullname),
-    );
+  Future<void> register(String email, String password, String fullName) async {
+    await _handleAuth(() => _authService.register(email, password, fullName));
   }
 
   Future<void> logout() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
     try {
       await _clearUserData();
       state = state.copyWith(user: null, isLoading: false, isAdmin: false);
@@ -68,42 +66,50 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
       if (token != null && token.isNotEmpty && userJson != null) {
         if (JwtDecoder.isExpired(token)) {
-          // Token expired, log out user
-          await logout();
+          await logout(); // Token expired, log out user
         } else {
           final user = User.fromJson(jsonDecode(userJson));
-          state = state.copyWith(
-            user: user,
-            isLoading: false,
-            isAdmin: user.isAdmin,
-          );
+          state = state.copyWith(user: user, isAdmin: user.isAdmin);
         }
-      } else {
-        state = state.copyWith(isLoading: false);
       }
     } catch (e) {
       _handleError(e);
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
   Future<void> _handleAuth(Future<User> Function() authMethod) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, error: '');
     try {
       final user = await authMethod();
       await _storeUserData(user);
-      state = state.copyWith(
-        user: user,
-        isLoading: false,
-        isAdmin: user.isAdmin,
-      );
+      state = state.copyWith(user: user, isAdmin: user.isAdmin);
     } catch (e) {
       _handleError(e);
+    } finally {
+      state = state.copyWith(isLoading: false);
     }
   }
 
   Future<void> _storeUserData(User user) async {
-    await _secureStorage.write(key: 'token', value: user.token);
-    await _secureStorage.write(key: 'user', value: jsonEncode(user.toJson()));
+    final updatedUser = User(
+      id: user.id,
+      fullName: user.fullName,
+      email: user.email,
+      role: user.role,
+      token: user.token,
+      profileImageUrl:
+          user.profileImageUrl.isNotEmpty
+              ? user.profileImageUrl
+              : 'https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=',
+    );
+
+    await _secureStorage.write(key: 'token', value: updatedUser.token);
+    await _secureStorage.write(
+      key: 'user',
+      value: jsonEncode(updatedUser.toJson()),
+    );
   }
 
   Future<void> _clearUserData() async {

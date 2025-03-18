@@ -35,7 +35,10 @@ class _MyAppState extends ConsumerState<MyApp> {
     final authState = ref.watch(authViewModelProvider);
 
     if (!_isAuthChecked) {
-      return const MaterialApp(home: LoaderPage());
+      return const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: LoaderPage(),
+      );
     }
 
     return MaterialApp(
