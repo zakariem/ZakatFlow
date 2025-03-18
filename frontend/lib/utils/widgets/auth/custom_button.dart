@@ -15,7 +15,7 @@ class CustomButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: CupertinoButton(
-        color: AppColors.buttonGold,
+        color: AppColors.buttonPrimary,
         onPressed: onTap,
         child: Text(
           text,

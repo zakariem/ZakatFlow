@@ -9,14 +9,26 @@ class AuthState {
   final User? user;
   final bool isLoading;
   final String? error;
+  final bool isAdmin;
 
-  const AuthState({this.user, this.isLoading = false, this.error});
+  const AuthState({
+    this.user,
+    this.isLoading = false,
+    this.error,
+    this.isAdmin = false,
+  });
 
-  AuthState copyWith({User? user, bool? isLoading, String? error}) {
+  AuthState copyWith({
+    User? user,
+    bool? isLoading,
+    String? error,
+    bool? isAdmin,
+  }) {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
       error: error,
+      isAdmin: isAdmin ?? user?.isAdmin ?? this.isAdmin,
     );
   }
 }
@@ -42,7 +54,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
     try {
       await _clearUserData();
-      state = state.copyWith(user: null, isLoading: false);
+      state = state.copyWith(user: null, isLoading: false, isAdmin: false);
     } catch (e) {
       _handleError(e);
     }
@@ -55,7 +67,11 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
       if (token != null && token.isNotEmpty && userJson != null) {
         final user = User.fromJson(jsonDecode(userJson));
-        state = state.copyWith(user: user, isLoading: false);
+        state = state.copyWith(
+          user: user,
+          isLoading: false,
+          isAdmin: user.isAdmin,
+        );
       } else {
         state = state.copyWith(isLoading: false);
       }
@@ -69,7 +85,11 @@ class AuthViewModel extends StateNotifier<AuthState> {
     try {
       final user = await authMethod();
       await _storeUserData(user);
-      state = state.copyWith(user: user, isLoading: false);
+      state = state.copyWith(
+        user: user,
+        isLoading: false,
+        isAdmin: user.isAdmin,
+      );
     } catch (e) {
       _handleError(e);
     }

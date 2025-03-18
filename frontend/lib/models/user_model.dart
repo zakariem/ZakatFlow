@@ -13,6 +13,8 @@ class User {
     required this.token,
   });
 
+  bool get isAdmin => role.toLowerCase() == 'admin';
+
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['_id'],

@@ -8,7 +8,8 @@ import '../../utils/theme/app_color.dart';
 import '../../utils/widgets/auth/auth_field.dart';
 import '../../utils/widgets/loader.dart';
 import '../../utils/widgets/auth/custom_button.dart';
-import '../home/home_screen.dart';
+import '../admin_main_screen.dart';
+import '../client_main_screen.dart';
 import 'register_view.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -33,12 +34,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       final authVM = ref.read(authViewModelProvider.notifier);
       await authVM.login(_emailController.text, _passwordController.text);
+
       if (!mounted) return;
+
       final state = ref.read(authViewModelProvider);
+
       if (state.user != null) {
-        Navigator.pushReplacement(context, HomeScreen.route());
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder:
+                (context) =>
+                    state.isAdmin
+                        ? const AdminMainScreen()
+                        : const ClientMainScreen(),
+          ),
+        );
       } else {
-        ErrorScanckbar.showSnackBar(context, state.error.toString());
+        ErrorScanckbar.showSnackBar(
+          context,
+          state.error?.toString() ?? 'An error occurred',
+        );
       }
     }
   }

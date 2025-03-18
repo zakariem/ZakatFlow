@@ -1,86 +1,68 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors
-  static const Color primaryGold = Color(
-    0xFFC1914D,
-  ); // Gold for highlights and branding
+  // Primary Colors (Branding)
+  static const Color primaryGold = Color(0xFFC1914D); // Rich Gold
   static const Color primaryBlack = Color(
-    0xFF000000,
-  ); // Deep black for backgrounds
+    0xFF121212,
+  ); // Soft Black (Better on OLED)
 
-  // Secondary Colors
-  static const Color secondaryWhite = Color(
-    0xFFFFFFFF,
-  ); // White for text and clean spaces
+  // Secondary Colors (Supporting)
+  static const Color secondaryWhite = Color(0xFFFFFFFF); // White
   static const Color secondaryGray = Color(
-    0xFFF2F2F2,
-  ); // Light gray for subtle contrasts
-  static const Color secondaryBeige = Color(
-    0xFFF9F5F0,
-  ); // Soft beige for a warm feel
+    0xFFE0E0E0,
+  ); // Lighter gray for UI elements
+  static const Color secondaryBeige = Color(0xFFF7F1E3); // Soft beige
 
-  // Accent Colors
-  static const Color accentDarkGold = Color(
-    0xFF8D6E3C,
-  ); // Darker shade for depth
+  // Accent Colors (Enhancements)
+  static const Color accentDarkGold = Color(0xFF8D6E3C);
   static const Color accentLightGold = Color(
     0xFFFFD700,
-  ); // Lighter gold for highlights
+  ); // Bright gold for highlights
 
   // Text Colors
-  static const Color textPrimary = primaryBlack;
-  static const Color textSecondary = primaryGold;
+  static const Color textPrimary = Color(
+    0xFF1E1E1E,
+  ); // Almost black for better readability
+  static const Color textSecondary = Color(
+    0xFF8D6E3C,
+  ); // Gold tone for emphasis
   static const Color textWhite = secondaryWhite;
-  static const Color textGray = Color(0xFFB0B0B0); // Muted text color
-  static const Color textError = Color(0xFFD32F2F); // Error text color (Red)
+  static const Color textGray = Color(
+    0xFF757575,
+  ); // Muted gray for secondary text
+  static const Color textError = Color(0xFFD32F2F); // Error messages (Red)
 
   // Button Colors
-  static const Color buttonGold = primaryGold;
-  static const Color buttonBlack = primaryBlack;
-  static const Color buttonSuccess = Color(
-    0xFF4CAF50,
-  ); // Green button for success
-  static const Color buttonError = Color(0xFFD32F2F); // Red button for error
-  static const Color buttonWarning = Color(
-    0xFFFFC107,
-  ); // Yellow button for warning
+  static const Color buttonPrimary = primaryGold;
+  static const Color buttonSecondary = primaryBlack;
+  static const Color buttonSuccess = Color(0xFF2E7D32); // Rich green
+  static const Color buttonError = Color(0xFFD32F2F);
+  static const Color buttonWarning = Color(0xFFFFC107); // Goldish yellow
 
   // Background Colors
-  static const Color backgroundDark = primaryBlack;
-  static const Color backgroundLight = secondaryWhite;
+  static const Color backgroundDark = Color(
+    0xFF1C1C1C,
+  ); // Deep black for dark mode
+  static const Color backgroundLight = Color(0xFFF9F9F9); // Softer white
   static const Color backgroundGray = secondaryGray;
-  static const Color backgroundSuccess = Color(
-    0x00e1e8f6,
-  ); // Light background for success
-  static const Color backgroundError = Color(
-    0xFFFEF1F1,
-  ); // Light background for error
-  static const Color backgroundWarning = Color(
-    0xFFFFF8E1,
-  ); // Light background for warning
-  static const Color backgroundInfo = Color(
-    0xFFE3F2FD,
-  ); // Light background for info
+  static const Color backgroundSuccess = Color(0xFFE8F5E9);
+  static const Color backgroundError = Color(0xFFFFEBEE);
+  static const Color backgroundWarning = Color(0xFFFFF8E1);
+  static const Color backgroundInfo = Color(0xFFE3F2FD);
 
   // Status Colors
-  static const Color success = Color(0xFF4CAF50); // Success color (Green)
-  static const Color error = Color(0xFFD32F2F); // Error color (Red)
-  static const Color warning = Color(0xFFFFC107); // Warning color (Yellow)
-  static const Color info = Color(0xFF2196F3); // Info color (Blue)
+  static const Color success = Color(0xFF4CAF50);
+  static const Color error = Color(0xFFD32F2F);
+  static const Color warning = Color(0xFFFFC107);
+  static const Color info = Color(0xFF2196F3);
 
   // Border Colors
-  static const Color borderPrimary = Color(
-    0xFFBDBDBD,
-  ); // Border for primary elements
-  static const Color borderError = Color(0xFFD32F2F); // Border color for error
-  static const Color borderSuccess = Color(
-    0xFF4CAF50,
-  ); // Border color for success
+  static const Color borderPrimary = Color(0xFFBDBDBD);
+  static const Color borderError = Color(0xFFD32F2F);
+  static const Color borderSuccess = Color(0xFF4CAF50);
 
   // Shadow Colors
-  static const Color shadowLight = Color(
-    0x80BDBDBD,
-  ); // Light shadow for UI depth
-  static const Color shadowDark = Color(0x80000000); // Dark shadow for UI depth
+  static const Color shadowLight = Color(0x80BDBDBD);
+  static const Color shadowDark = Color(0x80000000);
 }
