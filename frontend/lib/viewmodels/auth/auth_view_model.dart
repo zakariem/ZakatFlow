@@ -1,7 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
 import '../../models/user_model.dart';
 import '../../services/auth_service.dart';
 
@@ -66,12 +67,17 @@ class AuthViewModel extends StateNotifier<AuthState> {
       final userJson = await _secureStorage.read(key: 'user');
 
       if (token != null && token.isNotEmpty && userJson != null) {
-        final user = User.fromJson(jsonDecode(userJson));
-        state = state.copyWith(
-          user: user,
-          isLoading: false,
-          isAdmin: user.isAdmin,
-        );
+        if (JwtDecoder.isExpired(token)) {
+          // Token expired, log out user
+          await logout();
+        } else {
+          final user = User.fromJson(jsonDecode(userJson));
+          state = state.copyWith(
+            user: user,
+            isLoading: false,
+            isAdmin: user.isAdmin,
+          );
+        }
       } else {
         state = state.copyWith(isLoading: false);
       }
