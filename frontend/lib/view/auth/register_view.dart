@@ -78,6 +78,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: AppBar(backgroundColor: AppColors.backgroundLight, elevation: 0),
       backgroundColor: AppColors.backgroundLight,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
@@ -92,107 +93,102 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           minHeight: constraints.maxHeight,
                         ),
                         child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.05,
-                            ),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(height: size.height * 0.05),
-                                  Text(
-                                    'Create an account',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: size.width * 0.08,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: size.height * 0.05),
+                                Text(
+                                  'Create an account',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: size.width * 0.07,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                SizedBox(height: size.height * 0.02),
+                                Text(
+                                  'Fill your information below to continue',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: size.width * 0.036,
+                                    color: AppColors.textGray,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: size.height * 0.04),
+                                AuthField(
+                                  controller: _fullNameController,
+                                  hintText: 'Full Name',
+                                  validator: ValidationUtils.validateFullName,
+                                  keyboardType: TextInputType.name,
+                                ),
+                                SizedBox(height: size.height * 0.023),
+                                AuthField(
+                                  controller: _emailController,
+                                  hintText: 'Email',
+                                  validator: ValidationUtils.validateEmail,
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                                SizedBox(height: size.height * 0.023),
+                                AuthField(
+                                  controller: _passwordController,
+                                  hintText: 'Password',
+                                  isPassword: true,
+                                  obscureText: _isObscure,
+                                  toggleVisibility: () {
+                                    setState(() {
+                                      _isObscure = !_isObscure;
+                                    });
+                                  },
+                                  validator: ValidationUtils.validatePassword,
+                                  keyboardType: TextInputType.visiblePassword,
+                                ),
+                                SizedBox(height: size.height * 0.023),
+                                AuthField(
+                                  controller: _confirmPasswordController,
+                                  hintText: 'Confirm Password',
+                                  isPassword: true,
+                                  obscureText: _isConfirmObscure,
+                                  toggleVisibility: () {
+                                    setState(() {
+                                      _isConfirmObscure = !_isConfirmObscure;
+                                    });
+                                  },
+                                  validator: _validateConfirmPassword,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  textInputAction: TextInputAction.done,
+                                ),
+                                SizedBox(height: size.height * 0.04),
+                                CustomButton(
+                                  text: 'Register',
+                                  onTap: _register,
+                                ),
+                                SizedBox(height: size.height * 0.02),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Already have an account? ",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: size.width * 0.04,
+                                        color: AppColors.textGray,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: size.height * 0.02),
-                                  Text(
-                                    'Fill your information below to continue',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: size.width * 0.04,
-                                      color: AppColors.textGray,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(height: size.height * 0.05),
-                                  AuthField(
-                                    controller: _fullNameController,
-                                    hintText: 'Full Name',
-                                    validator: ValidationUtils.validateFullName,
-                                    keyboardType: TextInputType.name,
-                                  ),
-                                  SizedBox(height: size.height * 0.05),
-                                  AuthField(
-                                    controller: _emailController,
-                                    hintText: 'Email',
-                                    validator: ValidationUtils.validateEmail,
-                                    keyboardType: TextInputType.emailAddress,
-                                  ),
-                                  SizedBox(height: size.height * 0.023),
-                                  AuthField(
-                                    controller: _passwordController,
-                                    hintText: 'Password',
-                                    isPassword: true,
-                                    obscureText: _isObscure,
-                                    toggleVisibility: () {
-                                      setState(() {
-                                        _isObscure = !_isObscure;
-                                      });
-                                    },
-                                    validator: ValidationUtils.validatePassword,
-                                    keyboardType: TextInputType.visiblePassword,
-                                  ),
-                                  SizedBox(height: size.height * 0.023),
-                                  AuthField(
-                                    controller: _confirmPasswordController,
-                                    hintText: 'Confirm Password',
-                                    isPassword: true,
-                                    obscureText: _isConfirmObscure,
-                                    toggleVisibility: () {
-                                      setState(() {
-                                        _isConfirmObscure = !_isConfirmObscure;
-                                      });
-                                    },
-                                    validator: _validateConfirmPassword,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    textInputAction: TextInputAction.done,
-                                  ),
-                                  SizedBox(height: size.height * 0.04),
-                                  CustomButton(
-                                    text: 'Register',
-                                    onTap: _register,
-                                  ),
-                                  SizedBox(height: size.height * 0.02),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Already have an account? ",
+                                    InkWell(
+                                      onTap: () => Navigator.pop(context),
+                                      child: Text(
+                                        'Sign In',
                                         style: GoogleFonts.poppins(
                                           fontSize: size.width * 0.04,
-                                          color: AppColors.textGray,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
-                                      InkWell(
-                                        onTap: () => Navigator.pop(context),
-                                        child: Text(
-                                          'Sign In',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: size.width * 0.04,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),

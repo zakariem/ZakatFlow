@@ -76,87 +76,82 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           minHeight: constraints.maxHeight,
                         ),
                         child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: size.width * 0.05,
-                            ),
-                            child: Form(
-                              key: _formKey,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(height: size.height * 0.05),
-                                  Text(
-                                    'Sign In',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: size.width * 0.08,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
+                          child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(height: size.height * 0.05),
+                                Text(
+                                  'Sign In',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: size.width * 0.08,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                SizedBox(height: size.height * 0.02),
+                                Text(
+                                  'Hi, Welcome back, you’ve been missed',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: size.width * 0.04,
+                                    color: AppColors.textGray,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: size.height * 0.05),
+                                AuthField(
+                                  controller: _emailController,
+                                  hintText: 'Email',
+                                  validator: ValidationUtils.validateEmail,
+                                  keyboardType: TextInputType.emailAddress,
+                                ),
+                                SizedBox(height: size.height * 0.023),
+                                AuthField(
+                                  controller: _passwordController,
+                                  hintText: 'Password',
+                                  isPassword: true,
+                                  obscureText: _isObscure,
+                                  toggleVisibility: () {
+                                    setState(() {
+                                      _isObscure = !_isObscure;
+                                    });
+                                  },
+                                  validator: ValidationUtils.validatePassword,
+                                  keyboardType: TextInputType.visiblePassword,
+                                  textInputAction: TextInputAction.done,
+                                ),
+                                SizedBox(height: size.height * 0.04),
+                                CustomButton(text: 'Sign In', onTap: _login),
+                                SizedBox(height: size.height * 0.02),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "Don't have an account? ",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: size.width * 0.04,
+                                        color: AppColors.textGray,
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(height: size.height * 0.02),
-                                  Text(
-                                    'Hi, Welcome back, you’ve been missed',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: size.width * 0.04,
-                                      color: AppColors.textGray,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(height: size.height * 0.05),
-                                  AuthField(
-                                    controller: _emailController,
-                                    hintText: 'Email',
-                                    validator: ValidationUtils.validateEmail,
-                                    keyboardType: TextInputType.emailAddress,
-                                  ),
-                                  SizedBox(height: size.height * 0.023),
-                                  AuthField(
-                                    controller: _passwordController,
-                                    hintText: 'Password',
-                                    isPassword: true,
-                                    obscureText: _isObscure,
-                                    toggleVisibility: () {
-                                      setState(() {
-                                        _isObscure = !_isObscure;
-                                      });
-                                    },
-                                    validator: ValidationUtils.validatePassword,
-                                    keyboardType: TextInputType.visiblePassword,
-                                    textInputAction: TextInputAction.done,
-                                  ),
-                                  SizedBox(height: size.height * 0.04),
-                                  CustomButton(text: 'Sign In', onTap: _login),
-                                  SizedBox(height: size.height * 0.02),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Don't have an account? ",
+                                    InkWell(
+                                      onTap:
+                                          () => Navigator.push(
+                                            context,
+                                            RegisterScreen.route(),
+                                          ),
+                                      child: Text(
+                                        'Sign Up',
                                         style: GoogleFonts.poppins(
                                           fontSize: size.width * 0.04,
-                                          color: AppColors.textGray,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.textSecondary,
                                         ),
                                       ),
-                                      InkWell(
-                                        onTap:
-                                            () => Navigator.push(
-                                              context,
-                                              RegisterScreen.route(),
-                                            ),
-                                        child: Text(
-                                          'Sign Up',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: size.width * 0.04,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
