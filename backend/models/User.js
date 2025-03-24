@@ -16,20 +16,30 @@ const UserSchema = new mongoose.Schema(
       required: [true, "Email is required"],
       unique: true,
       lowercase: true,
-      validate: [validator.isEmail, "Please provide a valid email address"],
+      validate: {
+        validator: validator.isEmail,
+        message: "Please provide a valid email address",
+      },
     },
     password: {
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
+      select: false, // Prevents password from being returned in queries
     },
     role: {
       type: String,
       enum: ["admin", "client"],
       default: "client",
     },
-    resetToken: {
-      type: String, // Used for password reset functionality
+    profileImageUrl: {
+      type: String,
+      default:
+        "https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=",
+    },
+    cloudinaryPublicId: {
+      type: String,
+      default: null,
     },
   },
   { timestamps: true }
@@ -37,16 +47,14 @@ const UserSchema = new mongoose.Schema(
 
 // Hash password before saving
 UserSchema.pre("save", async function (next) {
-  // Only hash the password if it has been modified (or is new)
   if (!this.isModified("password")) return next();
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// Instance method to compare entered password with the hashed password
-UserSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+// Compare entered password with hashed password
+UserSchema.methods.matchPassword = function (enteredPassword) {
+  return bcrypt.compare(enteredPassword, this.password);
 };
 
 const User = mongoose.model("User", UserSchema);
