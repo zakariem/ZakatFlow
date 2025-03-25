@@ -13,7 +13,8 @@ import AuthorizeRole from "../middlewares/role_middleware.js";
 import multer from "multer";
 
 const router = express.Router();
-const upload = multer();
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);

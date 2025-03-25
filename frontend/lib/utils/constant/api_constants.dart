@@ -9,4 +9,7 @@ class ApiConstants {
   // User profile endpoint
   // Use HTTP GET to fetch, PUT/PATCH to update, and DELETE to remove the user profile.
   static const String profile = '$baseUrl/api/user/profile';
+
+  // upload
+  static const String upload = '$baseUrl/api/user/upload';
 }

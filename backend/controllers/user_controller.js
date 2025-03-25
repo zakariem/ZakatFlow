@@ -122,6 +122,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
 // @access  Private
 export const uploadProfileImage = asyncHandler(async (req, res) => {
   const { userId } = req.body;
+
   if (!req.file || !userId) {
     return res.status(400).json({ message: "Missing file or userId" });
   }
@@ -131,27 +132,36 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
     return res.status(404).json({ message: "User not found" });
   }
 
-  if (user.cloudinaryPublicId) {
-    await cloudinary.uploader.destroy(user.cloudinaryPublicId);
-  }
+  try {
+    // Delete old image if exists
+    if (user.cloudinaryPublicId) {
+      await cloudinary.uploader.destroy(user.cloudinaryPublicId);
+    }
 
-  cloudinary.uploader
-    .upload_stream({ folder: "profile_images" }, async (error, result) => {
-      if (error) {
-        return res
-          .status(500)
-          .json({ message: "Upload error", error: error.message });
-      }
-      user.profileImageUrl = result.secure_url;
-      user.cloudinaryPublicId = result.public_id;
-      await user.save();
-      res
-        .status(200)
-        .json({
+    // Upload new image
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: "profile_images" },
+      async (error, result) => {
+        if (error) {
+          return res.status(500).json({ message: "Upload error", error: error.message });
+        }
+
+        // Update user details
+        user.profileImageUrl = result.secure_url;
+        user.cloudinaryPublicId = result.public_id;
+        await user.save();
+
+        res.status(200).json({
           success: true,
           message: "Image uploaded successfully",
           data: user,
+          token: generateToken(user._id),
         });
-    })
-    .end(req.file.buffer);
+      }
+    );
+
+    uploadStream.end(req.file.buffer);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
 });

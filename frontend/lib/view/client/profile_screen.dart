@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/auth_providers.dart';
 import '../../utils/theme/app_color.dart';
 import '../auth/login_screen.dart';
+import 'upload_screen.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -10,6 +11,8 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final avatarRadius = screenWidth * 0.20;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -38,36 +41,39 @@ class ProfileScreen extends ConsumerWidget {
           children: [
             Center(
               child: Stack(
-                clipBehavior: Clip.none,
+                alignment: Alignment.bottomCenter,
                 children: [
                   CircleAvatar(
-                    radius: 50,
+                    radius: avatarRadius,
                     backgroundImage: NetworkImage(
                       authState.user!.profileImageUrl,
                     ),
                     backgroundColor: AppColors.secondaryGray,
                   ),
-                  Positioned(
-                    bottom: -10,
-                    right: -10,
-                    child: CircleAvatar(
-                      radius: 25,
-                      backgroundColor: AppColors.accentLightGold,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.edit,
-                          size: 20,
-                          color: AppColors.textWhite,
-                        ),
-                        onPressed: () {},
+
+                  CircleAvatar(
+                    radius: avatarRadius * 0.30,
+                    backgroundColor: AppColors.accentLightGold,
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.camera_alt,
+                        size: avatarRadius * 0.3 * 0.8,
+                        color: AppColors.textWhite,
                       ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const UploadScreen(),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 20),
-            // User Data Display in a Card
             Card(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -77,7 +83,6 @@ class ProfileScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    // User Name
                     Text(
                       authState.user!.fullName,
                       style: TextStyle(
@@ -87,7 +92,6 @@ class ProfileScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    // User Email
                     Text(
                       authState.user!.email,
                       style: TextStyle(

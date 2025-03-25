@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -61,14 +62,15 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
   Future<void> checkAuthStatus() async {
     try {
-      final token = await _secureStorage.read(key: 'token');
       final userJson = await _secureStorage.read(key: 'user');
 
-      if (token != null && token.isNotEmpty && userJson != null) {
+      if (userJson != null) {
+        final user = User.fromJson(jsonDecode(userJson));
+        final token = user.token; // Extract token from user object
+
         if (JwtDecoder.isExpired(token)) {
           await logout(); // Token expired, log out user
         } else {
-          final user = User.fromJson(jsonDecode(userJson));
           state = state.copyWith(user: user, isAdmin: user.isAdmin);
         }
       }
@@ -99,21 +101,19 @@ class AuthViewModel extends StateNotifier<AuthState> {
       email: user.email,
       role: user.role,
       token: user.token,
-      profileImageUrl:
-          user.profileImageUrl.isNotEmpty
-              ? user.profileImageUrl
-              : 'https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=',
+      profileImageUrl: user.profileImageUrl,
     );
 
-    await _secureStorage.write(key: 'token', value: updatedUser.token);
     await _secureStorage.write(
       key: 'user',
       value: jsonEncode(updatedUser.toJson()),
     );
+    debugPrint(
+      "User data stored successfully ${jsonEncode(updatedUser.toJson())}",
+    );
   }
 
   Future<void> _clearUserData() async {
-    await _secureStorage.delete(key: 'token');
     await _secureStorage.delete(key: 'user');
   }
 
