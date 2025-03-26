@@ -16,14 +16,13 @@ class UploadService {
   ) async {
     final request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
 
-    request.fields['userId'] = userId;
+    request.headers['userId'] = userId;
     request.headers['Authorization'] = 'Bearer $token';
-    request.headers['Content-Type'] = 'multipart/form-data';
 
     request.files.add(
-      await http.MultipartFile.fromPath(
+      http.MultipartFile.fromBytes(
         'image',
-        imageFile.path,
+        imageFile.readAsBytesSync(),
         filename: path.basename(imageFile.path),
       ),
     );
@@ -32,10 +31,16 @@ class UploadService {
     final responseData = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
-      final jsonData = json.decode(responseData);
-      return User.fromJson(jsonData['data']);
+      try {
+        final jsonData = json.decode(responseData);
+        return User.fromJson(jsonData['data']);
+      } catch (e) {
+        throw Exception('Invalid response format: $responseData');
+      }
     } else {
-      throw Exception('Failed to upload image: ${response.statusCode}');
+      throw Exception(
+        'Failed to upload image: ${response.statusCode} - $responseData',
+      );
     }
   }
 }

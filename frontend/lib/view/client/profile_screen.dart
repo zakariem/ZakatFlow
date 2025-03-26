@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/view/client/profile_update_view.dart';
 import '../../providers/auth_providers.dart';
 import '../../utils/theme/app_color.dart';
 import '../auth/login_screen.dart';
@@ -11,8 +12,11 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
+    final authNotifier = ref.read(authViewModelProvider.notifier);
     final screenWidth = MediaQuery.of(context).size.width;
     final avatarRadius = screenWidth * 0.20;
+
+    authNotifier.checkAuthStatus();
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -119,7 +123,12 @@ class ProfileScreen extends ConsumerWidget {
               ),
               icon: const Icon(Icons.edit, color: AppColors.textWhite),
               label: const Text('Edit Profile'),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileUpdateView()),
+                );
+              },
             ),
           ],
         ),

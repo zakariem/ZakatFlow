@@ -78,7 +78,7 @@ export const getUserProfile = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/profile
 // @access  Private
 export const updateUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.body._id);
   if (user) {
     user.fullName = req.body.fullName || user.fullName;
     user.email = req.body.email || user.email;
@@ -101,7 +101,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:id
 // @access  Private/Admin/Client
 export const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id);
+  const user = await User.findById(req.user._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -121,47 +121,65 @@ export const deleteUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/upload
 // @access  Private
 export const uploadProfileImage = asyncHandler(async (req, res) => {
-  const { userId } = req.body;
+  console.log("Received request to upload profile image");
 
-  if (!req.file || !userId) {
-    return res.status(400).json({ message: "Missing file or userId" });
+  if (!req.file) {
+    console.log("No file uploaded");
+    return res.status(400).json({ message: "No file uploaded" });
   }
 
-  const user = await User.findById(userId);
+  console.log("Checking user existence with ID:", req.headers.userid);
+  const user = await User.findById(req.headers.userid);
+
   if (!user) {
+    console.log("User not found");
     return res.status(404).json({ message: "User not found" });
   }
 
   try {
-    // Delete old image if exists
+    // Delete old image if it exists
     if (user.cloudinaryPublicId) {
+      console.log("Deleting old image with Public ID:", user.cloudinaryPublicId);
       await cloudinary.uploader.destroy(user.cloudinaryPublicId);
+      console.log("Old image deleted successfully");
     }
 
-    // Upload new image
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: "profile_images" },
-      async (error, result) => {
-        if (error) {
-          return res.status(500).json({ message: "Upload error", error: error.message });
+    console.log("Uploading new image to Cloudinary...");
+
+    // Use a Promise to handle async upload properly
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: "profile_images" },
+        (error, result) => {
+          if (error) {
+            console.error("Upload error:", error.message);
+            return reject(error);
+          }
+          resolve(result);
         }
+      );
+      stream.end(req.file.buffer);
+    });
 
-        // Update user details
-        user.profileImageUrl = result.secure_url;
-        user.cloudinaryPublicId = result.public_id;
-        await user.save();
+    console.log("Image uploaded successfully:", uploadResult.secure_url);
 
-        res.status(200).json({
-          success: true,
-          message: "Image uploaded successfully",
-          data: user,
-          token: generateToken(user._id),
-        });
-      }
-    );
+    // Update user details
+    user.profileImageUrl = uploadResult.secure_url;
+    user.cloudinaryPublicId = uploadResult.public_id;
+    await user.save();
 
-    uploadStream.end(req.file.buffer);
+    console.log("User profile updated with new image");
+
+    res.status(200).json({
+      success: true,
+      message: "Image uploaded successfully",
+      data: {
+        profileImageUrl: user.profileImageUrl,
+        token: generateToken(user._id),
+      },
+    });
   } catch (error) {
+    console.error("Internal server error:", error.message);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });

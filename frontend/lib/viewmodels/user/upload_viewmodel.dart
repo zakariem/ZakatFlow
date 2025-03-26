@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,7 +38,8 @@ class UploadViewModel extends StateNotifier<UploadState> {
 
   Future<void> uploadImage(File imageFile, String userId, String token) async {
     try {
-      state = UploadState(isUploading: true, message: 'Uploading...');
+      state = UploadState(isUploading: true);
+      debugPrint('Uploading image for user: $userId'); // Debugging
 
       final updatedUser = await _uploadService.uploadProfileImage(
         imageFile,
@@ -45,15 +47,15 @@ class UploadViewModel extends StateNotifier<UploadState> {
         token,
       );
 
+      debugPrint('Upload successful: ${updatedUser.toJson()}'); // Debugging
+
       // Remove old user data from secure storage
       await _secureStorage.delete(key: 'user');
-      await _secureStorage.delete(key: 'token');
 
-      // Save the new user data
-      await _secureStorage.write(key: 'token', value: updatedUser.token);
+      // Save new user data
       await _secureStorage.write(
         key: 'user',
-        value: jsonEncode(updatedUser.toJson()), // Fix: Convert map to string
+        value: jsonEncode(updatedUser.toJson()),
       );
 
       state = UploadState(
@@ -62,7 +64,13 @@ class UploadViewModel extends StateNotifier<UploadState> {
         updatedUser: updatedUser,
       );
     } catch (e) {
+      debugPrint('Upload error: $e'); // Debugging
+
       state = UploadState(isUploading: false, message: 'Upload error: $e');
     }
+  }
+
+  void clearMessage() {
+    state = UploadState(message: '');
   }
 }

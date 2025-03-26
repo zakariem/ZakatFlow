@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/utils/widgets/loader.dart';
 
 import '../../providers/auth_providers.dart';
 import '../../providers/upload_provider.dart';
@@ -18,6 +19,8 @@ class UploadScreen extends ConsumerWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (uploadState.message.isNotEmpty) {
         ErrorScanckbar.showSnackBar(context, uploadState.message);
+        debugPrint('Upload message: ${uploadState.message} ***************');
+        uploadNotifier.clearMessage();
       }
     });
 
@@ -39,8 +42,7 @@ class UploadScreen extends ConsumerWidget {
                 ),
               const SizedBox(height: 20),
 
-              if (uploadState.isUploading)
-                const CircularProgressIndicator(), // Show loading indicator
+              if (uploadState.isUploading) Loader(),
 
               const SizedBox(height: 20),
 
@@ -50,6 +52,9 @@ class UploadScreen extends ConsumerWidget {
 
                   final file = await uploadNotifier.pickImage();
                   if (file != null) {
+                    debugPrint(
+                      'Picked image: ${uploadState.message} ***************',
+                    );
                     await uploadNotifier.uploadImage(
                       file,
                       authState.user!.id,
