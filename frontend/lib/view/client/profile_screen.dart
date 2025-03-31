@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/utils/widgets/loader.dart';
 import 'package:frontend/view/client/profile_update_view.dart';
 import '../../providers/auth_providers.dart';
 import '../../utils/theme/app_color.dart';
@@ -12,11 +13,22 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
-    final authNotifier = ref.read(authViewModelProvider.notifier);
+
     final screenWidth = MediaQuery.of(context).size.width;
     final avatarRadius = screenWidth * 0.20;
 
-    authNotifier.checkAuthStatus();
+    // If user is null, navigate to login and show loading
+    if (authState.user == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (context.mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+          );
+        }
+      });
+      return const Scaffold(body: Center(child: LoaderPage()));
+    }
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -25,15 +37,41 @@ class ProfileScreen extends ConsumerWidget {
         title: const Text('Profile'),
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await ref.read(authViewModelProvider.notifier).logout();
-              if (!context.mounted) return;
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-              );
+          PopupMenuButton<String>(
+            color: AppColors.backgroundLight,
+            onSelected: (value) {
+              if (value == 'logout') {
+                _logout(context, ref);
+              } else if (value == 'delete') {
+                _confirmDeleteAccount(context, ref);
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem<String>(
+                  value: 'logout',
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout, color: Colors.black54),
+                      SizedBox(width: 10),
+                      Text('Logout'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<String>(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete, color: AppColors.buttonWarning),
+                      SizedBox(width: 10),
+                      Text(
+                        'Delete Account',
+                        style: TextStyle(color: AppColors.buttonWarning),
+                      ),
+                    ],
+                  ),
+                ),
+              ];
             },
           ),
         ],
@@ -54,7 +92,6 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                     backgroundColor: AppColors.secondaryGray,
                   ),
-
                   CircleAvatar(
                     radius: avatarRadius * 0.30,
                     backgroundColor: AppColors.accentLightGold,
@@ -134,5 +171,57 @@ class ProfileScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _logout(BuildContext context, WidgetRef ref) async {
+    await ref.read(authViewModelProvider.notifier).logout();
+  }
+
+  void _confirmDeleteAccount(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            backgroundColor: AppColors.backgroundLight,
+            title: const Text('Delete Account'),
+            content: const Text(
+              'Are you sure you want to delete your account? This action cannot be undone.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: AppColors.primaryGold),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await _deleteAccount(context, ref);
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.buttonWarning,
+                ),
+                child: const Text('Delete'),
+              ),
+            ],
+          ),
+    );
+  }
+
+  Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
+    try {
+      await ref.read(authViewModelProvider.notifier).deleteAccount();
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error deleting account: $e')));
+    }
   }
 }

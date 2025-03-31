@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/user_model.dart';
@@ -48,6 +49,25 @@ class AuthService {
       }
     } else {
       final error = jsonDecode(response.body);
+      throw Exception(error['message'] ?? 'Unknown error occurred');
+    }
+  }
+
+  Future<void> deleteAccount(String? userId, String token, String role) async {
+    debugPrint('Deleting account with userId: $userId, role: $role');
+    final response = await http.delete(
+      Uri.parse(ApiConstants.profile),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({'_id': userId, 'role': role}),
+    );
+
+    if (response.statusCode != 200) {
+      final error = jsonDecode(response.body);
+      debugPrint('Error deleting account: ${error['message']}');
+      debugPrint(response.toString());
       throw Exception(error['message'] ?? 'Unknown error occurred');
     }
   }

@@ -60,6 +60,37 @@ class AuthViewModel extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> deleteAccount() async {
+    // Ensure a user is logged in
+    final currentUser = state.user;
+    if (currentUser == null) {
+      _handleError(Exception('User not authenticated'));
+      return;
+    }
+
+    state = state.copyWith(isLoading: true);
+    try {
+      // Ensure the necessary fields are valid.
+      final userId = currentUser.id;
+      final token = currentUser.token;
+      final role = currentUser.role;
+
+      if (userId.isEmpty || token.isEmpty) {
+        throw Exception('User data incomplete for account deletion.');
+      }
+
+      // Call the delete account API.
+      await _authService.deleteAccount(userId, token, role);
+
+      // If deletion succeeds, log out the user.
+      await logout();
+    } catch (e) {
+      _handleError(e);
+    } finally {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+
   Future<void> checkAuthStatus() async {
     try {
       final userJson = await _secureStorage.read(key: 'user');
@@ -118,6 +149,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
   }
 
   void _handleError(dynamic error) {
+    debugPrint('Error: $error');
     state = state.copyWith(error: error.toString(), isLoading: false);
   }
 }

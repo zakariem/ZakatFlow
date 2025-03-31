@@ -16,7 +16,7 @@ class ClientMainScreen extends ConsumerWidget {
     const CalculateScreen(),
     const DonateScreen(),
     const HistoryScreen(),
-    const ProfileScreen(),
+    ProfileScreen(),
   ];
 
   static final List<BottomNavigationBarItem> _navItems = const [

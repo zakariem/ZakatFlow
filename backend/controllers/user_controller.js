@@ -101,20 +101,40 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
 // @route   DELETE /api/users/:id
 // @access  Private/Admin/Client
 export const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.body._id);
+  console.log("Deleting user with ID:", req.body._id);
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
+
   if (
-    req.user._id.toString() !== user._id.toString() &&
-    req.user.role !== "admin"
+    req.body._id.toString() !== user._id.toString() &&
+    req.body.role !== "admin"
   ) {
     return res
       .status(403)
       .json({ message: "Not authorized to delete this account" });
   }
-  await user.deleteOne();
-  res.json({ success: true, message: "User account deleted successfully" });
+
+  try {
+    // Check if user has a profile image stored in Cloudinary
+    if (user.cloudinaryPublicId) {
+      console.log(
+        "Deleting user image from Cloudinary:",
+        user.cloudinaryPublicId
+      );
+      await cloudinary.uploader.destroy(user.cloudinaryPublicId);
+      console.log("User image deleted from Cloudinary");
+    }
+
+    await user.deleteOne();
+    res.json({ success: true, message: "User account deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error.message);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
 });
 
 // @desc    Upload profile image
@@ -139,7 +159,10 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
   try {
     // Delete old image if it exists
     if (user.cloudinaryPublicId) {
-      console.log("Deleting old image with Public ID:", user.cloudinaryPublicId);
+      console.log(
+        "Deleting old image with Public ID:",
+        user.cloudinaryPublicId
+      );
       await cloudinary.uploader.destroy(user.cloudinaryPublicId);
       console.log("Old image deleted successfully");
     }
@@ -180,6 +203,8 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     console.error("Internal server error:", error.message);
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
   }
 });

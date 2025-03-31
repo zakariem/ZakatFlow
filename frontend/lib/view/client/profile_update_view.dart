@@ -13,10 +13,10 @@ class ProfileUpdateView extends ConsumerStatefulWidget {
   const ProfileUpdateView({super.key});
 
   @override
-  _ProfileUpdateViewState createState() => _ProfileUpdateViewState();
+  ProfileUpdateViewState createState() => ProfileUpdateViewState();
 }
 
-class _ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
+class ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
   late TextEditingController fullNameController;
   late TextEditingController emailController;
 
@@ -40,7 +40,7 @@ class _ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
-    final updateprofileState = ref.watch(profileUpdateProvider);
+    final updateProfileState = ref.watch(profileUpdateProvider);
     final uploadNotifier = ref.read(profileUpdateProvider.notifier);
 
     double screenWidth = MediaQuery.of(context).size.width;
@@ -50,11 +50,11 @@ class _ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
     double verticalPadding = screenHeight * 0.02;
 
     // Show error snack bar only when there is a new message
-    if (updateprofileState.message.isNotEmpty) {
+    if (updateProfileState.message.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ErrorScanckbar.showSnackBar(context, updateprofileState.message);
+        ErrorScanckbar.showSnackBar(context, updateProfileState.message);
         debugPrint(
-          'Upload message: ${updateprofileState.message} ***************',
+          'Upload message: ${updateProfileState.message} ***************',
         );
         uploadNotifier
             .clearMessage(); // Clear the message after showing the snackbar
@@ -62,7 +62,7 @@ class _ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Update Profile'), centerTitle: true),
+      appBar: AppBar(title: const Text('Update Profile'), centerTitle: true),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         child: SingleChildScrollView(
@@ -84,8 +84,8 @@ class _ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
                 keyboardType: TextInputType.emailAddress,
               ),
               SizedBox(height: verticalPadding),
-              updateprofileState.isUploading
-                  ? Loader()
+              updateProfileState.isUploading
+                  ? const Loader()
                   : CustomButton(
                     text: 'Update Profile',
                     onTap: () {

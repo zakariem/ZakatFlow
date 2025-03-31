@@ -56,7 +56,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final state = ref.read(authViewModelProvider);
 
       if (state.user != null) {
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder:
@@ -65,6 +65,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ? const AdminMainScreen()
                         : const ClientMainScreen(),
           ),
+          (route) => false,
         );
       } else {
         ErrorScanckbar.showSnackBar(context, state.error.toString());
