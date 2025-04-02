@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -61,7 +60,6 @@ class AuthViewModel extends StateNotifier<AuthState> {
   }
 
   Future<void> deleteAccount() async {
-    // Ensure a user is logged in
     final currentUser = state.user;
     if (currentUser == null) {
       _handleError(Exception('User not authenticated'));
@@ -70,21 +68,14 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
     state = state.copyWith(isLoading: true);
     try {
-      // Ensure the necessary fields are valid.
-      final userId = currentUser.id;
-      final token = currentUser.token;
-      final role = currentUser.role;
-
-      if (userId.isEmpty || token.isEmpty) {
-        throw Exception('User data incomplete for account deletion.');
-      }
-
-      // Call the delete account API.
-      await _authService.deleteAccount(userId, token, role);
-
-      // If deletion succeeds, log out the user.
+      await _authService.deleteAccount(
+        currentUser.id,
+        currentUser.token,
+        currentUser.role,
+      );
       await logout();
     } catch (e) {
+      state = state.copyWith(error: 'Failed to delete account: $e');
       _handleError(e);
     } finally {
       state = state.copyWith(isLoading: false);
@@ -94,21 +85,21 @@ class AuthViewModel extends StateNotifier<AuthState> {
   Future<void> checkAuthStatus() async {
     try {
       final userJson = await _secureStorage.read(key: 'user');
+      if (userJson == null) {
+        state = state.copyWith(user: null, isAdmin: false);
+        return;
+      }
 
-      if (userJson != null) {
-        final user = User.fromJson(jsonDecode(userJson));
-        final token = user.token; // Extract token from user object
+      final user = User.fromJson(jsonDecode(userJson));
+      final token = user.token;
 
-        if (JwtDecoder.isExpired(token)) {
-          await logout(); // Token expired, log out user
-        } else {
-          state = state.copyWith(user: user, isAdmin: user.isAdmin);
-        }
+      if (JwtDecoder.isExpired(token)) {
+        await logout();
+      } else {
+        state = state.copyWith(user: user, isAdmin: user.isAdmin);
       }
     } catch (e) {
-      _handleError(e);
-    } finally {
-      state = state.copyWith(isLoading: false);
+      state = state.copyWith(error: 'Failed to check authentication status');
     }
   }
 
@@ -126,22 +117,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
   }
 
   Future<void> _storeUserData(User user) async {
-    final updatedUser = User(
-      id: user.id,
-      fullName: user.fullName,
-      email: user.email,
-      role: user.role,
-      token: user.token,
-      profileImageUrl: user.profileImageUrl,
-    );
-
-    await _secureStorage.write(
-      key: 'user',
-      value: jsonEncode(updatedUser.toJson()),
-    );
-    debugPrint(
-      "User data stored successfully ${jsonEncode(updatedUser.toJson())}",
-    );
+    await _secureStorage.write(key: 'user', value: jsonEncode(user.toJson()));
   }
 
   Future<void> _clearUserData() async {
@@ -149,7 +125,14 @@ class AuthViewModel extends StateNotifier<AuthState> {
   }
 
   void _handleError(dynamic error) {
-    debugPrint('Error: $error');
-    state = state.copyWith(error: error.toString(), isLoading: false);
+    String errorMessage;
+
+    if (error is Exception) {
+      errorMessage = error.toString();
+    } else {
+      errorMessage = 'An unexpected error occurred';
+    }
+
+    state = state.copyWith(error: errorMessage, isLoading: false);
   }
 }

@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/client_navigation_provider.dart';
 import '../utils/theme/app_color.dart';
-import 'client/calculate_screen.dart';
-import 'client/donate_screen.dart';
-import 'client/history_screen.dart';
-import 'client/home_screen.dart';
-import 'client/profile_screen.dart';
+import 'client/calculator/calculate_screen.dart';
+import 'client/donate/donate_screen.dart';
+import 'client/history/history_screen.dart';
+import 'client/home/home_screen.dart';
+import 'client/profile/profile_screen.dart';
 
 class ClientMainScreen extends ConsumerWidget {
   const ClientMainScreen({super.key});
 
-  static final List<Widget> _screens = [
-    const HomeScreen(),
-    const CalculateScreen(),
-    const DonateScreen(),
-    const HistoryScreen(),
+  static const List<Widget> _screens = [
+    HomeScreen(),
+    CalculateScreen(),
+    DonateScreen(),
+    HistoryScreen(),
     ProfileScreen(),
   ];
 
-  static final List<BottomNavigationBarItem> _navItems = const [
+  static const List<BottomNavigationBarItem> _navItems = [
     BottomNavigationBarItem(icon: Icon(Icons.home, size: 28), label: 'Home'),
     BottomNavigationBarItem(
       icon: Icon(Icons.calculate, size: 28),
@@ -52,11 +52,11 @@ class ClientMainScreen extends ConsumerWidget {
         unselectedItemColor: AppColors.textGray,
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal),
         items: _navItems,
         onTap: (index) {
-          ref.read(clientNavigationProvider.notifier).state = index;
+          ref.read(clientNavigationProvider.notifier).setIndex(index);
         },
         type: BottomNavigationBarType.fixed,
       ),
