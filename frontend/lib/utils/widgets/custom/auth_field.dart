@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../theme/app_color.dart';
 
-class AuthField extends StatelessWidget {
+class CustomField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String? Function(String?)? validator;
@@ -12,7 +12,7 @@ class AuthField extends StatelessWidget {
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
 
-  const AuthField({
+  const CustomField({
     super.key,
     required this.controller,
     required this.hintText,

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../providers/auth_providers.dart';
-import '../../providers/profile_update_provider.dart';
-import '../../utils/constant/validation_utils.dart';
-import '../../utils/widgets/auth/auth_field.dart';
-import '../../utils/widgets/auth/custom_button.dart';
-import '../../utils/widgets/loader.dart';
-import '../../utils/widgets/snackbar/error_scanckbar.dart';
+import '../../../providers/auth_providers.dart';
+import '../../../providers/profile_update_provider.dart';
+import '../../../utils/constant/validation_utils.dart';
+import '../../../utils/widgets/custom/auth_field.dart';
+import '../../../utils/widgets/custom/custom_button.dart';
+import '../../../utils/widgets/loader.dart';
+import '../../../utils/widgets/snackbar/error_scanckbar.dart';
 
 class ProfileUpdateView extends ConsumerStatefulWidget {
   const ProfileUpdateView({super.key});
@@ -70,14 +70,14 @@ class ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: verticalPadding),
-              AuthField(
+              CustomField(
                 controller: fullNameController,
                 hintText: 'Full Name',
                 validator: ValidationUtils.validateFullName,
                 keyboardType: TextInputType.name,
               ),
               SizedBox(height: verticalPadding * 2),
-              AuthField(
+              CustomField(
                 controller: emailController,
                 hintText: 'Email',
                 validator: ValidationUtils.validateEmail,

@@ -5,9 +5,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../providers/auth_providers.dart';
 import '../../utils/constant/validation_utils.dart';
 import '../../utils/theme/app_color.dart';
-import '../../utils/widgets/auth/auth_field.dart';
+import '../../utils/widgets/custom/auth_field.dart';
 import '../../utils/widgets/loader.dart';
-import '../../utils/widgets/auth/custom_button.dart';
+import '../../utils/widgets/custom/custom_button.dart';
 import '../admin_main_screen.dart';
 import '../client_main_screen.dart';
 
@@ -118,21 +118,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   textAlign: TextAlign.center,
                                 ),
                                 SizedBox(height: size.height * 0.04),
-                                AuthField(
+                                CustomField(
                                   controller: _fullNameController,
                                   hintText: 'Full Name',
                                   validator: ValidationUtils.validateFullName,
                                   keyboardType: TextInputType.name,
                                 ),
                                 SizedBox(height: size.height * 0.023),
-                                AuthField(
+                                CustomField(
                                   controller: _emailController,
                                   hintText: 'Email',
                                   validator: ValidationUtils.validateEmail,
                                   keyboardType: TextInputType.emailAddress,
                                 ),
                                 SizedBox(height: size.height * 0.023),
-                                AuthField(
+                                CustomField(
                                   controller: _passwordController,
                                   hintText: 'Password',
                                   isPassword: true,
@@ -146,7 +146,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   keyboardType: TextInputType.visiblePassword,
                                 ),
                                 SizedBox(height: size.height * 0.023),
-                                AuthField(
+                                CustomField(
                                   controller: _confirmPasswordController,
                                   hintText: 'Confirm Password',
                                   isPassword: true,

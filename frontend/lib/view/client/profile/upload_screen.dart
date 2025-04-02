@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/widgets/loader.dart';
 
-import '../../providers/auth_providers.dart';
-import '../../providers/upload_provider.dart';
-import '../../utils/widgets/snackbar/error_scanckbar.dart';
+import '../../../providers/auth_providers.dart';
+import '../../../providers/upload_provider.dart';
+import '../../../utils/widgets/snackbar/error_scanckbar.dart';
 
 class UploadScreen extends ConsumerWidget {
   const UploadScreen({super.key});
