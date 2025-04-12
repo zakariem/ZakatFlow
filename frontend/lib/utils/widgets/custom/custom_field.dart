@@ -4,24 +4,28 @@ import '../../theme/app_color.dart';
 
 class CustomField extends StatelessWidget {
   final TextEditingController controller;
-  final String hintText;
+  final String? hintText;
+  final String? labelText;
   final String? Function(String?)? validator;
   final bool obscureText;
   final bool isPassword;
   final VoidCallback? toggleVisibility;
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
+  final void Function(String)? onChanged;
 
   const CustomField({
     super.key,
     required this.controller,
-    required this.hintText,
+    this.hintText,
+    this.labelText,
     this.validator,
     this.obscureText = false,
     this.isPassword = false,
     this.toggleVisibility,
     this.textInputAction = TextInputAction.next,
     this.keyboardType = TextInputType.text,
+    this.onChanged,
   });
 
   @override
@@ -32,7 +36,10 @@ class CustomField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      onChanged: onChanged,
       decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(color: AppColors.primaryBlack),
         suffixIcon:
             isPassword
                 ? IconButton(

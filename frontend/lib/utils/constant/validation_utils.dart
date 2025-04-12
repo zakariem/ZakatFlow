@@ -29,4 +29,14 @@ class ValidationUtils {
     }
     return null;
   }
+
+  static String? validateNumberField(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Field cannot be empty';
+    }
+    if (num.tryParse(value) == null) {
+      return 'Enter a valid number';
+    }
+    return null;
+  }
 }

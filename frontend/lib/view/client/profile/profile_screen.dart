@@ -99,7 +99,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           Navigator.pushReplacement(context, LoginScreen.route());
-          clientNavigator.setIndex(0);
+          clientNavigator.reset();
         }
       });
       return const LoaderPage();

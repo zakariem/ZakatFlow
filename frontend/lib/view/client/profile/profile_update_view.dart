@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../providers/auth_providers.dart';
 import '../../../providers/profile_update_provider.dart';
 import '../../../utils/constant/validation_utils.dart';
-import '../../../utils/widgets/custom/auth_field.dart';
+import '../../../utils/widgets/custom/custom_field.dart';
 import '../../../utils/widgets/custom/custom_button.dart';
 import '../../../utils/widgets/loader.dart';
 import '../../../utils/widgets/snackbar/error_scanckbar.dart';

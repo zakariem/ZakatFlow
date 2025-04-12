@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../providers/auth_providers.dart';
 import '../../utils/constant/validation_utils.dart';
 import '../../utils/theme/app_color.dart';
-import '../../utils/widgets/custom/auth_field.dart';
+import '../../utils/widgets/custom/custom_field.dart';
 import '../../utils/widgets/loader.dart';
 import '../../utils/widgets/custom/custom_button.dart';
 import '../admin_main_screen.dart';
