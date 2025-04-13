@@ -22,6 +22,7 @@ class CalculateScreen extends ConsumerStatefulWidget {
 class _CalculateScreenState extends ConsumerState<CalculateScreen> {
   final formKey = GlobalKey<FormState>();
   final Map<StateProvider<String>, TextEditingController> controllers = {};
+  bool isCalculating = false; // Tracks calculation/loading state
 
   @override
   void initState() {
@@ -126,33 +127,64 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
                     ),
                     ..._buildFields(ref),
                     const SizedBox(height: 30),
-                    CustomButton(
-                      onTap: () {
-                        if (formKey.currentState!.validate()) {
-                          final zakat = viewModel.calculateZakat(metalPrices);
-                          final formattedZakat = NumberFormat(
-                            '#,##0.00',
-                          ).format(zakat);
-                          showDialog(
-                            context: context,
-                            builder:
-                                (_) => AlertDialog(
-                                  title: const Text('Zakat Due'),
-                                  content: Text(
-                                    'Your Zakat is: \$$formattedZakat USD',
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('OK'),
+                    // Show a loading indicator if a calculation is in progress
+                    isCalculating
+                        ? const Center(child: CircularProgressIndicator())
+                        : CustomButton(
+                          onTap: () async {
+                            if (formKey.currentState!.validate()) {
+                              setState(() {
+                                isCalculating = true;
+                              });
+                              // Simulate some processing delay (this can be removed if calculation is fast)
+                              await Future.delayed(const Duration(seconds: 1));
+                              final zakatMap = viewModel.calculateZakat(
+                                metalPrices,
+                              );
+                              setState(() {
+                                isCalculating = false;
+                              });
+                              // Use the correct key: 'financialZakat'
+                              final formattedZakat = NumberFormat(
+                                '#,##0.00',
+                              ).format(zakatMap['financialZakat']);
+                              final animalZakat = zakatMap['animalZakat'];
+                              final camelZakat = animalZakat['camels'];
+                              final cowZakat = animalZakat['cows'];
+                              final sheepZakat = animalZakat['sheep'];
+
+                              showDialog(
+                                context: context,
+                                builder:
+                                    (_) => AlertDialog(
+                                      title: const Text('Zakat Calculation'),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '💰 Monetary Zakat: \$$formattedZakat USD',
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Text('🐫 Camel Zakat: $camelZakat'),
+                                          Text('🐄 Cow Zakat: $cowZakat'),
+                                          Text('🐑 Sheep Zakat: $sheepZakat'),
+                                        ],
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed:
+                                              () => Navigator.pop(context),
+                                          child: const Text('OK'),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                          );
-                        }
-                      },
-                      text: 'Calculate Zakat',
-                    ),
+                              );
+                            }
+                          },
+                          text: 'Calculate Zakat',
+                        ),
                   ],
                 ),
               ),
@@ -266,7 +298,6 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
         'label': 'Immediate dues (taxes, rent, utilities)',
         'provider': taxesProvider,
       },
-
       {'label': 'عدد الإبل', 'provider': camelValueProvider},
       {'label': 'عدد البقر', 'provider': cowValueProvider},
       {'label': 'عدد الغنم', 'provider': sheepValueProvider},

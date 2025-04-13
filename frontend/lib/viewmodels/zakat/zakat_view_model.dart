@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../providers/zakat_providers.dart';
 
 final zakatViewModelProvider = Provider<ZakatViewModel>(
@@ -10,26 +9,24 @@ class ZakatViewModel {
   final Ref ref;
   ZakatViewModel(this.ref);
 
-  static const double SHEEP_PRICE = 20;
-  static const double CAMEL_PRICE = 500;
-  static const double COW_PRICE = 150;
-
-  double calculateZakat(Map<String, double> metalPrices) {
+  Map<String, dynamic> calculateZakat(Map<String, double> metalPrices) {
     final basis = ref.read(basisProvider);
 
+    // Retrieve input values for gold and silver
     double goldInput = double.tryParse(ref.read(goldValueProvider)) ?? 0;
     double silverInput = double.tryParse(ref.read(silverValueProvider)) ?? 0;
     final goldPricePerGram = metalPrices['goldGram24k'] ?? 0;
     final silverPricePerGram = metalPrices['silverGram999'] ?? 0;
     double goldValue = goldInput * goldPricePerGram;
     double silverValue = silverInput * silverPricePerGram;
+
+    // Retrieve cash and other asset values
     final cash = double.tryParse(ref.read(cashValueProvider)) ?? 0;
     final deposited = double.tryParse(ref.read(depositedProvider)) ?? 0;
     final loans = double.tryParse(ref.read(loansProvider)) ?? 0;
     final investments = double.tryParse(ref.read(investmentsProvider)) ?? 0;
     final stock = double.tryParse(ref.read(stockProvider)) ?? 0;
-
-    final assets =
+    double assets =
         goldValue +
         silverValue +
         cash +
@@ -38,72 +35,85 @@ class ZakatViewModel {
         investments +
         stock;
 
+    // Retrieve liabilities values
     final borrowed = double.tryParse(ref.read(borrowedProvider)) ?? 0;
     final wages = double.tryParse(ref.read(wagesProvider)) ?? 0;
     final taxes = double.tryParse(ref.read(taxesProvider)) ?? 0;
-    final liabilities = borrowed + wages + taxes;
+    double liabilities = borrowed + wages + taxes;
 
     double netAssets = assets - liabilities;
-    double baseZakat = 0;
+    double financialZakat = 0;
 
+    // Determine whether to use the gold or silver nisab threshold
     if (basis == 'Gold') {
-      if (netAssets >= (85 * goldPricePerGram)) {
-        baseZakat = netAssets * 0.025;
+      final goldNisab = 85 * goldPricePerGram;
+      if (netAssets >= goldNisab) {
+        financialZakat = netAssets * 0.025;
       }
     } else {
-      if (netAssets >= (595 * silverPricePerGram)) {
-        baseZakat = netAssets * 0.025;
+      final silverNisab = 595 * silverPricePerGram;
+      if (netAssets >= silverNisab) {
+        financialZakat = netAssets * 0.025;
       }
     }
 
-    double animalZakat = 0;
+    // Calculate zakat for livestock
     double camelCount = double.tryParse(ref.read(camelValueProvider)) ?? 0;
     double cowCount = double.tryParse(ref.read(cowValueProvider)) ?? 0;
     double sheepCount = double.tryParse(ref.read(sheepValueProvider)) ?? 0;
+    String camelZakat = _calculateCamelZakat(camelCount);
+    String cowZakat = _calculateCowZakat(cowCount);
+    String sheepZakat = _calculateSheepZakat(sheepCount);
 
-    animalZakat += _calculateCamelZakat(camelCount);
-    animalZakat += _calculateCowZakat(cowCount);
-    animalZakat += _calculateSheepZakat(sheepCount);
-
-    return baseZakat + animalZakat;
+    return {
+      'financialZakat': financialZakat,
+      'nisabThresholds': getNisabThresholds(metalPrices),
+      'animalZakat': {
+        'camels': camelZakat,
+        'cows': cowZakat,
+        'sheep': sheepZakat,
+      },
+    };
   }
 
   Map<String, double> getNisabThresholds(Map<String, double> metalPrices) {
     final goldPrice = metalPrices['goldGram24k'] ?? 0;
     final silverPrice = metalPrices['silverGram999'] ?? 0;
-    return {'gold': goldPrice * 85, 'silver': silverPrice * 595};
+    return {'gold': 85 * goldPrice, 'silver': 595 * silverPrice};
   }
 
-  double _calculateCamelZakat(double count) {
-    if (count < 5) return 0;
-
-    if (count >= 5 && count < 10) return 1 * SHEEP_PRICE;
-
-    if (count >= 10 && count < 15) return 2 * SHEEP_PRICE;
-
-    if (count >= 15 && count < 20) return 3 * SHEEP_PRICE;
-
-    if (count >= 20 && count < 25) return 4 * SHEEP_PRICE;
-
-    if (count >= 25 && count < 36) return CAMEL_PRICE;
-
-    return ((count / 25).floor()) * CAMEL_PRICE;
+  String _calculateCamelZakat(double count) {
+    if (count < 5) return 'No zakat due';
+    if (count >= 5 && count < 10) return '1 sheep';
+    if (count >= 10 && count < 15) return '2 sheep';
+    if (count >= 15 && count < 20) return '3 sheep';
+    if (count >= 20 && count < 25) return '4 sheep';
+    if (count >= 25 && count < 36) return '1 camel';
+    if (count >= 36 && count < 46) return '2 camels';
+    if (count >= 46 && count < 56) return '3 camels';
+    int extra = ((count - 55) / 10).floor();
+    return '${3 + extra} camels';
   }
 
-  double _calculateCowZakat(double count) {
-    if (count < 30) return 0;
-
-    int units = ((count - 30) ~/ 10) + 1;
-    return units * COW_PRICE;
+  String _calculateCowZakat(double count) {
+    if (count < 30) return 'No zakat due';
+    if (count >= 30 && count <= 39) return '1 taba’ah';
+    if (count >= 40 && count <= 59) return '1 musinnah';
+    if (count >= 60 && count <= 69) return '2 taba’ahs';
+    if (count >= 70 && count <= 79) return '1 taba’ah and 1 musinnah';
+    if (count >= 80 && count <= 89) return '2 musinnah';
+    if (count >= 90 && count <= 99) return '3 taba’ahs';
+    if (count >= 100 && count <= 109) return '2 taba’ahs and 1 musinnah';
+    if (count >= 110 && count <= 119) return '1 taba’ah and 2 musinnah';
+    if (count >= 120 && count <= 129) return 'Either 4 taba’ahs or 3 musinnah';
+    return 'Zakat calculation for this number not implemented';
   }
 
-  double _calculateSheepZakat(double count) {
-    if (count < 40) return 0;
-
-    if (count <= 120) return 1 * SHEEP_PRICE;
-    if (count <= 200) return 2 * SHEEP_PRICE;
-
-    int extraUnits = ((count - 200) ~/ 100) + 2;
-    return extraUnits * SHEEP_PRICE;
+  String _calculateSheepZakat(double count) {
+    if (count < 40) return 'No zakat due';
+    if (count <= 120) return '1 sheep';
+    if (count <= 200) return '2 sheep';
+    int extra = ((count - 200) ~/ 100);
+    return '${2 + extra} sheep';
   }
 }
