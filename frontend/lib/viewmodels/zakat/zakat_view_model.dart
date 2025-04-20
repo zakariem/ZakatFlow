@@ -45,7 +45,7 @@ class ZakatViewModel {
     double financialZakat = 0;
 
     // Determine whether to use the gold or silver nisab threshold
-    if (basis == 'Gold') {
+    if (basis == 'Dahab') {
       final goldNisab = 85 * goldPricePerGram;
       if (netAssets >= goldNisab) {
         financialZakat = netAssets * 0.025;
@@ -83,36 +83,84 @@ class ZakatViewModel {
   }
 
   String _calculateCamelZakat(double count) {
-    if (count < 5) return 'No zakat due';
-    if (count >= 5 && count < 10) return '1 sheep';
-    if (count >= 10 && count < 15) return '2 sheep';
-    if (count >= 15 && count < 20) return '3 sheep';
-    if (count >= 20 && count < 25) return '4 sheep';
-    if (count >= 25 && count < 36) return '1 camel';
-    if (count >= 36 && count < 46) return '2 camels';
-    if (count >= 46 && count < 56) return '3 camels';
-    int extra = ((count - 55) / 10).floor();
-    return '${3 + extra} camels';
+    if (count < 5) return 'Zakada lama rabo (ma jirto zakaa la bixinayo)';
+    if (count >= 5 && count < 10) return '1 ido ama 1 ari';
+    if (count >= 10 && count < 15) return '2 ido ama 2 ari';
+    if (count >= 15 && count < 20) return '3 ido ama 3 ari';
+    if (count >= 20 && count < 25) return '4 ido ama 4 ari';
+    if (count >= 25 && count < 36) {
+      return '1 neef geel dhedig ah oo hal sano jirsatay (bint makaad)';
+    }
+    if (count >= 36 && count < 46) {
+      return '1 neef geel dhedig ah oo laba sano jirsatay (bint laboon)';
+    }
+    if (count >= 46 && count < 61) {
+      return '1 neef geel dhedig ah oo saddex sano jirsatay (hiqqa)';
+    }
+    if (count >= 61 && count < 76) {
+      return '1 neef geel dhedig ah oo afar sano jirsatay (jadh’a)';
+    }
+    if (count >= 76 && count < 91) {
+      return '2 neef geel dhedig ah oo laba sano jirsatay';
+    }
+    if (count >= 91 && count < 121) {
+      return '2 neef geel dhedig ah oo saddex sano jirsatay';
+    }
+
+    int extra = ((count - 120) / 40).floor();
+    return 'Zakada waa ${extra + 3} neef geel (hal neef 40 kii neefba kadib)';
   }
 
   String _calculateCowZakat(double count) {
-    if (count < 30) return 'No zakat due';
-    if (count >= 30 && count <= 39) return '1 taba’ah';
-    if (count >= 40 && count <= 59) return '1 musinnah';
-    if (count >= 60 && count <= 69) return '2 taba’ahs';
-    if (count >= 70 && count <= 79) return '1 taba’ah and 1 musinnah';
-    if (count >= 80 && count <= 89) return '2 musinnah';
-    if (count >= 90 && count <= 99) return '3 taba’ahs';
-    if (count >= 100 && count <= 109) return '2 taba’ahs and 1 musinnah';
-    if (count >= 110 && count <= 119) return '1 taba’ah and 2 musinnah';
-    if (count >= 120 && count <= 129) return 'Either 4 taba’ahs or 3 musinnah';
-    return 'Zakat calculation for this number not implemented';
+    if (count < 30) return 'ma jirto zakaa la bixinayo';
+
+    int tabaahCount = 0;
+    int musinnahCount = 0;
+
+    // Start calculation for each range
+    if (count >= 30 && count <= 39) {
+      tabaahCount = 1;
+    } else if (count >= 40 && count <= 59) {
+      musinnahCount = 1;
+    } else if (count >= 60 && count <= 69) {
+      tabaahCount = 2;
+    } else if (count >= 70 && count <= 79) {
+      tabaahCount = 1;
+      musinnahCount = 1;
+    } else if (count >= 80 && count <= 89) {
+      musinnahCount = 2;
+    } else if (count >= 90 && count <= 99) {
+      tabaahCount = 3;
+    } else if (count >= 100 && count <= 109) {
+      tabaahCount = 2;
+      musinnahCount = 1;
+    } else if (count >= 110 && count <= 119) {
+      tabaahCount = 1;
+      musinnahCount = 2;
+    } else if (count >= 120) {
+      double remaining = count - 120;
+      tabaahCount =
+          (remaining / 30).floor() +
+          4; // 4 taba'ahs for the first 120 cows, then 1 taba'ah for each 30 extra cows
+      musinnahCount = (remaining / 30).floor() + 3; // Similarly for musinnahs
+    }
+
+    // Return zakat calculation in Af-Soomaali
+    if (tabaahCount > 0 && musinnahCount > 0) {
+      return '$tabaahCount taba’ah iyo $musinnahCount musinnah';
+    } else if (tabaahCount > 0) {
+      return '$tabaahCount taba’ah';
+    } else if (musinnahCount > 0) {
+      return '$musinnahCount musinnah';
+    } else {
+      return 'Xisaabinta zakada ee tiradan lama fulin';
+    }
   }
 
   String _calculateSheepZakat(double count) {
-    if (count < 40) return 'No zakat due';
-    if (count <= 120) return '1 sheep';
-    if (count <= 200) return '2 sheep';
+    if (count < 40) return 'ma jirto zakaa la bixinayo';
+    if (count <= 120) return '1 ido ama 1 ari';
+    if (count <= 200) return '2 ido ama 2 ari';
     int extra = ((count - 200) ~/ 100);
     return '${2 + extra} sheep';
   }

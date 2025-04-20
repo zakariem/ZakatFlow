@@ -77,7 +77,7 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         title: Text(
-          'Dynamic Zakat Calculator',
+          'Xisaabinta Zakaatul Maal',
           style: GoogleFonts.poppins(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,
@@ -85,6 +85,7 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
         ),
         backgroundColor: AppColors.backgroundLight,
         elevation: 0,
+        centerTitle: true,
       ),
       body: metalPricesAsync.when(
         data:
@@ -110,8 +111,8 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
                         },
                         child: Text(
                           ref.watch(showMoreSummaryProvider)
-                              ? 'Show less ▲'
-                              : 'Show more ▼',
+                              ? 'Muuji wax ka yar ▲'
+                              : 'Muuji wax dheeraad ah ▼',
                           style: const TextStyle(
                             fontSize: 16,
                             color: AppColors.primaryGold,
@@ -121,9 +122,9 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
                     ),
                     const SizedBox(height: 16),
                     CustomDropdown(
-                      label: 'Select Calculation Basis',
+                      label: 'Dooro habka xisaabinta',
                       provider: basisProvider,
-                      options: ['Gold', 'Silver'],
+                      options: ['Dahab', 'Qalin'],
                     ),
                     ..._buildFields(ref),
                     const SizedBox(height: 30),
@@ -167,9 +168,11 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
                                             '💰 Monetary Zakat: \$$formattedZakat USD',
                                           ),
                                           const SizedBox(height: 12),
-                                          Text('🐫 Camel Zakat: $camelZakat'),
-                                          Text('🐄 Cow Zakat: $cowZakat'),
-                                          Text('🐑 Sheep Zakat: $sheepZakat'),
+                                          Text('🐫 Zakada Geela: $camelZakat'),
+                                          Text('🐄 Zakada Lo`da: $cowZakat'),
+                                          Text(
+                                            '🐑 Zakada Ariga iyo Idaha: $sheepZakat',
+                                          ),
                                         ],
                                       ),
                                       actions: [
@@ -183,7 +186,7 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
                               );
                             }
                           },
-                          text: 'Calculate Zakat',
+                          text: 'Xisaabi Zakaatul Maal',
                         ),
                   ],
                 ),
@@ -211,7 +214,7 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Text(
-          '💡 How Zakat is Calculated .............',
+          'Sida Zakaatul Maalka loo xisaabiyo .............',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       );
@@ -227,50 +230,50 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '💡 How Zakat is Calculated',
+            '💡 Sida Zakaatka Loo Xisaabiyo',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
-            'Zakat is an annual obligation for every adult Muslim who owns wealth above the Nisab threshold for one full lunar year. It is calculated at 2.5% of your net zakatable assets, plus any additional liabilities such as livestock Zakat.',
+            'Zakaatku waa waajib sannadle ah oo saaran Muslim kasta oo qaangaar ah oo haysta hanti ka badan xadka Nisabka muddo sannad dayaxeed buuxa ah. Waxaa laga xisaabiyaa 2.5% ee hantida laga bixiyo Zakaatka, oo lagu daro wixii waajibyo dheeraad ah sida Zakaatka xoolaha.',
           ),
           const SizedBox(height: 12),
           const Text(
-            '✅ What to Include:',
+            '✅ Waxa la Xisaabinayo:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            '• Zakatable Assets: Gold, silver, cash, savings, business assets, investments, and livestock.\n'
-            '• Possession Period: Must have been held for at least one full lunar year.',
+            '• Hantida laga bixiyo Zakaat: Dahab, lacag caddaan ah, kayd, hanti ganacsi, maalgashi, iyo xoolo.\n'
+            '• Muddada Haynta: Waa in la hayay ugu yaraan hal sannad dayaxeed buuxa.',
           ),
           const SizedBox(height: 8),
           const Text(
-            '➖ What You Can Deduct:',
+            '➖ Waxa la Ka Jarayo:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SelectableText(
-            '• Debts due within the next 12 months\n'
-            '• Overdue payments\n'
-            '• Up to 12 months of long-term debt instalments\n\n'
-            'Note: Expenses not yet due, long-term debts beyond 12 months, and interest (riba) cannot be deducted.',
+            '• Deymaha la bixinayo 12-ka bilood ee soo socda\n'
+            '• Bixino dib u dhacay\n'
+            '• Ilaa 12 bilood oo ka mid ah deyn muddo-dheer ah\n\n'
+            'Ogeysiis: Kharashaadka aan weli la gaarin waqtigooda, deymaha ka badan 12 bilood, iyo ribada (riba) lama jarayo.',
           ),
           const SizedBox(height: 8),
           const Text(
-            '🧮 Net Assets Formula:',
+            '🧮 Qaaciddada Hantida Saafi ah:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            'Net Assets = Total Zakatable Assets – Deductible Liabilities',
+            'Hanti Saafi ah = Wadarta Hantida laga bixiyo Zakaat – Waajibaadka laga jari karo',
           ),
           const SizedBox(height: 8),
           const Text(
-            '📉 Nisab Threshold for 2025:',
+            '📉 Xadka Nisabka ee 2025:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           SelectableText(
-            '• Using Silver (595 grams) ≈  ${r"$"}${nisab['silver']?.toStringAsFixed(2) ?? "N/A"}\n'
-            '• Using Gold (85 grams) ≈  ${r"$"}${nisab['gold']?.toStringAsFixed(2) ?? "N/A"}\n\n'
-            'Pay Zakat only if your net assets exceed one of these values.',
+            '• Marka la adeegsado Qalin (595 garaam) ≈  ${r"$"}${nisab['silver']?.toStringAsFixed(2) ?? "N/A"}\n'
+            '• Marka la adeegsado Dahab (85 garaam) ≈  ${r"$"}${nisab['gold']?.toStringAsFixed(2) ?? "N/A"}\n\n'
+            'Zakaat bixi oo keliya haddii hantidaada saafi ah ay ka badan tahay mid ka mid ah qiimayaashan.',
           ),
         ],
       ),
@@ -279,28 +282,31 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
 
   List<Widget> _buildFields(WidgetRef ref) {
     final fields = [
-      {'label': 'Weight of gold (in grams)', 'provider': goldValueProvider},
-      {'label': 'Weight of silver (in grams)', 'provider': silverValueProvider},
-      {'label': 'Cash (in hand and bank)', 'provider': cashValueProvider},
-      {'label': 'Deposited for future purpose', 'provider': depositedProvider},
-      {'label': 'Loans given out', 'provider': loansProvider},
+      {'label': 'Miisaanka dahabka (gram)', 'provider': goldValueProvider},
       {
-        'label': 'Business investments, shares, pensions',
+        'label': 'Miisaanka lacagta dayaxa (gram)',
+        'provider': silverValueProvider,
+      },
+      {'label': 'Lacagta (gacanta iyo bangiga)', 'provider': cashValueProvider},
+      {
+        'label': 'Lacagta lagu deponay mustaqbalka',
+        'provider': depositedProvider,
+      },
+      {'label': 'Deyn bixinta', 'provider': loansProvider},
+      {
+        'label': 'Maalgashiga ganacsiga, saamiyada, mushaharka hawlgabka',
         'provider': investmentsProvider,
       },
-      {'label': 'Value of stock', 'provider': stockProvider},
+      {'label': 'Qiimaha saamiyada', 'provider': stockProvider},
+      {'label': 'Lacag ama alaab lagu amaahdo', 'provider': borrowedProvider},
+      {'label': 'Mushaarka loo leeyahay shaqaalaha', 'provider': wagesProvider},
       {
-        'label': 'Borrowed money / goods on credit',
-        'provider': borrowedProvider,
-      },
-      {'label': 'Wages due to employees', 'provider': wagesProvider},
-      {
-        'label': 'Immediate dues (taxes, rent, utilities)',
+        'label': 'Xoolo degdeg ah (cashuuraha, kirada, adeegyada)',
         'provider': taxesProvider,
       },
-      {'label': 'عدد الإبل', 'provider': camelValueProvider},
-      {'label': 'عدد البقر', 'provider': cowValueProvider},
-      {'label': 'عدد الغنم', 'provider': sheepValueProvider},
+      {'label': 'Tirada geela', 'provider': camelValueProvider},
+      {'label': 'Tirada lo’da', 'provider': cowValueProvider},
+      {'label': 'Tirada idaha', 'provider': sheepValueProvider},
     ];
 
     return fields.map((field) {

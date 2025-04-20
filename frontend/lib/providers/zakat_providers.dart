@@ -5,7 +5,7 @@ import '../services/zakat_service.dart';
 
 final storage = FlutterSecureStorage();
 
-final basisProvider = StateProvider<String>((ref) => 'Gold');
+final basisProvider = StateProvider<String>((ref) => 'Dahab');
 final goldValueProvider = StateProvider<String>((ref) => '0');
 final silverValueProvider = StateProvider<String>((ref) => '0');
 final cashValueProvider = StateProvider<String>((ref) => '0');
