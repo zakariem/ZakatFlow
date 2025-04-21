@@ -34,6 +34,8 @@ class _CalculateScreenState extends ConsumerState<CalculateScreen> {
         backgroundColor: AppColors.backgroundLight,
         elevation: 0,
         centerTitle: true,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
       ),
       body: metalPricesAsync.when(
         data:

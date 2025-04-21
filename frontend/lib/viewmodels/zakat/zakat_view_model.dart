@@ -68,6 +68,7 @@ class ZakatViewModel {
     return {
       'financialZakat': financialZakat,
       'nisabThresholds': getNisabThresholds(metalPrices),
+      'netAssets': netAssets,
       'animalZakat': {
         'camels': camelZakat,
         'cows': cowZakat,

@@ -31,6 +31,10 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
   final formKey = GlobalKey<FormState>();
   final Map<StateProvider<String>, TextEditingController> controllers = {};
 
+  bool _showResult = false;
+  double _totalAssets = 0.0;
+  double _computedZakat = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -116,56 +120,72 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
             ),
             ...buildFields(ref, controllers),
             const SizedBox(height: 30),
+
+            // Calculate button or loading indicator
             widget.isCalculating
                 ? const Center(child: CircularProgressIndicator())
                 : CustomButton(
                   onTap: () async {
-                    if (formKey.currentState!.validate()) {
-                      widget.onCalculationStart();
-                      await Future.delayed(const Duration(seconds: 1));
+                    if (!formKey.currentState!.validate()) return;
 
-                      final zakatMap = viewModel.calculateZakat(
-                        widget.metalPrices,
-                      );
-                      widget.onCalculationEnd();
+                    // Start calculation
+                    widget.onCalculationStart();
 
-                      final formattedZakat = NumberFormat(
-                        '#,##0.00',
-                      ).format(zakatMap['financialZakat']);
-                      final animal = zakatMap['animalZakat'];
-                      final camel = animal['camels'];
-                      final cow = animal['cows'];
-                      final sheep = animal['sheep'];
+                    // Simulate delay
+                    await Future.delayed(const Duration(seconds: 1));
 
-                      showDialog(
-                        context: context,
-                        builder:
-                            (_) => AlertDialog(
-                              title: const Text('Zakat Calculation'),
-                              content: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '💰 Monetary Zakat: \$$formattedZakat USD',
-                                  ),
-                                  Text('🐫 Zakada Geela: $camel'),
-                                  Text('🐄 Zakada Loda: $cow'),
-                                  Text('🐑 Zakada Ariga: $sheep'),
-                                ],
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('OK'),
-                                ),
-                              ],
-                            ),
-                      );
-                    }
+                    // Perform zakat calculation
+                    final zakatMap = viewModel.calculateZakat(
+                      widget.metalPrices,
+                    );
+                    final totalAssets = zakatMap['netAssets'] as double;
+                    final computedZakat = zakatMap['financialZakat'] as double;
+
+                    setState(() {
+                      _totalAssets = totalAssets;
+                      _computedZakat = computedZakat;
+                      _showResult = true;
+                    });
+
+                    // End calculation
+                    widget.onCalculationEnd();
                   },
                   text: 'Xisaabi Zakaatul Maal',
                 ),
+
+            const SizedBox(height: 20),
+
+            // Display results after first calculation
+            if (_showResult) ...[
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Total assets'),
+                trailing: Text(
+                  '\$${NumberFormat('#,##0.00').format(_totalAssets)} USD',
+                  style: const TextStyle(
+                    fontSize: 18, // Increased font size
+                    fontWeight: FontWeight.bold, // Bolder font
+                  ),
+                ),
+              ),
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('Zakat payable'),
+                trailing: Text(
+                  '\$${NumberFormat('#,##0.00').format(_computedZakat)} USD',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Pay Now button only if zakat > 0
+              if (_computedZakat > 0)
+                CustomButton(onTap: () {}, text: 'Pay Now'),
+            ],
           ],
         ),
       ),

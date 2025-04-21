@@ -85,6 +85,17 @@ class ZakatSummaryCard extends ConsumerWidget {
             '• Marka la adeegsado Dahab (85 garaam) ≈  \$${nisab['gold']?.toStringAsFixed(2) ?? "N/A"}\n\n'
             'Zakaat bixi oo keliya haddii hantidaada saafi ah ay ka badan tahay mid ka mid ah qiimayaashan.',
           ),
+          const SizedBox(height: 8),
+          const Text(
+            '📌 Fahamka Labada Nooc ee Nisabka:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            '• Qalin (595g): Waxaa badanaa lagu xisaabiyaa lacagta caddaanka ah iyo hantida la midka ah. Waxa uu leeyahay qiimo hoose, sidaas darteed dad badan ayaa waajib ku noqonaya.\n\n'
+            '• Dahab (85g): Waxaa loo isticmaalaa haddii qofka uu yahay mid sabool ah ama dakhligiisu hooseeyo, si aan culays loogu noqon.\n\n'
+            '🔹 Talo: Waxaa la doorbidaa in la isticmaalo Qalinka (Silver) maadaama uu dadka masaakiinta ah faa’iido u yahay, dadka badanna uu waajibinayo.\n'
+            '🔹 Qofku wuu dooran karaa midka uu rabbo, laakiin waxaa habboon in la doorto midka ugu habboon xaaladdiisa iyo cibaadadiisa.',
+          ),
         ],
       ),
     );
