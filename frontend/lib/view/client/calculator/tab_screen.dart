@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/view/client/calculator/Zakaatul_xoolaha.dart';
 import 'package:frontend/view/client/calculator/zakaatul_maal.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../providers/calculator_tab_provider.dart';
 import '../../../utils/theme/app_color.dart';
-import 'zakaatul_xoolaha_iyo_dalagga.dart';
 
 class TabScreen extends ConsumerStatefulWidget {
   const TabScreen({super.key});
@@ -18,10 +18,7 @@ class _TabScreenState extends ConsumerState<TabScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<Widget> screens = const [
-    ZakaatulmaalScreen(),
-    ZakaatulXoolahaIyoDalagga(),
-  ];
+  final List<Widget> screens = const [ZakaatulmaalScreen(), ZakaatulXoolaha()];
 
   @override
   void initState() {
@@ -51,7 +48,7 @@ class _TabScreenState extends ConsumerState<TabScreen>
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         title: Text(
-          'Xisaabinta Zakaatul Maal',
+          'Xisaabinta Zakada',
           style: GoogleFonts.poppins(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.bold,

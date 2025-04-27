@@ -32,9 +32,6 @@ List<Widget> buildFields(
       'label': 'Xoolo degdeg ah (cashuuraha, kirada, adeegyada)',
       'provider': taxesProvider,
     },
-    {'label': 'Tirada geela', 'provider': camelValueProvider},
-    {'label': 'Tirada lo’da', 'provider': cowValueProvider},
-    {'label': 'Tirada idaha', 'provider': sheepValueProvider},
   ];
 
   return fields.map((field) {

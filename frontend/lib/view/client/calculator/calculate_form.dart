@@ -53,9 +53,6 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
       borrowedProvider,
       wagesProvider,
       taxesProvider,
-      camelValueProvider,
-      cowValueProvider,
-      sheepValueProvider,
     ];
 
     for (var provider in providers) {
