@@ -24,20 +24,26 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void _handleLogout() async {
     final authVM = ref.read(authViewModelProvider.notifier);
+    final clientNavigator = ref.read(clientNavigationProvider.notifier);
     await authVM.logout();
 
     if (!mounted) return;
 
     Navigator.pushReplacement(context, LoginScreen.route());
+    await Future.delayed(const Duration(seconds: 2));
+    clientNavigator.reset();
   }
 
   Future<void> _handleDeleteAccount() async {
     try {
       final authVM = ref.read(authViewModelProvider.notifier);
+      final clientNavigator = ref.read(clientNavigationProvider.notifier);
       await authVM.deleteAccount();
 
       if (!mounted) return;
       Navigator.pushReplacement(context, LoginScreen.route());
+      await Future.delayed(const Duration(seconds: 2));
+      clientNavigator.reset();
     } catch (e) {
       if (!mounted) return;
       ErrorScanckbar.showSnackBar(context, 'Failed to delete account: $e');
@@ -86,8 +92,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authViewModelProvider);
-    final clientNavigator = ref.read(clientNavigationProvider.notifier);
+    final authState = ref.watch(
+      authViewModelProvider,
+    ); // Listening for changes in authState
+    final clientNavigator = ref.watch(clientNavigationProvider.notifier);
     final size = MediaQuery.of(context).size;
     final avatarRadius = size.width * 0.20;
 

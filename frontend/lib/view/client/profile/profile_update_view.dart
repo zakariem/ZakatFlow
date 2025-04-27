@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../../providers/auth_providers.dart';
 import '../../../providers/profile_update_provider.dart';
 import '../../../utils/constant/validation_utils.dart';
@@ -49,7 +48,6 @@ class ProfileUpdateViewState extends ConsumerState<ProfileUpdateView> {
     double horizontalPadding = screenWidth * 0.08;
     double verticalPadding = screenHeight * 0.02;
 
-    // Show error snack bar only when there is a new message
     if (updateProfileState.message.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ErrorScanckbar.showSnackBar(context, updateProfileState.message);
