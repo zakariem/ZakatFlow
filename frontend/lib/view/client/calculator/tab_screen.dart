@@ -1,0 +1,76 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/view/client/calculator/zakaatul_maal.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import '../../../providers/calculator_tab_provider.dart';
+import '../../../utils/theme/app_color.dart';
+import 'zakaatul_xoolaha_iyo_dalagga.dart';
+
+class TabScreen extends ConsumerStatefulWidget {
+  const TabScreen({super.key});
+
+  @override
+  ConsumerState<TabScreen> createState() => _TabScreenState();
+}
+
+class _TabScreenState extends ConsumerState<TabScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  final List<Widget> screens = const [
+    ZakaatulmaalScreen(),
+    ZakaatulXoolahaIyoDalagga(),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    final tabs = ref.read(tabViewModelProvider).getTabs();
+    _tabController = TabController(length: tabs.length, vsync: this);
+
+    _tabController.addListener(() {
+      if (!_tabController.indexIsChanging) {
+        ref.read(tabIndexProvider.notifier).state = _tabController.index;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tabs = ref.watch(tabViewModelProvider).getTabs();
+    ref.watch(tabIndexProvider);
+
+    return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(
+        title: Text(
+          'Xisaabinta Zakaatul Maal',
+          style: GoogleFonts.poppins(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: AppColors.backgroundLight,
+        elevation: 0,
+        centerTitle: true,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: AppColors.primaryGold,
+          unselectedLabelColor: AppColors.textSecondary,
+          indicatorColor: AppColors.primaryGold,
+          tabs: tabs.map((tab) => Tab(text: tab)).toList(),
+        ),
+      ),
+      body: TabBarView(controller: _tabController, children: screens),
+    );
+  }
+}
