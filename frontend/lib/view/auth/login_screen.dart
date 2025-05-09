@@ -83,7 +83,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               children: [
                                 SizedBox(height: size.height * 0.05),
                                 Text(
-                                  'Sign In',
+                                  'Soo gal',
                                   style: GoogleFonts.poppins(
                                     fontSize: size.width * 0.08,
                                     fontWeight: FontWeight.bold,
@@ -92,7 +92,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 ),
                                 SizedBox(height: size.height * 0.02),
                                 Text(
-                                  'Hi, Welcome back, you’ve been missed',
+                                  'Salaan, ku soo dhawoow mar kale, waan kuu xiiseynay',
                                   style: GoogleFonts.poppins(
                                     fontSize: size.width * 0.04,
                                     color: AppColors.textGray,
@@ -122,13 +122,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   textInputAction: TextInputAction.done,
                                 ),
                                 SizedBox(height: size.height * 0.04),
-                                CustomButton(text: 'Sign In', onTap: _login),
+                                CustomButton(text: 'Soo gal', onTap: _login),
                                 SizedBox(height: size.height * 0.02),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "Don't have an account? ",
+                                      "Ma lihid akoonto? ",
                                       style: GoogleFonts.poppins(
                                         fontSize: size.width * 0.04,
                                         color: AppColors.textGray,
@@ -141,7 +141,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                             RegisterScreen.route(),
                                           ),
                                       child: Text(
-                                        'Sign Up',
+                                        'Isdiiwaangeli',
                                         style: GoogleFonts.poppins(
                                           fontSize: size.width * 0.04,
                                           fontWeight: FontWeight.bold,

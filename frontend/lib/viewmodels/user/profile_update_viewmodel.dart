@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/providers/auth_providers.dart';
 
 import '../../models/user_model.dart';
 import '../../services/profile_update.dart';
@@ -44,6 +45,11 @@ class ProfileUpdateViewmodel extends StateNotifier<UpdateState> {
           key: 'user',
           value: jsonEncode(updatedUser.toJson()),
         );
+        // Update the global auth state with the new user data
+        if (!context.mounted) return;
+        final container = ProviderScope.containerOf(context, listen: false);
+        final authViewModel = container.read(authViewModelProvider.notifier);
+        authViewModel.updateUser(updatedUser);
         state = UpdateState(updatedUser: updatedUser);
         if (!context.mounted) return;
         Navigator.pop(context);

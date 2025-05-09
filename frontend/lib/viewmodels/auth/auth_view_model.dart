@@ -29,7 +29,7 @@ class AuthState {
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
-      isAdmin: isAdmin ?? user?.isAdmin ?? this.isAdmin,
+      isAdmin: isAdmin ?? this.isAdmin,
     );
   }
 }
@@ -42,7 +42,20 @@ class AuthViewModel extends StateNotifier<AuthState> {
     : super(const AuthState());
 
   Future<void> login(String email, String password) async {
-    await _handleAuth(() => _authService.login(email, password));
+    state = state.copyWith(isLoading: true, error: '');
+    try {
+      // Clear any existing user data first to ensure we're starting fresh
+      await _clearUserData();
+      
+      // Now attempt to login with the provided credentials
+      final user = await _authService.login(email, password);
+      
+      // If we get here, login was successful, so store the user data
+      await _storeUserData(user);
+      state = state.copyWith(user: user, isAdmin: user.isAdmin, isLoading: false);
+    } catch (e) {
+      _handleError(e);
+    }
   }
 
   Future<void> register(String email, String password, String fullName) async {
@@ -53,10 +66,17 @@ class AuthViewModel extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true);
     try {
       await _clearUserData();
-      state = state.copyWith(user: null, isLoading: false, isAdmin: false);
+      // Reset the state completely but don't trigger additional rebuilds
+      // until we're completely done with the logout process
+      state = const AuthState(); // Use const for immutable state
+      print('User logged out successfully');
     } catch (e) {
       _handleError(e);
+    } finally {
+      // Set loading to false as the final state update
+      state = state.copyWith(isLoading: false);
     }
+    // Note: Navigation should be handled by the UI component, not here
   }
 
   Future<void> deleteAccount() async {
@@ -106,6 +126,9 @@ class AuthViewModel extends StateNotifier<AuthState> {
   Future<void> _handleAuth(Future<User> Function() authMethod) async {
     state = state.copyWith(isLoading: true, error: '');
     try {
+      // Clear any existing user data first
+      await _clearUserData();
+      
       final user = await authMethod();
       await _storeUserData(user);
       state = state.copyWith(user: user, isAdmin: user.isAdmin);
@@ -134,5 +157,10 @@ class AuthViewModel extends StateNotifier<AuthState> {
     }
 
     state = state.copyWith(error: errorMessage, isLoading: false);
+  }
+
+  Future<void> updateUser(User user) async {
+    state = state.copyWith(user: user, isAdmin: user.isAdmin);
+    await _storeUserData(user);
   }
 }

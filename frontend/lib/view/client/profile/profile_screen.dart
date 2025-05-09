@@ -22,32 +22,40 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  void _handleLogout() async {
-    final authVM = ref.read(authViewModelProvider.notifier);
+  void _handleLogout() {
     final clientNavigator = ref.read(clientNavigationProvider.notifier);
-    await authVM.logout();
 
-    if (!mounted) return;
+    clientNavigator.reset(); // Reset BEFORE navigation
 
-    Navigator.pushReplacement(context, LoginScreen.route());
-    await Future.delayed(const Duration(seconds: 2));
-    clientNavigator.reset();
+    ref
+        .read(authViewModelProvider.notifier)
+        .logout()
+        .then((_) {
+          if (!mounted) return;
+          Navigator.pushReplacement(context, LoginScreen.route());
+        })
+        .catchError((error) {
+          if (!mounted) return;
+          ErrorScanckbar.showSnackBar(context, 'Logout failed: $error');
+        });
   }
 
-  Future<void> _handleDeleteAccount() async {
-    try {
-      final authVM = ref.read(authViewModelProvider.notifier);
-      final clientNavigator = ref.read(clientNavigationProvider.notifier);
-      await authVM.deleteAccount();
+  void _handleDeleteAccount() {
+    final clientNavigator = ref.read(clientNavigationProvider.notifier);
 
-      if (!mounted) return;
-      Navigator.pushReplacement(context, LoginScreen.route());
-      await Future.delayed(const Duration(seconds: 2));
-      clientNavigator.reset();
-    } catch (e) {
-      if (!mounted) return;
-      ErrorScanckbar.showSnackBar(context, 'Failed to delete account: $e');
-    }
+    clientNavigator.reset(); // Reset BEFORE navigation
+
+    ref
+        .read(authViewModelProvider.notifier)
+        .deleteAccount()
+        .then((_) {
+          if (!mounted) return;
+          Navigator.pushReplacement(context, LoginScreen.route());
+        })
+        .catchError((e) {
+          if (!mounted) return;
+          ErrorScanckbar.showSnackBar(context, 'Failed to delete account: $e');
+        });
   }
 
   void _showDeleteConfirmation() {
@@ -105,10 +113,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     if (authState.user == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          Navigator.pushReplacement(context, LoginScreen.route());
-          clientNavigator.reset();
-        }
+        if (!mounted) return;
+        Navigator.pushReplacement(context, LoginScreen.route());
+        clientNavigator.reset();
       });
       return const LoaderPage();
     }
@@ -129,6 +136,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           PopupMenuButton<String>(
             color: AppColors.backgroundLight,
             onSelected: (value) {
+              // Removed: Navigator.of(context).pop();
               if (value == 'logout') {
                 _handleLogout();
               } else if (value == 'delete') {

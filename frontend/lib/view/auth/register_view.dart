@@ -101,7 +101,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               children: [
                                 SizedBox(height: size.height * 0.05),
                                 Text(
-                                  'Create an account',
+                                  'Samee so Akoon',
                                   style: GoogleFonts.poppins(
                                     fontSize: size.width * 0.07,
                                     fontWeight: FontWeight.bold,
@@ -110,7 +110,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 ),
                                 SizedBox(height: size.height * 0.02),
                                 Text(
-                                  'Fill your information below to continue',
+                                  'Buuxi macluumaadkaaga hoose si aad u sii waddo',
                                   style: GoogleFonts.poppins(
                                     fontSize: size.width * 0.036,
                                     color: AppColors.textGray,
@@ -120,7 +120,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 SizedBox(height: size.height * 0.04),
                                 CustomField(
                                   controller: _fullNameController,
-                                  hintText: 'Full Name',
+                                  hintText: 'Magaca Buuxa',
                                   validator: ValidationUtils.validateFullName,
                                   keyboardType: TextInputType.name,
                                 ),
@@ -148,7 +148,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 SizedBox(height: size.height * 0.023),
                                 CustomField(
                                   controller: _confirmPasswordController,
-                                  hintText: 'Confirm Password',
+                                  hintText: 'Xaqiiji  Password ka',
                                   isPassword: true,
                                   obscureText: _isConfirmObscure,
                                   toggleVisibility: () {
@@ -162,7 +162,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 ),
                                 SizedBox(height: size.height * 0.04),
                                 CustomButton(
-                                  text: 'Register',
+                                  text: 'Is Diiwaan geli',
                                   onTap: _register,
                                 ),
                                 SizedBox(height: size.height * 0.02),
@@ -170,7 +170,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "Already have an account? ",
+                                      "Xisaab horay ma u lahayd? ",
                                       style: GoogleFonts.poppins(
                                         fontSize: size.width * 0.04,
                                         color: AppColors.textGray,
@@ -179,7 +179,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                     InkWell(
                                       onTap: () => Navigator.pop(context),
                                       child: Text(
-                                        'Sign In',
+                                        'Soo gal',
                                         style: GoogleFonts.poppins(
                                           fontSize: size.width * 0.04,
                                           fontWeight: FontWeight.bold,
