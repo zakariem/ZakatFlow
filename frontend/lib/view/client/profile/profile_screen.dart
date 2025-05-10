@@ -5,7 +5,6 @@ import 'package:frontend/utils/widgets/loader.dart';
 import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
 import 'package:frontend/view/client/profile/profile_update_view.dart';
 import '../../../providers/auth_providers.dart';
-import '../../../providers/client_navigation_provider.dart';
 import '../../../utils/theme/app_color.dart';
 import '../../auth/login_screen.dart';
 import 'upload_screen.dart';
@@ -22,40 +21,34 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-  void _handleLogout() {
-    final clientNavigator = ref.read(clientNavigationProvider.notifier);
-
-    clientNavigator.reset(); // Reset BEFORE navigation
-
-    ref
-        .read(authViewModelProvider.notifier)
-        .logout()
-        .then((_) {
-          if (!mounted) return;
-          Navigator.pushReplacement(context, LoginScreen.route());
-        })
-        .catchError((error) {
-          if (!mounted) return;
-          ErrorScanckbar.showSnackBar(context, 'Logout failed: $error');
-        });
+  void _handleLogout() async {
+    try {
+      await ref.read(authViewModelProvider.notifier).logout();
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        LoginScreen.route(),
+        (route) => false,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ErrorScanckbar.showSnackBar(context, 'Logout failed: $error');
+    }
   }
 
-  void _handleDeleteAccount() {
-    final clientNavigator = ref.read(clientNavigationProvider.notifier);
-
-    clientNavigator.reset(); // Reset BEFORE navigation
-
-    ref
-        .read(authViewModelProvider.notifier)
-        .deleteAccount()
-        .then((_) {
-          if (!mounted) return;
-          Navigator.pushReplacement(context, LoginScreen.route());
-        })
-        .catchError((e) {
-          if (!mounted) return;
-          ErrorScanckbar.showSnackBar(context, 'Failed to delete account: $e');
-        });
+  void _handleDeleteAccount() async {
+    try {
+      await ref.read(authViewModelProvider.notifier).deleteAccount();
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        LoginScreen.route(),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ErrorScanckbar.showSnackBar(context, 'Failed to delete account: $e');
+    }
   }
 
   void _showDeleteConfirmation() {
@@ -103,7 +96,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final authState = ref.watch(
       authViewModelProvider,
     ); // Listening for changes in authState
-    final clientNavigator = ref.watch(clientNavigationProvider.notifier);
     final size = MediaQuery.of(context).size;
     final avatarRadius = size.width * 0.20;
 
@@ -115,7 +107,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         Navigator.pushReplacement(context, LoginScreen.route());
-        clientNavigator.reset();
       });
       return const LoaderPage();
     }
@@ -135,8 +126,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         actions: [
           PopupMenuButton<String>(
             color: AppColors.backgroundLight,
-            onSelected: (value) {
-              // Removed: Navigator.of(context).pop();
+            onSelected: (value) async {
               if (value == 'logout') {
                 _handleLogout();
               } else if (value == 'delete') {

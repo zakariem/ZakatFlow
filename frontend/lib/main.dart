@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/widgets/loader.dart';
-import 'package:frontend/view/admin_main_screen.dart';
-import 'package:frontend/view/client_main_screen.dart';
 import 'providers/auth_providers.dart';
-import 'view/auth/login_screen.dart';
+import 'utils/widgets/auth_gate.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -32,8 +30,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final authState = ref.watch(authViewModelProvider);
-
     if (!_isAuthChecked) {
       return const MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -44,12 +40,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Zakat App',
-      home:
-          authState.user == null
-              ? const LoginScreen()
-              : authState.isAdmin
-              ? const AdminMainScreen()
-              : const ClientMainScreen(),
+      home: _isAuthChecked ? const AuthGate() : const LoaderPage(),
     );
   }
 }

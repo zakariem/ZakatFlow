@@ -3,6 +3,7 @@ import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../providers/auth_providers.dart';
+import '../../providers/client_navigation_provider.dart';
 import '../../utils/constant/validation_utils.dart';
 import '../../utils/theme/app_color.dart';
 import '../../utils/widgets/custom/custom_field.dart';
@@ -24,6 +25,17 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
+  // Add this in your LoginScreen's build method or initState
+  @override
+  void initState() {
+    super.initState();
+    // Reset navigation when login screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final clientNavigator = ref.read(clientNavigationProvider.notifier);
+      clientNavigator.reset();
+    });
+  }
+
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
