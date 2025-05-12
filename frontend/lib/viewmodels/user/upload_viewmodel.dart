@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
+
+// Conditional import for File
+import 'dart:io'
+    if (dart.library.html) 'package:frontend/services/web_file.dart';
 
 import '../../models/user_model.dart';
 import '../../services/upload_service.dart';
@@ -24,11 +28,16 @@ class UploadViewModel extends StateNotifier<UploadState> {
   final FlutterSecureStorage _secureStorage;
   final ImagePicker _picker = ImagePicker();
 
-  Future<File?> pickImage() async {
+  Future<dynamic> pickImage() async {
     try {
       final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
-        return File(pickedFile.path);
+        // For web, return XFile directly; for mobile, return File
+        if (kIsWeb) {
+          return pickedFile;
+        } else {
+          return File(pickedFile.path);
+        }
       }
     } catch (e) {
       state = UploadState(message: 'Error picking image: $e');
@@ -36,10 +45,21 @@ class UploadViewModel extends StateNotifier<UploadState> {
     return null;
   }
 
-  Future<void> uploadImage(File imageFile, String userId, String token) async {
+  Future<void> uploadImage(
+    dynamic imageFile,
+    String userId,
+    String token,
+  ) async {
     try {
-      state = UploadState(isUploading: true);
-      debugPrint('Uploading image for user: $userId'); // Debugging
+      state = UploadState(isUploading: true, message: 'Uploading image...');
+      // Handle debug print differently for web and mobile
+      if (kIsWeb) {
+        debugPrint('Uploading image for user: $userId (web platform)');
+      } else {
+        debugPrint(
+          'Uploading image for user: $userId with file path: ${imageFile.path}',
+        );
+      } // Enhanced debugging
 
       final updatedUser = await _uploadService.uploadProfileImage(
         imageFile,
@@ -65,8 +85,19 @@ class UploadViewModel extends StateNotifier<UploadState> {
       );
     } catch (e) {
       debugPrint('Upload error: $e'); // Debugging
+      debugPrint(
+        'Stack trace: ${StackTrace.current}',
+      ); // Add stack trace for better debugging
 
-      state = UploadState(isUploading: false, message: 'Upload error: $e');
+      // Provide a more user-friendly error message
+      String errorMessage = 'Upload failed. Please try again.';
+      if (e.toString().contains('connection')) {
+        errorMessage = 'Network error. Please check your connection.';
+      } else if (e.toString().contains('format')) {
+        errorMessage = 'Server response error. Please try again later.';
+      }
+
+      state = UploadState(isUploading: false, message: errorMessage);
     }
   }
 

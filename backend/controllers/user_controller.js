@@ -9,7 +9,9 @@ import cloudinary from "../config/cloud.js";
 export const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password } = req.body;
   if (!fullName || !email || !password) {
-    return res.status(400).json({ message: "Fadlan buuxi dhammaan meelaha bannaan" });
+    return res
+      .status(400)
+      .json({ message: "Fadlan buuxi dhammaan meelaha bannaan" });
   }
 
   const userExists = await User.findOne({ email });
@@ -38,7 +40,9 @@ export const registerUser = asyncHandler(async (req, res) => {
 export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(400).json({ message: "Fadlan buuxi dhammaan meelaha bannaan" });
+    return res
+      .status(400)
+      .json({ message: "Fadlan buuxi dhammaan meelaha bannaan" });
   }
 
   const user = await User.findOne({ email }).select("+password");
@@ -90,7 +94,9 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   if (email && email !== user.email) {
     const emailExists = await User.findOne({ email });
     if (emailExists) {
-      return res.status(400).json({ message: "Email-ka hore ayaa loo isticmaalay" });
+      return res
+        .status(400)
+        .json({ message: "Email-ka hore ayaa loo isticmaalay" });
     }
     user.email = email;
   }
@@ -125,18 +131,26 @@ export const deleteUser = asyncHandler(async (req, res) => {
     req.body._id.toString() !== user._id.toString() &&
     req.body.role !== "admin"
   ) {
-    return res.status(403).json({ message: "Ma haysid oggolaansho inaad tirtirto akoonkan" });
+    return res
+      .status(403)
+      .json({ message: "Ma haysid oggolaansho inaad tirtirto akoonkan" });
   }
 
   try {
     if (user.cloudinaryPublicId) {
-      console.log("Tirtirista sawirka isticmaalaha Cloudinary:", user.cloudinaryPublicId);
+      console.log(
+        "Tirtirista sawirka isticmaalaha Cloudinary:",
+        user.cloudinaryPublicId
+      );
       await cloudinary.uploader.destroy(user.cloudinaryPublicId);
       console.log("Sawirka waa la tirtiray");
     }
 
     await user.deleteOne();
-    res.json({ success: true, message: "Akaawnka isticmaalaha waa la tirtiray" });
+    res.json({
+      success: true,
+      message: "Akaawnka isticmaalaha waa la tirtiray",
+    });
   } catch (error) {
     console.error("Khalad tirtirid:", error.message);
     res.status(500).json({ message: "Khalad gudaha ah", error: error.message });

@@ -19,7 +19,7 @@ class UploadScreen extends ConsumerWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (uploadState.message.isNotEmpty) {
         ErrorScanckbar.showSnackBar(context, uploadState.message);
-        debugPrint('Upload message: ${uploadState.message} ***************');
+        debugPrint('Upload message: ${uploadState.message}');
         uploadNotifier.clearMessage();
       }
     });
