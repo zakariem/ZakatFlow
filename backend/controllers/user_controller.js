@@ -177,14 +177,15 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
   }
 
   try {
+    // Delete old image from Cloudinary if exists
     if (user.cloudinaryPublicId) {
       console.log("Tirtirida sawirkii hore:", user.cloudinaryPublicId);
       await cloudinary.uploader.destroy(user.cloudinaryPublicId);
       console.log("Sawirkii hore waa la tirtiray");
     }
 
+    // Upload new image to Cloudinary
     console.log("Gelinta sawirka cusub Cloudinary...");
-
     const uploadResult = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         { folder: "profile_images" },
@@ -199,19 +200,19 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
       stream.end(req.file.buffer);
     });
 
-    console.log("Sawir si guul leh ayaa loo geliyay:", uploadResult.secure_url);
-
+    // Update user data
     user.profileImageUrl = uploadResult.secure_url;
     user.cloudinaryPublicId = uploadResult.public_id;
-    await user.save();
+    const updatedUser = await user.save();
 
-    console.log("Profile-ka isticmaalaha waa la cusboonaysiiyay");
+    // Remove password and generate token
+    const { password, ...userData } = updatedUser.toObject();
 
     res.status(200).json({
       success: true,
       message: "Sawirka si guul leh ayaa loo geliyay",
       data: {
-        profileImageUrl: user.profileImageUrl,
+        ...userData,
         token: generateToken(user._id),
       },
     });

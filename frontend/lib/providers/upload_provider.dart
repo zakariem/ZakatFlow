@@ -6,7 +6,11 @@ import '../viewmodels/user/upload_viewmodel.dart';
 
 final secureStorageProvider = Provider((ref) => const FlutterSecureStorage());
 
-final uploadViewModelProvider = StateNotifierProvider<
-  UploadViewModel,
-  UploadState
->((ref) => UploadViewModel(UploadService(), ref.watch(secureStorageProvider)));
+final uploadViewModelProvider =
+    StateNotifierProvider<UploadViewModel, UploadState>(
+      (ref) => UploadViewModel(
+        UploadService(),
+        ref.watch(secureStorageProvider),
+        ref,
+      ),
+    );

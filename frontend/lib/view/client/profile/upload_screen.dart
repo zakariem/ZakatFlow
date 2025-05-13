@@ -15,11 +15,20 @@ class UploadScreen extends ConsumerWidget {
     final authState = ref.watch(authViewModelProvider);
     final uploadNotifier = ref.read(uploadViewModelProvider.notifier);
 
-    // Show snackbar when there's an error or success message
+    // Handle post-upload logic (error/snackbar or success/navigation)
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (uploadState.message.isNotEmpty) {
+      // If upload completed successfully, and we have an updated user, go back
+      if (!uploadState.isUploading &&
+          uploadState.updatedUser != null &&
+          uploadState.message.isEmpty) {
+        Navigator.pop(context);
+      }
+
+      // If there's an error message, show snackbar
+      if (!uploadState.isUploading &&
+          uploadState.message.isNotEmpty &&
+          uploadState.updatedUser == null) {
         ErrorScanckbar.showSnackBar(context, uploadState.message);
-        debugPrint('Upload message: ${uploadState.message}');
         uploadNotifier.clearMessage();
       }
     });
@@ -42,28 +51,23 @@ class UploadScreen extends ConsumerWidget {
                 ),
               const SizedBox(height: 20),
 
-              if (uploadState.isUploading) Loader(),
+              uploadState.isUploading
+                  ? const Loader()
+                  : ElevatedButton(
+                    onPressed: () async {
+                      if (authState.user == null) return;
 
-              const SizedBox(height: 20),
-
-              ElevatedButton(
-                onPressed: () async {
-                  if (authState.user == null) return;
-
-                  final file = await uploadNotifier.pickImage();
-                  if (file != null) {
-                    debugPrint(
-                      'Picked image: ${uploadState.message} ***************',
-                    );
-                    await uploadNotifier.uploadImage(
-                      file,
-                      authState.user!.id,
-                      authState.user!.token,
-                    );
-                  }
-                },
-                child: const Text('Pick & Upload New Image'),
-              ),
+                      final file = await uploadNotifier.pickImage();
+                      if (file != null) {
+                        await uploadNotifier.uploadImage(
+                          file,
+                          authState.user!.id,
+                          authState.user!.token,
+                        );
+                      }
+                    },
+                    child: const Text('Pick & Upload New Image'),
+                  ),
             ],
           ),
         ),
