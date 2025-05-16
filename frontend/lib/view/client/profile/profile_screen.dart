@@ -45,9 +45,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         LoginScreen.route(),
         (route) => false,
       );
-    } catch (e) {
+    } catch (error) {
       if (!mounted) return;
-      ErrorScanckbar.showSnackBar(context, 'Failed to delete account: $e');
+      ErrorScanckbar.showSnackBar(context, 'Delete account failed: \$error');
     }
   }
 

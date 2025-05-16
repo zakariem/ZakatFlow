@@ -25,13 +25,45 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
-      select: false, // Prevents password from being returned in queries
+      select: false,
     },
     role: {
       type: String,
-      enum: ["admin", "client"],
+      enum: ["admin", "client", "agent"],
       default: "client",
     },
+
+    // Agent-specific fields
+    location: {
+      type: String,
+      required: [
+        function () {
+          return this.role === "agent";
+        },
+        "Location is required for agents",
+      ],
+      trim: true,
+    },
+    phoneNumber: {
+      type: String,
+      required: [
+        function () {
+          return this.role === "agent";
+        },
+        "Phone number is required for agents",
+      ],
+      trim: true,
+    },
+    totalDonation: {
+      type: Number,
+      required: [
+        function () {
+          return this.role === "agent";
+        },
+        "Total donation is required for agents",
+      ],
+    },
+
     profileImageUrl: {
       type: String,
       default:
@@ -56,7 +88,7 @@ UserSchema.pre("save", async function (next) {
   }
 });
 
-// Compare entered password with hashed password
+// Password comparison method
 UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

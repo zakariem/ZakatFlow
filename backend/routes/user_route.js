@@ -1,36 +1,60 @@
 import express from "express";
+import multer from "../config/multer.js";
 import {
   registerUser,
   loginUser,
-  getUsers,
   getUserProfile,
   updateUserProfile,
   deleteUser,
   uploadProfileImage,
+  createAgent,
+  getAgents,
+  getAgentById,
+  updateAgent,
+  deleteAgent,
 } from "../controllers/user_controller.js";
 import authMiddleware from "../middlewares/auth-middleware.js";
 import AuthorizeRole from "../middlewares/role_middleware.js";
-import multer from "multer";
 
 const router = express.Router();
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
+// User Auth
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-router.get("/", authMiddleware, AuthorizeRole("admin"), getUsers);
+
 router
   .route("/profile")
   .get(authMiddleware, getUserProfile)
   .put(authMiddleware, updateUserProfile)
   .delete(authMiddleware, deleteUser);
 
+// Image Upload (User)
 router.post(
   "/upload",
   authMiddleware,
-  upload.single("image"),
+  multer.single("image"),
   uploadProfileImage
 );
+
+// Agent Routes (Admin Only)
+router.post(
+  "/create-agent",
+  authMiddleware,
+  AuthorizeRole("admin"),
+  multer.single("image"),
+  createAgent
+);
+
+router.get("/agents", authMiddleware, AuthorizeRole("admin"), getAgents);
+router.get("/agents/:id", authMiddleware, AuthorizeRole("admin"), getAgentById);
+router.put(
+  "/agents/:id",
+  authMiddleware,
+  AuthorizeRole("admin"),
+  multer.single("image"),
+  updateAgent
+);
+router.delete("/agents/:id", authMiddleware, AuthorizeRole("admin"), deleteAgent);
 
 export default router;

@@ -53,6 +53,7 @@ class AuthService {
   }
 
   Future<void> deleteAccount(String? userId, String token, String role) async {
+    print(token);
     if (userId == null || userId.isEmpty || token.isEmpty) {
       throw Exception('User data is incomplete for account deletion.');
     }
@@ -61,8 +62,8 @@ class AuthService {
       final response = await http.delete(
         Uri.parse(ApiConstants.profile),
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
         },
         body: jsonEncode({'_id': userId, 'role': role}),
       );
