@@ -12,4 +12,7 @@ class ApiConstants {
 
   // upload
   static const String upload = '$baseUrl/api/user/upload';
+
+  //Agents
+  static const String agents = '$baseUrl/api/user/agents';
 }

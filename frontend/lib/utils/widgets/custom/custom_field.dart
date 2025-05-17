@@ -9,6 +9,7 @@ class CustomField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool obscureText;
   final bool isPassword;
+  final bool readOnly;
   final VoidCallback? toggleVisibility;
   final TextInputAction textInputAction;
   final TextInputType keyboardType;
@@ -22,6 +23,7 @@ class CustomField extends StatelessWidget {
     this.validator,
     this.obscureText = false,
     this.isPassword = false,
+    this.readOnly = false,
     this.toggleVisibility,
     this.textInputAction = TextInputAction.next,
     this.keyboardType = TextInputType.text,
@@ -31,6 +33,7 @@ class CustomField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readOnly,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
       controller: controller,

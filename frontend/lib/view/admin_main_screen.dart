@@ -5,7 +5,7 @@ import '../providers/admin_navigation_provider.dart';
 import '../utils/theme/app_color.dart';
 import 'admin/dashboard_screen.dart';
 import 'admin/payments_screen.dart';
-import 'admin/recipients_screen.dart';
+import 'admin/agent/agents_screen.dart';
 import 'admin/reports_screen.dart';
 import 'admin/settings_screen.dart';
 
@@ -15,7 +15,7 @@ class AdminMainScreen extends ConsumerWidget {
   static final List<Widget> _screens = [
     const DashboardScreen(),
     const PaymentsScreen(),
-    const RecipientsScreen(),
+    const AgentsScreen(),
     const ReportsScreen(),
     const SettingsScreen(),
   ];
@@ -31,7 +31,7 @@ class AdminMainScreen extends ConsumerWidget {
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.group, color: AppColors.accentDarkGold),
-      label: 'Recipients 👥',
+      label: 'Agents',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.assignment, color: AppColors.warning),

@@ -16,4 +16,22 @@ class SuccessSnackbar extends StatelessWidget {
       margin: const EdgeInsets.all(16.0),
     );
   }
+
+  static void showSnackBar(BuildContext context, String message) {
+    final messenger = ScaffoldMessenger.of(context);
+
+    if (messenger.mounted) {
+      messenger.hideCurrentSnackBar();
+    }
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(message, style: const TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.success,
+        duration: const Duration(seconds: 3),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16.0),
+      ),
+    );
+  }
 }

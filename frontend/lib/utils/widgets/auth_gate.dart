@@ -12,7 +12,7 @@ class AuthGate extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
-
+    debugPrint(authState.user?.token);
     if (authState.user == null) {
       return const LoginScreen();
     } else if (authState.isAdmin) {

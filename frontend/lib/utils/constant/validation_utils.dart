@@ -39,4 +39,15 @@ class ValidationUtils {
     }
     return null;
   }
+
+  static String? validatePhoneNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Lambarka telefoonka lama dhaafi karo';
+    }
+    final phoneRegex = RegExp(r'^61\d{7}$');
+    if (!phoneRegex.hasMatch(value)) {
+      return 'Lambarka saxda ah waa inuu ka bilaabmaa 61 kana koobnaadaa 9 lambarr';
+    }
+    return null;
+  }
 }
