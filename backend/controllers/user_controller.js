@@ -141,8 +141,8 @@ export const createAgent = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: "Kaliya admin ayaa abuurikaro agent" });
   }
 
-  const { fullName, email, password } = req.body;
-  if (!fullName || !email || !password || !req.file) {
+  const { fullName, email, password, phoneNumber, address } = req.body;
+  if (!fullName || !email || !password || phoneNumber || address || !req.file) {
     return res.status(400).json({ message: "Fadlan buuxi dhammaan xogta oo ay ku jirto sawir" });
   }
 
@@ -159,6 +159,8 @@ export const createAgent = asyncHandler(async (req, res) => {
   const agent = new User({
     fullName,
     email,
+    phoneNumber,
+    address,
     password,
     role: "agent",
     profileImageUrl: uploadResult.secure_url,
@@ -194,7 +196,7 @@ export const updateAgent = asyncHandler(async (req, res) => {
   const agent = await User.findOne({ _id: req.params.id, role: "agent" });
   if (!agent) return res.status(404).json({ message: "Agent lama helin" });
 
-  const { fullName, email, password } = req.body;
+  const { fullName, email, password, phoneNumber, address } = req.body;
 
   if (email && email !== agent.email) {
     const emailExists = await User.findOne({ email });
@@ -204,6 +206,8 @@ export const updateAgent = asyncHandler(async (req, res) => {
 
   if (fullName) agent.fullName = fullName;
   if (password) agent.password = password;
+  if (phoneNumber) agent.phoneNumber = phoneNumber;
+  if (address) agent.address = address;
 
   if (req.file) {
     if (agent.cloudinaryPublicId) await cloudinary.uploader.destroy(agent.cloudinaryPublicId);

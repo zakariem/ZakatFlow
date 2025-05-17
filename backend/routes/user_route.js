@@ -39,14 +39,14 @@ router.post(
 
 // Agent Routes (Admin Only)
 router.post(
-  "/create-agent",
+  "/agents",
   authMiddleware,
   AuthorizeRole("admin"),
   multer.single("image"),
   createAgent
 );
 
-router.get("/agents", authMiddleware, AuthorizeRole("admin"), getAgents);
+router.get("/agents", authMiddleware, getAgents);
 router.get("/agents/:id", authMiddleware, AuthorizeRole("admin"), getAgentById);
 router.put(
   "/agents/:id",

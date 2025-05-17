@@ -34,13 +34,13 @@ const UserSchema = new mongoose.Schema(
     },
 
     // Agent-specific fields
-    location: {
+    address: {
       type: String,
       required: [
         function () {
           return this.role === "agent";
         },
-        "Location is required for agents",
+        "Address is required for agents",
       ],
       trim: true,
     },
