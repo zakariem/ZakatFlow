@@ -148,7 +148,8 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         title: Text(_isEdit ? 'Wax ka beddel Hay\'ada' : 'Hay\'ad diiwan gali'),
-        foregroundColor: AppColors.textWhite,
+        backgroundColor: AppColors.backgroundLight,
+        elevation: 0,
       ),
       body:
           _loading

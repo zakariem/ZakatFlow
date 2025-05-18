@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../providers/admin_navigation_provider.dart';
 import '../../providers/auth_providers.dart';
 import '../../providers/client_navigation_provider.dart';
 import '../../utils/constant/validation_utils.dart';
@@ -10,6 +11,7 @@ import '../../utils/widgets/custom/custom_field.dart';
 import '../../utils/widgets/loader.dart';
 import '../../utils/widgets/custom/custom_button.dart';
 import '../admin_main_screen.dart';
+import '../agent_main_screen.dart';
 import '../client_main_screen.dart';
 import 'register_view.dart';
 
@@ -32,6 +34,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // Reset navigation when login screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final clientNavigator = ref.read(clientNavigationProvider.notifier);
+      final adminNavigator = ref.read(adminNavigationProvider.notifier);
+      adminNavigator.reset();
       clientNavigator.reset();
     });
   }
@@ -52,14 +56,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final state = ref.read(authViewModelProvider);
 
       if (state.user != null) {
+        final role = state.user?.role.toLowerCase();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder:
-                (context) =>
-                    state.isAdmin
-                        ? const AdminMainScreen()
-                        : const ClientMainScreen(),
+            builder: (context) =>
+                state.isAdmin
+                    ? const AdminMainScreen()
+                    : (role == 'agent'
+                        ? const AgentMainScreen()
+                        : const ClientMainScreen()),
           ),
         );
       } else {
@@ -72,6 +78,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
     final size = MediaQuery.of(context).size;
+
+    // Show error snackbar if error is set
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (authState.error.isNotEmpty) {
+        ErrorScanckbar.showSnackBar(context, authState.error);
+        // Optionally, clear the error after showing
+        ref.read(authViewModelProvider.notifier).state = authState.copyWith(
+          error: '',
+        );
+      }
+    });
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,

@@ -54,7 +54,10 @@ class AgentProvider extends ChangeNotifier {
     _successMessage = null;
     await _safeNotifyListeners();
     try {
-      _selectedAgent = await _agentsService.getAgentById(id, token);
+      final agent = await _agentsService.getAgentById(id, token);
+      _agents.clear(); // Clear old agents
+      _agents.add(agent); // Add only the fetched agent
+      _selectedAgent = agent;
       _successMessage = "Agent loaded successfully";
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');

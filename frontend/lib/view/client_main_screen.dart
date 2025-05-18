@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/client_navigation_provider.dart';
 import '../utils/theme/app_color.dart';
 import 'client/calculator/tab_screen.dart';
-import 'client/donate/donate_screen.dart';
 import 'client/history/history_screen.dart';
 import 'client/home/home_screen.dart';
 import 'client/profile/profile_screen.dart';
@@ -14,7 +13,7 @@ class ClientMainScreen extends ConsumerWidget {
   static const List<Widget> _screens = [
     HomeScreen(),
     TabScreen(),
-    DonateScreen(),
+   
     HistoryScreen(),
     ProfileScreen(),
   ];
@@ -24,10 +23,6 @@ class ClientMainScreen extends ConsumerWidget {
     BottomNavigationBarItem(
       icon: Icon(Icons.calculate, size: 28),
       label: 'Calculate',
-    ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.credit_card, size: 28),
-      label: 'Donate',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.history, size: 28),

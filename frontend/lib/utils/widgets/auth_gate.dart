@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/utils/widgets/loader.dart';
 
 import '../../providers/auth_providers.dart';
 import '../../view/admin_main_screen.dart';
 import '../../view/auth/login_screen.dart';
 import '../../view/client_main_screen.dart';
+import '../../view/agent_main_screen.dart';
 
 class AuthGate extends ConsumerWidget {
   const AuthGate({super.key});
@@ -12,11 +14,24 @@ class AuthGate extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authViewModelProvider);
-    debugPrint(authState.user?.token);
+
+    // Show loading while user info is being fetched or processed
+    if (authState.isLoading) {
+      return const Scaffold(body: Center(child: Loader()));
+    }
+
+    // Show login screen if user is not authenticated
     if (authState.user == null) {
       return const LoginScreen();
-    } else if (authState.isAdmin) {
+    }
+
+    // Decide destination screen based on role
+    final role = authState.user?.role.toLowerCase();
+    debugPrint(role);
+    if (authState.isAdmin) {
       return const AdminMainScreen();
+    } else if (role == 'agent') {
+      return const AgentMainScreen();
     } else {
       return const ClientMainScreen();
     }

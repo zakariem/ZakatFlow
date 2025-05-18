@@ -47,7 +47,7 @@ router.post(
 );
 
 router.get("/agents", authMiddleware, getAgents);
-router.get("/agents/:id", authMiddleware, AuthorizeRole("admin"), getAgentById);
+router.get("/agents/:id", authMiddleware, getAgentById);
 router.put(
   "/agents/:id",
   authMiddleware,

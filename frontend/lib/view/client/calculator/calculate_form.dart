@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/view/client/donate/donate_screen.dart';
 import 'package:intl/intl.dart';
 import '../../../providers/zakat_providers.dart';
 import '../../../utils/theme/app_color.dart';
@@ -156,7 +157,7 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
             if (_showResult) ...[
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Total assets'),
+                title: const Text('Totalka Lacagtada'),
                 trailing: Text(
                   '\$${NumberFormat('#,##0.00').format(_totalAssets)} USD',
                   style: const TextStyle(
@@ -167,7 +168,7 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Zakat payable'),
+                title: const Text('Zakada lagaarabo'),
                 trailing: Text(
                   '\$${NumberFormat('#,##0.00').format(_computedZakat)} USD',
                   style: const TextStyle(
@@ -181,7 +182,15 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
 
               // Pay Now button only if zakat > 0
               if (_computedZakat > 0)
-                CustomButton(onTap: () {}, text: 'Pay Now'),
+                CustomButton(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => DonationScreen()),
+                    );
+                  },
+                  text: 'Hadda Bixi',
+                ),
             ],
           ],
         ),

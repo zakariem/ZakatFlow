@@ -70,8 +70,8 @@ class _AgentsScreenState extends ConsumerState<AgentsScreen> {
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         title: const Text('Hay\'adaha'),
-        backgroundColor: AppColors.textWhite,
-        elevation: 2,
+        backgroundColor: AppColors.backgroundLight,
+        elevation: 0,
       ),
       body: _buildBody(viewModel),
       floatingActionButton: FloatingActionButton(
