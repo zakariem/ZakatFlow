@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/utils/widgets/loader.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import '../../../models/agent_model.dart';
 import '../../../providers/auth_providers.dart';
 import '../../../utils/constant/validation_utils.dart';
 import '../../../utils/theme/app_color.dart';
@@ -15,24 +17,24 @@ import '../../../utils/widgets/snackbar/success_snackbar.dart';
 import '../../../viewmodels/agent_view_model.dart';
 
 class AgentFormScreen extends ConsumerStatefulWidget {
-  final String? agentId;
-  const AgentFormScreen({super.key, this.agentId});
-
+  final Agent? agent;
+  const AgentFormScreen({super.key, this.agent});
   @override
   ConsumerState<AgentFormScreen> createState() => _AgentFormScreenState();
 }
 
 class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
-  final _addressController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
 
   bool _isEdit = false;
   bool _loading = false;
   bool _obscurePassword = true;
+  bool _initialized = false;
 
   XFile? _pickedImage;
   String? _existingImageUrl;
@@ -41,25 +43,18 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
   @override
   void initState() {
     super.initState();
-    if (widget.agentId != null) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(agentViewModelProvider).clearMessages();
+    });
+    if (widget.agent != null) {
       _isEdit = true;
-      _loadAgentData();
+      _fullNameController.text = widget.agent!.fullName;
+      _emailController.text = widget.agent!.email;
+      _phoneNumberController.text = widget.agent!.phoneNumber;
+      _addressController.text = widget.agent!.address;
+      _existingImageUrl = widget.agent!.profileImageUrl;
     }
-  }
-
-  Future<void> _loadAgentData() async {
-    setState(() => _loading = true);
-    final viewModel = ref.read(agentViewModelProvider);
-    await viewModel.selectAgent(widget.agentId!, '');
-    final agent = viewModel.selectedAgent;
-    if (agent != null) {
-      _fullNameController.text = agent.fullName;
-      _emailController.text = agent.email;
-      _phoneNumberController.text = agent.phoneNumber;
-      _addressController.text = agent.address;
-      _existingImageUrl = agent.profileImageUrl;
-    }
-    setState(() => _loading = false);
+    _initialized = true;
   }
 
   Future<void> _pickImage() async {
@@ -79,10 +74,10 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     final authState = ref.read(authViewModelProvider);
     final viewModel = ref.read(agentViewModelProvider);
-    
+
     final data = {
       'fullName': _fullNameController.text,
       'email': _emailController.text,
@@ -100,19 +95,15 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
     try {
       if (_isEdit) {
         await viewModel.editAgent(
-          widget.agentId!,
+          widget.agent!.id, // Use the agent's id from the Agent object
           data,
           _pickedImage,
           authState.user!.token,
         );
       } else {
-        await viewModel.addAgent(
-          data,
-          _pickedImage,
-          authState.user!.token,
-        );
+        await viewModel.addAgent(data, _pickedImage, authState.user!.token);
       }
-      
+
       if (mounted) {
         Navigator.of(context).pop();
       }
@@ -129,30 +120,39 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = ref.watch(agentViewModelProvider);
+    if (!_initialized) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundLight,
+        appBar: AppBar(
+          title: Text(_isEdit ? 'Edit Agent' : 'Create Agent'),
+          backgroundColor: AppColors.primaryGold,
+          foregroundColor: AppColors.textWhite,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
-    // Show error/success snackbar after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (viewModel.error != null && viewModel.error!.isNotEmpty) {
-        ErrorScanckbar.showSnackBar(context, viewModel.error!);
-        ref.read(agentViewModelProvider).clearMessages();
-      } else if (viewModel.successMessage != null &&
-          viewModel.successMessage!.isNotEmpty) {
+      final viewModel = ref.read(agentViewModelProvider);
+      if (viewModel.successMessage != null) {
         SuccessSnackbar.showSnackBar(context, viewModel.successMessage!);
-        ref.read(agentViewModelProvider).clearMessages();
+        viewModel.clearMessages();
+      }
+      if (viewModel.error != null) {
+        ErrorScanckbar.showSnackBar(context, viewModel.error!);
+        viewModel.clearMessages();
       }
     });
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        title: Text(_isEdit ? 'Edit Agent' : 'Create Agent'),
-        backgroundColor: AppColors.primaryGold,
+        title: Text(_isEdit ? 'Wax ka beddel Hay\'ada' : 'Hay\'ad diiwan gali'),
         foregroundColor: AppColors.textWhite,
       ),
       body:
           _loading
-              ? const Center(child: CircularProgressIndicator())
+              ? const Center(child: Loader())
               : Padding(
                 padding: const EdgeInsets.all(16),
                 child: Form(
@@ -229,7 +229,10 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
                       const SizedBox(height: 24),
                       CustomButton(
                         onTap: _submit,
-                        text: _isEdit ? 'Update Agent' : 'Create Agent',
+                        text:
+                            _isEdit
+                                ? 'Wax ka beddel Hay\'ada'
+                                : 'Hay\'ad diiwan gali',
                       ),
                     ],
                   ),

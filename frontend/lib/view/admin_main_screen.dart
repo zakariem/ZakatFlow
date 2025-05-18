@@ -22,24 +22,24 @@ class AdminMainScreen extends ConsumerWidget {
 
   static final List<BottomNavigationBarItem> _navItems = [
     BottomNavigationBarItem(
-      icon: Icon(Icons.dashboard, color: AppColors.primaryGold),
-      label: 'Dashboard 📊',
+      icon: Icon(Icons.dashboard, size: 28),
+      label: 'Dashboard',
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.payment, color: AppColors.success),
-      label: 'Payments 💰',
+      icon: Icon(Icons.payment, size: 28),
+      label: 'Payments',
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.group, color: AppColors.accentDarkGold),
-      label: 'Agents',
+      icon: Icon(Icons.group, size: 28),
+      label: 'Hay\'adaha',
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.assignment, color: AppColors.warning),
-      label: 'Reports 📜',
+      icon: Icon(Icons.assignment, size: 28),
+      label: 'Reports',
     ),
     BottomNavigationBarItem(
-      icon: Icon(Icons.settings, color: AppColors.textGray),
-      label: 'Settings ⚙️',
+      icon: Icon(Icons.settings, size: 28),
+      label: 'Settings',
     ),
   ];
 

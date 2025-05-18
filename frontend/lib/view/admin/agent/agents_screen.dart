@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../viewmodels/agent_view_model.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
 import '../../../providers/auth_providers.dart';
 import '../../../utils/theme/app_color.dart';
 import '../../../utils/widgets/loader.dart';
-import 'agent_form_screen.dart';
 import '../../../utils/widgets/snackbar/error_scanckbar.dart';
 import '../../../utils/widgets/snackbar/success_snackbar.dart';
+import '../../../viewmodels/agent_view_model.dart';
+import 'agent_form_screen.dart';
 
 class AgentsScreen extends ConsumerStatefulWidget {
   const AgentsScreen({super.key});
@@ -16,51 +18,72 @@ class AgentsScreen extends ConsumerStatefulWidget {
 }
 
 class _AgentsScreenState extends ConsumerState<AgentsScreen> {
+  bool _initialized = false;
+
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final token = ref.read(authViewModelProvider).user?.token;
-      if (token != null) {
-        await ref.read(agentViewModelProvider).loadAgents(token);
-      }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initialize();
     });
+  }
+
+  Future<void> _initialize() async {
+    final token = ref.read(authViewModelProvider).user?.token;
+    if (token != null) {
+      await ref.read(agentViewModelProvider).loadAgents(token);
+    }
+    if (mounted) {
+      setState(() => _initialized = true);
+    }
+    await _handleMessages();
+  }
+
+  Future<void> _handleMessages() async {
+    final viewModel = ref.read(agentViewModelProvider);
+    if (!mounted) return;
+
+    await Future.delayed(Duration.zero); // Wait for context to be ready
+
+    if (viewModel.error != null && viewModel.error!.isNotEmpty) {
+      ErrorScanckbar.showSnackBar(context, viewModel.error!);
+      viewModel.clearMessages();
+    } else if (viewModel.successMessage != null &&
+        viewModel.successMessage!.isNotEmpty) {
+      SuccessSnackbar.showSnackBar(context, viewModel.successMessage!);
+      viewModel.clearMessages();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final agentViewModel = ref.watch(agentViewModelProvider);
+    final viewModel = ref.watch(agentViewModelProvider);
 
-    // Show error/success snackbar after build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (agentViewModel.error != null && agentViewModel.error!.isNotEmpty) {
-        ErrorScanckbar.showSnackBar(context, agentViewModel.error!);
-        ref.read(agentViewModelProvider).clearMessages();
-      } else if (agentViewModel.successMessage != null && agentViewModel.successMessage!.isNotEmpty) {
-        SuccessSnackbar.showSnackBar(context, agentViewModel.successMessage!);
-        ref.read(agentViewModelProvider).clearMessages();
-      }
-    });
+    if (!_initialized) {
+      return const Scaffold(
+        backgroundColor: AppColors.backgroundLight,
+        body: Center(child: Loader()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
-        title: const Text('Agents'),
-        backgroundColor: AppColors.primaryGold,
-        foregroundColor: AppColors.textWhite,
+        title: const Text('Hay\'adaha'),
+        backgroundColor: AppColors.textWhite,
         elevation: 2,
       ),
-      body: _buildBody(agentViewModel),
+      body: _buildBody(viewModel),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primaryGold,
         foregroundColor: AppColors.textWhite,
         onPressed: () {
-          Navigator.of(context).push(
+          Navigator.push(
+            context,
             MaterialPageRoute(builder: (context) => const AgentFormScreen()),
           );
         },
-        tooltip: 'Add Agent',
+        tooltip: 'Kusoo dar hay\'ad',
         child: const Icon(Icons.add),
       ),
     );
@@ -74,43 +97,91 @@ class _AgentsScreenState extends ConsumerState<AgentsScreen> {
     if (viewModel.agents.isEmpty) {
       return Center(
         child: Text(
-          'No agents found.',
+          'Hay\'ado lama helin',
           style: TextStyle(color: AppColors.textGray),
         ),
       );
     }
 
-    return ListView.builder(
-      itemCount: viewModel.agents.length,
-      itemBuilder: (context, index) {
-        final agent = viewModel.agents[index];
-        return Card(
-          color: AppColors.secondaryBeige,
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          child: ListTile(
-            leading:
-                agent.profileImageUrl != null
-                    ? CircleAvatar(
-                      backgroundImage: NetworkImage(agent.profileImageUrl!),
-                    )
-                    : CircleAvatar(
-                      backgroundColor: AppColors.accentLightGold,
-                      child: const Icon(Icons.person, color: Colors.white),
+    return RefreshIndicator(
+      onRefresh: _initialize,
+      child: ListView.builder(
+        itemCount: viewModel.agents.length,
+        itemBuilder: (context, index) {
+          final agent = viewModel.agents[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+            child: Slidable(
+              key: ValueKey(agent.id),
+              endActionPane: ActionPane(
+                motion: const DrawerMotion(),
+                extentRatio: 0.25,
+                children: [
+                  SlidableAction(
+                    onPressed: (context) async {
+                      final token = ref.read(authViewModelProvider).user?.token;
+                      if (token != null) {
+                        await ref
+                            .read(agentViewModelProvider)
+                            .removeAgent(agent.id, token);
+                        if (mounted) {
+                          await _handleMessages();
+                        }
+                      }
+                    },
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Tirtir',
+                    borderRadius: BorderRadius.circular(7),
+                  ),
+                ],
+              ),
+              child: Card(
+                color: AppColors.secondaryBeige,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: ListTile(
+                  leading:
+                      agent.profileImageUrl != null
+                          ? CircleAvatar(
+                            backgroundImage: NetworkImage(
+                              agent.profileImageUrl!,
+                            ),
+                          )
+                          : CircleAvatar(
+                            backgroundColor: AppColors.accentLightGold,
+                            child: const Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            ),
+                          ),
+                  title: Text(
+                    agent.fullName,
+                    style: TextStyle(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
                     ),
-            title: Text(
-              agent.fullName,
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.bold,
+                  ),
+                  subtitle: Text(
+                    agent.email,
+                    style: TextStyle(color: AppColors.textGray),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AgentFormScreen(agent: agent),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
-            subtitle: Text(
-              agent.email,
-              style: TextStyle(color: AppColors.textGray),
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

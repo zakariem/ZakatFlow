@@ -12,9 +12,11 @@ class AgentViewModel {
   Agent? get selectedAgent => agentProvider.selectedAgent;
   bool get isLoading => agentProvider.isLoading;
   String? get error => agentProvider.error;
-  String? get successMessage => agentProvider.successMessage; // <-- Add this
+  String? get successMessage => agentProvider.successMessage;
 
-  void clearMessages() => agentProvider.clearMessages(); // <-- Add this
+  Future<void> clearMessages() async {
+    await Future.microtask(() => agentProvider.clearMessages());
+  }
 
   Future<void> loadAgents(String token) async {
     await agentProvider.fetchAgents(token);
@@ -46,7 +48,6 @@ class AgentViewModel {
   }
 }
 
-// Riverpod provider for AgentViewModel
 final agentViewModelProvider = Provider<AgentViewModel>((ref) {
   final agentProvider = ref.watch(agentProviderNotifierProvider);
   return AgentViewModel(agentProvider);

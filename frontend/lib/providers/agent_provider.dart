@@ -27,11 +27,16 @@ class AgentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> _safeNotifyListeners() async {
+    await Future.microtask(() => notifyListeners());
+  }
+
   Future<void> fetchAgents(String token) async {
     _isLoading = true;
     _error = null;
     _successMessage = null;
-    notifyListeners();
+    await _safeNotifyListeners();
+    
     try {
       _agents = await _agentsService.getAgents(token);
       _successMessage = "Agents loaded successfully";
@@ -39,7 +44,7 @@ class AgentProvider extends ChangeNotifier {
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      await _safeNotifyListeners();
     }
   }
 
@@ -47,7 +52,7 @@ class AgentProvider extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     _successMessage = null;
-    notifyListeners();
+    await _safeNotifyListeners();
     try {
       _selectedAgent = await _agentsService.getAgentById(id, token);
       _successMessage = "Agent loaded successfully";
@@ -55,7 +60,7 @@ class AgentProvider extends ChangeNotifier {
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      await _safeNotifyListeners();
     }
   }
 
@@ -67,7 +72,7 @@ class AgentProvider extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     _successMessage = null;
-    notifyListeners();
+    await _safeNotifyListeners();
     try {
       final newAgent = await _agentsService.createAgent(
         agentData,
@@ -80,7 +85,7 @@ class AgentProvider extends ChangeNotifier {
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      await _safeNotifyListeners();
     }
   }
 
@@ -93,7 +98,7 @@ class AgentProvider extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     _successMessage = null;
-    notifyListeners();
+    await _safeNotifyListeners();
     try {
       final updated = await _agentsService.updateAgent(
         id,
@@ -113,7 +118,7 @@ class AgentProvider extends ChangeNotifier {
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      await _safeNotifyListeners();
     }
   }
 
@@ -121,7 +126,7 @@ class AgentProvider extends ChangeNotifier {
     _isLoading = true;
     _error = null;
     _successMessage = null;
-    notifyListeners();
+    await _safeNotifyListeners();
     try {
       await _agentsService.deleteAgent(id, token);
       _agents.removeWhere((a) => a.id == id);
@@ -133,14 +138,12 @@ class AgentProvider extends ChangeNotifier {
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
-      notifyListeners();
+      await _safeNotifyListeners();
     }
   }
 }
 
 // Riverpod provider for AgentProvider
-final agentProviderNotifierProvider = ChangeNotifierProvider<AgentProvider>((
-  ref,
-) {
+final agentProviderNotifierProvider = ChangeNotifierProvider<AgentProvider>((ref) {
   return AgentProvider(AgentsService());
 });
