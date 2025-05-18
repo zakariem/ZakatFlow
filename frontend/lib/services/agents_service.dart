@@ -1,17 +1,11 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart' as path;
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../models/agent_model.dart';
 import '../utils/constant/api_constants.dart';
-
-// Conditional import for File
-import 'dart:io'
-    if (dart.library.html) 'package:frontend/services/web_file.dart';
-
-import 'package:image_picker/image_picker.dart';
 
 class AgentsService {
   Future<List<Agent>> getAgents(String token) async {
@@ -24,7 +18,7 @@ class AgentsService {
       final data = jsonDecode(response.body);
       return (data['data'] as List).map((e) => Agent.fromJson(e)).toList();
     } else {
-      throw Exception('Failed to load agents');
+      throw _handleError(response);
     }
   }
 
@@ -38,47 +32,54 @@ class AgentsService {
       final data = jsonDecode(response.body);
       return Agent.fromJson(data['data']);
     } else {
-      throw Exception('Failed to load agent');
+      throw _handleError(response);
     }
   }
 
   Future<Agent> createAgent(
     Map<String, String> agentData,
-    dynamic imageFile, // File (mobile) or XFile (web)
+    XFile? imageFile,
     String token,
   ) async {
-    var request = http.MultipartRequest('POST', Uri.parse(ApiConstants.agents));
-    debugPrint("${token}_________________________");
+    final request = http.MultipartRequest('POST', Uri.parse(ApiConstants.agents));
     request.headers['Authorization'] = 'Bearer $token';
-    request.fields.addAll(agentData);
 
+    // Add all form fields
+    agentData.forEach((key, value) {
+      request.fields[key] = value;
+    });
+
+    // Add image if exists
     if (imageFile != null) {
-      _addImageToRequest(request, imageFile);
+      await _addImageToRequest(request, imageFile);
     }
 
-    final response = await _sendMultipartRequest(request);
-    return Agent.fromJson(response['data']);
+    return _sendAgentRequest(request);
   }
 
   Future<Agent> updateAgent(
     String id,
     Map<String, String> agentData,
-    dynamic imageFile, // File (mobile) or XFile (web)
+    XFile? imageFile,
     String token,
   ) async {
-    var request = http.MultipartRequest(
+    final request = http.MultipartRequest(
       'PUT',
       Uri.parse('${ApiConstants.agents}/$id'),
     );
     request.headers['Authorization'] = 'Bearer $token';
-    request.fields.addAll(agentData);
 
+    // Add all form fields
+    agentData.forEach((key, value) {
+      request.fields[key] = value;
+    });
+
+    // Add image if exists
     if (imageFile != null) {
-      _addImageToRequest(request, imageFile);
+      await _addImageToRequest(request, imageFile);
     }
 
-    final response = await _sendMultipartRequest(request);
-    return Agent.fromJson(response['data']);
+    return _sendAgentRequest(request);
   }
 
   Future<void> deleteAgent(String id, String token) async {
@@ -88,64 +89,55 @@ class AgentsService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete agent');
+      throw _handleError(response);
     }
   }
 
-  /// Adds the image to the multipart request depending on the platform.
-  void _addImageToRequest(
+  Future<void> _addImageToRequest(
     http.MultipartRequest request,
-    dynamic imageFile,
+    XFile imageFile,
   ) async {
-    if (kIsWeb) {
-      if (imageFile is XFile) {
-        final bytes = await imageFile.readAsBytes();
-        final filename = path.basename(imageFile.name);
-        request.files.add(
-          http.MultipartFile.fromBytes('image', bytes, filename: filename),
-        );
-      } else {
-        throw Exception('Unsupported file type for web');
-      }
-    } else {
-      if (imageFile is File) {
-        request.files.add(
-          await http.MultipartFile.fromPath(
-            'image',
-            imageFile.path,
-            filename: path.basename(imageFile.path),
-          ),
-        );
-      } else {
-        throw Exception('Unsupported file type for mobile');
-      }
-    }
+    final bytes = await imageFile.readAsBytes();
+    final mimeType = lookupMimeType(imageFile.name) ?? 'image/jpeg';
+    final extension = mimeType.split('/')[1];
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'image',
+        bytes,
+        filename: 'profile_${DateTime.now().millisecondsSinceEpoch}.$extension',
+        contentType: MediaType('image', extension),
+      ),
+    );
   }
 
-  /// Sends the request and parses the response.
-  Future<Map<String, dynamic>> _sendMultipartRequest(
-    http.MultipartRequest request,
-  ) async {
+  Future<Agent> _sendAgentRequest(http.MultipartRequest request) async {
     try {
       final streamedResponse = await request.send();
-      final responseBody = await streamedResponse.stream.bytesToString();
+      final response = await http.Response.fromStream(streamedResponse);
 
-      if (streamedResponse.statusCode == 200 ||
-          streamedResponse.statusCode == 201) {
-        final data = jsonDecode(responseBody);
-        if (data['data'] != null) {
-          return data;
-        } else {
-          throw Exception('Missing data in response: $responseBody');
-        }
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        return Agent.fromJson(data['data']);
       } else {
-        throw Exception(
-          'Failed request: ${streamedResponse.statusCode} - $responseBody',
-        );
+        throw _handleError(response);
       }
     } catch (e) {
-      print('Upload error: $e');
-      rethrow;
+      throw Exception('Failed to process request: $e');
+    }
+  }
+
+  Exception _handleError(http.Response response) {
+    final statusCode = response.statusCode;
+    final body = response.body;
+
+    if (statusCode == 403) {
+      return Exception('You are not authorized to perform this action');
+    } else if (statusCode == 400) {
+      final error = jsonDecode(body)['message'];
+      return Exception(error ?? 'Invalid request');
+    } else {
+      return Exception('Request failed with status: $statusCode');
     }
   }
 }

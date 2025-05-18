@@ -26,7 +26,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   res.status(201).json({
     success: true,
     message: "Isticmaale si guul leh ayaa loo diiwaan geliyay",
-    data: { ...userData, token: generateToken(user._id) },
+    data: { ...userData, token: generateToken(user) },
   });
 });
 
@@ -43,7 +43,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     res.json({
       success: true,
       message: "Si guul leh ayaad u gashay",
-      data: { ...userData, token: generateToken(user._id) },
+      data: { ...userData, token: generateToken(user) },
     });
   } else {
     res.status(401).json({ message: "Email ama Password ayaa khaldan" });
@@ -80,7 +80,7 @@ export const updateUserProfile = asyncHandler(async (req, res) => {
   res.json({
     success: true,
     message: "Xogta isticmaalaha waa la cusboonaysiiyay",
-    data: { ...userData, token: generateToken(updatedUser._id) },
+    data: { ...userData, token: generateToken(updatedUser) },
   });
 });
 
@@ -129,7 +129,7 @@ export const uploadProfileImage = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Sawirka si guul leh ayaa loo geliyay",
-    data: { ...userData, token: generateToken(user._id) },
+    data: { ...userData, token: generateToken(user) },
   });
 });
 
@@ -142,20 +142,30 @@ export const createAgent = asyncHandler(async (req, res) => {
   }
 
   const { fullName, email, password, phoneNumber, address } = req.body;
-  if (!fullName || !email || !password || phoneNumber || address || !req.file) {
-    return res.status(400).json({ message: "Fadlan buuxi dhammaan xogta oo ay ku jirto sawir" });
+  
+  // Validate required fields
+  if (!fullName || !email || !password || !phoneNumber || !address) {
+    return res.status(400).json({ message: "Fadlan buuxi dhammaan xogta" });
   }
 
+  // Check if email exists
   const exists = await User.findOne({ email });
-  if (exists) return res.status(400).json({ message: "Email hore ayaa loo isticmaalay" });
+  if (exists) {
+    return res.status(400).json({ message: "Email hore ayaa loo isticmaalay" });
+  }
 
-  const uploadResult = await new Promise((resolve, reject) => {
-    cloudinary.uploader.upload_stream({ folder: "agents" }, (error, result) => {
-      if (error) reject(error);
-      else resolve(result);
-    }).end(req.file.buffer);
-  });
+  // Process image if exists
+  let imageResult;
+  if (req.file) {
+    imageResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "agents" },
+        (error, result) => error ? reject(error) : resolve(result)
+      ).end(req.file.buffer);
+    });
+  }
 
+  // Create agent
   const agent = new User({
     fullName,
     email,
@@ -163,8 +173,8 @@ export const createAgent = asyncHandler(async (req, res) => {
     address,
     password,
     role: "agent",
-    profileImageUrl: uploadResult.secure_url,
-    cloudinaryPublicId: uploadResult.public_id,
+    profileImageUrl: imageResult?.secure_url,
+    cloudinaryPublicId: imageResult?.public_id,
     totalDonation: 0,
   });
 
@@ -174,6 +184,57 @@ export const createAgent = asyncHandler(async (req, res) => {
   res.status(201).json({
     success: true,
     message: "Agent si guul leh ayaa loo abuuray",
+    data: agentData,
+  });
+});
+
+// Update agent
+export const updateAgent = asyncHandler(async (req, res) => {
+  const agent = await User.findOne({ _id: req.params.id, role: "agent" });
+  if (!agent) {
+    return res.status(404).json({ message: "Agent lama helin" });
+  }
+
+  const { fullName, email, password, phoneNumber, address } = req.body;
+
+  // Update email if changed
+  if (email && email !== agent.email) {
+    const emailExists = await User.findOne({ email });
+    if (emailExists) {
+      return res.status(400).json({ message: "Email hore ayaa loo isticmaalay" });
+    }
+    agent.email = email;
+  }
+
+  // Update other fields
+  if (fullName) agent.fullName = fullName;
+  if (password) agent.password = password;
+  if (phoneNumber) agent.phoneNumber = phoneNumber;
+  if (address) agent.address = address;
+
+  // Update image if provided
+  if (req.file) {
+    if (agent.cloudinaryPublicId) {
+      await cloudinary.uploader.destroy(agent.cloudinaryPublicId);
+    }
+    
+    const uploadResult = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { folder: "agents" },
+        (error, result) => error ? reject(error) : resolve(result)
+      ).end(req.file.buffer);
+    });
+    
+    agent.profileImageUrl = uploadResult.secure_url;
+    agent.cloudinaryPublicId = uploadResult.public_id;
+  }
+
+  const updatedAgent = await agent.save();
+  const { password: _, ...agentData } = updatedAgent.toObject();
+
+  res.json({
+    success: true,
+    message: "Xogta agent-ka waa la cusboonaysiiyay",
     data: agentData,
   });
 });
@@ -189,46 +250,6 @@ export const getAgentById = asyncHandler(async (req, res) => {
   const agent = await User.findOne({ _id: req.params.id, role: "agent" }).select("-password");
   if (!agent) return res.status(404).json({ message: "Agent lama helin" });
   res.json({ success: true, data: agent });
-});
-
-// Update agent
-export const updateAgent = asyncHandler(async (req, res) => {
-  const agent = await User.findOne({ _id: req.params.id, role: "agent" });
-  if (!agent) return res.status(404).json({ message: "Agent lama helin" });
-
-  const { fullName, email, password, phoneNumber, address } = req.body;
-
-  if (email && email !== agent.email) {
-    const emailExists = await User.findOne({ email });
-    if (emailExists) return res.status(400).json({ message: "Email hore ayaa loo isticmaalay" });
-    agent.email = email;
-  }
-
-  if (fullName) agent.fullName = fullName;
-  if (password) agent.password = password;
-  if (phoneNumber) agent.phoneNumber = phoneNumber;
-  if (address) agent.address = address;
-
-  if (req.file) {
-    if (agent.cloudinaryPublicId) await cloudinary.uploader.destroy(agent.cloudinaryPublicId);
-    const uploadResult = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream({ folder: "agents" }, (error, result) => {
-        if (error) reject(error);
-        else resolve(result);
-      }).end(req.file.buffer);
-    });
-    agent.profileImageUrl = uploadResult.secure_url;
-    agent.cloudinaryPublicId = uploadResult.public_id;
-  }
-
-  const updatedAgent = await agent.save();
-  const { password: _, ...agentData } = updatedAgent.toObject();
-
-  res.json({
-    success: true,
-    message: "Xogta agent-ka waa la cusboonaysiiyay",
-    data: agentData,
-  });
 });
 
 // Delete agent

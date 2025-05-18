@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import '../../../providers/auth_providers.dart';
 import '../../../utils/constant/validation_utils.dart';
 import '../../../utils/theme/app_color.dart';
+import '../../../utils/widgets/custom/custom_button.dart';
 import '../../../utils/widgets/custom/custom_field.dart';
 import '../../../utils/widgets/snackbar/error_scanckbar.dart';
 import '../../../utils/widgets/snackbar/success_snackbar.dart';
@@ -78,15 +79,21 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
 
   void _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    
     final authState = ref.read(authViewModelProvider);
     final viewModel = ref.read(agentViewModelProvider);
+    
     final data = {
       'fullName': _fullNameController.text,
       'email': _emailController.text,
-      'password': _passwordController.text,
       'phoneNumber': _phoneNumberController.text,
       'address': _addressController.text,
     };
+
+    // Only add password for new agents
+    if (!_isEdit) {
+      data['password'] = _passwordController.text;
+    }
 
     setState(() => _loading = true);
 
@@ -99,11 +106,24 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
           authState.user!.token,
         );
       } else {
-        await viewModel.addAgent(data, _pickedImage, authState.user!.token);
+        await viewModel.addAgent(
+          data,
+          _pickedImage,
+          authState.user!.token,
+        );
       }
-      if (mounted) Navigator.of(context).pop();
+      
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ErrorScanckbar.showSnackBar(context, e.toString());
+      }
     } finally {
-      if (mounted) setState(() => _loading = false);
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
   }
 
@@ -207,13 +227,9 @@ class _AgentFormScreenState extends ConsumerState<AgentFormScreen> {
                         const SizedBox(height: 12),
                       ],
                       const SizedBox(height: 24),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryGold,
-                          foregroundColor: AppColors.textWhite,
-                        ),
-                        onPressed: _submit,
-                        child: Text(_isEdit ? 'Update Agent' : 'Create Agent'),
+                      CustomButton(
+                        onTap: _submit,
+                        text: _isEdit ? 'Update Agent' : 'Create Agent',
                       ),
                     ],
                   ),

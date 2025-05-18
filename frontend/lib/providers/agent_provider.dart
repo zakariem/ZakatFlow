@@ -13,13 +13,13 @@ class AgentProvider extends ChangeNotifier {
   Agent? _selectedAgent;
   bool _isLoading = false;
   String? _error;
-  String? _successMessage; // <-- Add this
+  String? _successMessage;
 
   List<Agent> get agents => _agents;
   Agent? get selectedAgent => _selectedAgent;
   bool get isLoading => _isLoading;
   String? get error => _error;
-  String? get successMessage => _successMessage; // <-- Add this
+  String? get successMessage => _successMessage;
 
   void clearMessages() {
     _error = null;
@@ -36,7 +36,7 @@ class AgentProvider extends ChangeNotifier {
       _agents = await _agentsService.getAgents(token);
       _successMessage = "Agents loaded successfully";
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -52,7 +52,7 @@ class AgentProvider extends ChangeNotifier {
       _selectedAgent = await _agentsService.getAgentById(id, token);
       _successMessage = "Agent loaded successfully";
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -77,7 +77,7 @@ class AgentProvider extends ChangeNotifier {
       _agents.add(newAgent);
       _successMessage = "Agent created successfully";
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -110,7 +110,7 @@ class AgentProvider extends ChangeNotifier {
       }
       _successMessage = "Agent updated successfully";
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -130,7 +130,7 @@ class AgentProvider extends ChangeNotifier {
       }
       _successMessage = "Agent deleted successfully";
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
       notifyListeners();
