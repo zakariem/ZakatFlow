@@ -6,6 +6,7 @@ import '../../../providers/zakat_providers.dart';
 import '../../../utils/theme/app_color.dart';
 import '../../../utils/widgets/custom/custom_button.dart';
 import '../../../utils/widgets/custom/custom_dropdown.dart';
+import '../../../utils/widgets/loader.dart';
 import '../../../viewmodels/zakat/zakat_view_model.dart';
 import 'fields_section.dart';
 import 'zakat_summary_card.dart';
@@ -121,7 +122,7 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
 
             // Calculate button or loading indicator
             widget.isCalculating
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: Loader())
                 : CustomButton(
                   onTap: () async {
                     if (!formKey.currentState!.validate()) return;
@@ -186,7 +187,9 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => DonationScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => DonationScreen(amount: 2.0),
+                      ),
                     );
                   },
                   text: 'Hadda Bixi',

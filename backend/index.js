@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import userRoutes from './routes/user_route.js';
+import paymentRoutes from './routes/payment_routes.js';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 app.use('/api/user', userRoutes);
+app.use('/api/payments', paymentRoutes);
 
 app.get('/', (req, res) => {
     res.send('API is running...');

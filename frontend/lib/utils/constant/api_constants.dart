@@ -15,4 +15,7 @@ class ApiConstants {
 
   //Agents
   static const String agents = '$baseUrl/api/user/agents';
+
+  //Payments
+  static const String payments = '$baseUrl/api/payments';
 }
