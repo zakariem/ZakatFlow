@@ -6,6 +6,8 @@ import '../../../providers/auth_providers.dart';
 import '../../../providers/payment_provider.dart';
 import '../../../utils/theme/app_color.dart';
 import '../../../utils/widgets/loader.dart';
+import '../../../utils/widgets/snackbar/error_scanckbar.dart';
+import '../../../utils/widgets/snackbar/success_snackbar.dart';
 import '../../../viewmodels/agent_view_model.dart';
 import '../../../viewmodels/payment_viewmodel.dart';
 
@@ -48,9 +50,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
   Future<void> _handleSubmit() async {
     final phoneNumber = _phoneController.text.trim();
     if (selectedAgentId == null || phoneNumber.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Dooro Hay\'ada')));
+      ErrorScanckbar.showSnackBar(context, 'Dooro Hay\'ada');
       return;
     }
 
@@ -84,13 +84,9 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
     ref.listen<PaymentState>(paymentNotifierProvider, (prev, next) {
       if (!next.isLoading) {
         if (next.error != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(next.error!)));
+          ErrorScanckbar.showSnackBar(context, next.error!);
         } else if (next.data != null) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Payment successful!')));
+          SuccessSnackbar.showSnackBar(context, 'Payment successful!');
         }
       }
     });
@@ -162,7 +158,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
               keyboardType: TextInputType.phone,
               validator: ValidationUtils.validatePhoneNumber,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/payment_model.dart';
 import '../services/payment_service.dart';
@@ -51,7 +50,10 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
       } else {
         state = state.copyWith(
           isLoading: false,
-          error: '${responseBody['message']}',
+          error:
+              responseBody['message'] == 'RCS_USER_REJECTED'
+                  ? 'Waad joojisay lacag bixin mar labad is ku day'
+                  : '${responseBody['message']}',
         );
       }
     } catch (e) {
