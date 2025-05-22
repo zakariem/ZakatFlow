@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/constant/validation_utils.dart';
 import 'package:frontend/utils/widgets/custom/custom_field.dart';
 import '../../../providers/auth_providers.dart';
+import '../../../providers/client_navigation_provider.dart';
 import '../../../providers/payment_provider.dart';
 import '../../../utils/theme/app_color.dart';
 import '../../../utils/widgets/loader.dart';
 import '../../../utils/widgets/snackbar/error_scanckbar.dart';
-import '../../../utils/widgets/snackbar/success_snackbar.dart';
 import '../../../viewmodels/agent_view_model.dart';
 import '../../../viewmodels/payment_viewmodel.dart';
 
@@ -86,7 +86,9 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
         if (next.error != null) {
           ErrorScanckbar.showSnackBar(context, next.error!);
         } else if (next.data != null) {
-          SuccessSnackbar.showSnackBar(context, 'Payment successful!');
+          // Navigate to HistoryScreen with success message
+          Navigator.of(context).pop();
+          ref.read(clientNavigationProvider.notifier).setIndex(2);
         }
       }
     });

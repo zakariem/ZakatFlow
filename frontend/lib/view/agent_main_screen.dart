@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/widgets/loader.dart';
 import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
+import 'package:frontend/utils/widgets/snackbar/success_snackbar.dart';
 import '../providers/auth_providers.dart';
+import '../providers/history_provider.dart';
 import '../utils/theme/app_color.dart';
-import '../utils/widgets/snackbar/success_snackbar.dart';
 import '../viewmodels/agent_view_model.dart';
+import '../viewmodels/history_viewmodel.dart';
 import 'auth/login_screen.dart';
 
 class AgentMainScreen extends ConsumerStatefulWidget {
@@ -19,29 +21,31 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchAgent();
+    _loadData();
   }
 
-  Future<void> _fetchAgent() async {
+  Future<void> _loadData() async {
     final authState = ref.read(authViewModelProvider);
     final agentViewModel = ref.read(agentViewModelProvider);
+    final historyVm = ref.read(historyViewModelProvider);
     final user = authState.user;
+
     if (user == null) return;
 
+    // Load agent
     await agentViewModel.selectAgent(user.id, user.token);
 
-    if (!mounted) return; // Exit early if widget is disposed
+    if (!mounted) return;
 
-    final error = agentViewModel.error;
-    final success = agentViewModel.successMessage;
-
-    if (error != null) {
-      ErrorScanckbar.showSnackBar(context, error);
-      await agentViewModel.clearMessages();
-    } else if (success != null) {
-      SuccessSnackbar.showSnackBar(context, success);
-      await agentViewModel.clearMessages();
+    if (agentViewModel.error != null) {
+      ErrorScanckbar.showSnackBar(context, agentViewModel.error!);
+    } else if (agentViewModel.successMessage != null) {
+      SuccessSnackbar.showSnackBar(context, agentViewModel.successMessage!);
     }
+    await agentViewModel.clearMessages();
+
+    // Load payment history
+    await historyVm.loadHistory(user.token, HistoryRole.agent);
   }
 
   @override
@@ -54,20 +58,19 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
       backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         backgroundColor: AppColors.backgroundLight,
-        leading:
-            agent?.profileImageUrl != null
-                ? Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(agent!.profileImageUrl!),
-                  ),
-                )
-                : const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircleAvatar(child: Icon(Icons.person)),
-                ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            backgroundImage: agent?.profileImageUrl != null
+                ? NetworkImage(agent!.profileImageUrl!)
+                : null,
+            child: agent?.profileImageUrl == null
+                ? const Icon(Icons.person)
+                : null,
+          ),
+        ),
         title: Text(
-          agent?.fullName ?? '',
+          agent?.fullName ?? 'Agent',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -75,7 +78,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh',
-            onPressed: _fetchAgent,
+            onPressed: _loadData,
           ),
           IconButton(
             icon: const Icon(Icons.logout),
@@ -85,85 +88,137 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
                 await ref.read(authViewModelProvider.notifier).logout();
                 if (!mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (_) => false,
                 );
-              } catch (error) {
+              } catch (e) {
                 if (!mounted) return;
-                ErrorScanckbar.showSnackBar(context, 'Logout failed: $error');
+                ErrorScanckbar.showSnackBar(context, 'Logout failed: $e');
               }
             },
           ),
         ],
       ),
-      body:
-          isLoading
-              ? const Center(child: Loader())
-              : agent == null
-              ? const Center(child: Text('Hay\'ad mala helin'))
+      body: isLoading
+          ? const Center(child: Loader())
+          : agent == null
+              ? const Center(child: Text("Hay'ad lama helin"))
               : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryGold,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          children: [
-                            const Text(
-                              "Total Donations",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textWhite,
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              "\$${agent.totalDonation ?? 0} USD",
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textWhite,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Row(
-                      children: const [
-                        Expanded(child: Divider()),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            "Dadka lacag noo soo direen",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Expanded(child: Divider()),
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildAgentDonationCard(agent.totalDonation ?? 0),
+                        const SizedBox(height: 32),
+                        const DividerWithText("Dadka lacag noo soo direen"),
+                        const SizedBox(height: 16),
+                        _buildPaymentHistory(),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    const Center(
-                      child: Text(
-                        "Not found",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
+    );
+  }
+
+  Widget _buildAgentDonationCard(double totalDonation) {
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      color: AppColors.primaryGold,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            const Text(
+              "Total Donations",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textWhite,
               ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "\$$totalDonation USD",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textWhite,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPaymentHistory() {
+    final historyVm = ref.watch(historyViewModelProvider);
+
+    if (historyVm.isLoading) return const Center(child: Loader());
+
+    if (historyVm.error != null) {
+      return Center(
+        child: Text("Error: ${historyVm.error}", style: const TextStyle(color: Colors.red)),
+      );
+    }
+
+    if (historyVm.history.isEmpty) {
+      return const Center(
+        child: Text("No payments found.", style: TextStyle(color: Colors.grey)),
+      );
+    }
+
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: historyVm.history.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final payment = historyVm.history[index];
+        return Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 2,
+          child: ListTile(
+            leading: const Icon(Icons.person, color: AppColors.primaryGold),
+            title: Text(payment.userFullName, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Account: ${payment.userAccountNo}"),
+                Text("Amount: ${payment.amount} ${payment.currency}"),
+                Text("Date: ${payment.paidAt.toLocal()}"),
+              ],
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.payment, size: 18),
+                Text(payment.paymentMethod, style: const TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class DividerWithText extends StatelessWidget {
+  final String text;
+  const DividerWithText(this.text, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(child: Divider()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        const Expanded(child: Divider()),
+      ],
     );
   }
 }

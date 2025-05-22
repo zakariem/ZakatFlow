@@ -7,7 +7,7 @@ class Agent {
   final String role;
   final String? profileImageUrl;
   final String? cloudinaryPublicId;
-  final int? totalDonation;
+  final double? totalDonation;
 
   Agent({
     required this.id,
@@ -26,8 +26,8 @@ class Agent {
       id: json['_id'] ?? '',
       fullName: json['fullName'] ?? '',
       email: json['email'] ?? '',
-      phoneNumber: json['phoneNumber']?? '',
-      address: json['address']?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      address: json['address'] ?? '',
       role: json['role'] ?? '',
       profileImageUrl: json['profileImageUrl'],
       cloudinaryPublicId: json['cloudinaryPublicId'],

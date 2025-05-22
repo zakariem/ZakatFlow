@@ -21,6 +21,26 @@ final wagesProvider = StateProvider<String>((ref) => '0');
 final taxesProvider = StateProvider<String>((ref) => '0');
 final showMoreSummaryProvider = StateProvider<bool>((ref) => false);
 
+void resetZakatProviders(WidgetRef ref) {
+  ref.invalidate(basisProvider);
+  ref.invalidate(goldValueProvider);
+  ref.invalidate(silverValueProvider);
+  ref.invalidate(cashValueProvider);
+  ref.invalidate(camelValueProvider);
+  ref.invalidate(cowValueProvider);
+  ref.invalidate(sheepValueProvider);
+  ref.invalidate(depositedProvider);
+  ref.invalidate(loansProvider);
+  ref.invalidate(investmentsProvider);
+  ref.invalidate(stockProvider);
+  ref.invalidate(borrowedProvider);
+  ref.invalidate(wagesProvider);
+  ref.invalidate(taxesProvider);
+  ref.invalidate(showMoreSummaryProvider);
+  ref.invalidate(metalPricesProvider);
+}
+
+
 final metalPricesProvider = FutureProvider<Map<String, double>>((ref) async {
   const storageKey = 'metal_prices';
   const timestampKey = 'metal_prices_timestamp';

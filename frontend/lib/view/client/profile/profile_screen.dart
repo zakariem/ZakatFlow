@@ -5,6 +5,7 @@ import 'package:frontend/utils/widgets/loader.dart';
 import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
 import 'package:frontend/view/client/profile/profile_update_view.dart';
 import '../../../providers/auth_providers.dart';
+import '../../../providers/zakat_providers.dart';
 import '../../../utils/theme/app_color.dart';
 import '../../auth/login_screen.dart';
 import 'upload_screen.dart';
@@ -23,6 +24,8 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   void _handleLogout() async {
     try {
+      // Reset all zakat-related providers
+      resetZakatProviders(ref);
       await ref.read(authViewModelProvider.notifier).logout();
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
@@ -38,6 +41,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   void _handleDeleteAccount() async {
     try {
+      // Reset all zakat-related providers
+      resetZakatProviders(ref);
       await ref.read(authViewModelProvider.notifier).deleteAccount();
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(

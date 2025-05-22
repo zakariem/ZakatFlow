@@ -60,12 +60,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                state.isAdmin
-                    ? const AdminMainScreen()
-                    : (role == 'agent'
-                        ? const AgentMainScreen()
-                        : const ClientMainScreen()),
+            builder:
+                (context) =>
+                    state.isAdmin
+                        ? const AdminMainScreen()
+                        : (role == 'agent'
+                            ? const AgentMainScreen()
+                            : const ClientMainScreen()),
           ),
         );
       } else {

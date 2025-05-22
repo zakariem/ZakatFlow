@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:frontend/utils/widgets/custom/custom_field.dart';
 import 'package:frontend/view/client/donate/donate_screen.dart';
 import 'package:intl/intl.dart';
 import '../../../providers/zakat_providers.dart';
@@ -8,7 +9,6 @@ import '../../../utils/widgets/custom/custom_button.dart';
 import '../../../utils/widgets/custom/custom_dropdown.dart';
 import '../../../utils/widgets/loader.dart';
 import '../../../viewmodels/zakat/zakat_view_model.dart';
-import 'fields_section.dart';
 import 'zakat_summary_card.dart';
 
 class CalculateForm extends ConsumerStatefulWidget {
@@ -37,6 +37,25 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
   double _totalAssets = 0.0;
   double _computedZakat = 0.0;
 
+  final List<Map<String, dynamic>> fields = [
+    {'label': 'Miisaanka dahabka (grams)', 'provider': goldValueProvider},
+    {'label': 'Miisaanka qalinka (grams)', 'provider': silverValueProvider},
+    {'label': 'Lacagta (gacanta iyo bangiga)', 'provider': cashValueProvider},
+    {
+      'label': 'Lacagta lagu deponay mustaqbalka',
+      'provider': depositedProvider,
+    },
+    {'label': 'Deyn bixinta', 'provider': loansProvider},
+    {
+      'label': 'Maalgashiga ganacsiga, saamiyada, mushaharka hawlgabka',
+      'provider': investmentsProvider,
+    },
+    {'label': 'Qiimaha saamiyada (shares)', 'provider': stockProvider},
+    {'label': 'Lacag ama alaab lagu amaahdo', 'provider': borrowedProvider},
+    {'label': 'Mushaarka loo leeyahay shaqaalaha', 'provider': wagesProvider},
+    {'label': 'Cashuuraha iyo kirada', 'provider': taxesProvider},
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -44,20 +63,8 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
   }
 
   void _initControllers() {
-    final providers = [
-      goldValueProvider,
-      silverValueProvider,
-      cashValueProvider,
-      depositedProvider,
-      loansProvider,
-      investmentsProvider,
-      stockProvider,
-      borrowedProvider,
-      wagesProvider,
-      taxesProvider,
-    ];
-
-    for (var provider in providers) {
+    for (var field in fields) {
+      final provider = field['provider'] as StateProvider<String>;
       final initialText = ref.read(provider);
       final controller = TextEditingController(text: initialText);
       controller.addListener(() {
@@ -78,8 +85,17 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(zakatViewModelProvider);
+    final basis = ref.watch(basisProvider);
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
+
+    final filteredFields =
+        fields.where((field) {
+          final provider = field['provider'] as StateProvider<String>;
+          if (provider == goldValueProvider) return basis == 'Dahab';
+          if (provider == silverValueProvider) return basis == 'Qalin';
+          return true;
+        }).toList();
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
@@ -117,23 +133,44 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
               provider: basisProvider,
               options: ['Dahab', 'Qalin'],
             ),
-            ...buildFields(ref, controllers),
+            const SizedBox(height: 20),
+
+            ...filteredFields.map((field) {
+              final label = field['label'] as String;
+              final provider = field['provider'] as StateProvider<String>;
+              final controller = controllers[provider]!;
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CustomField(
+                  controller: controller,
+                  keyboardType: TextInputType.number,
+                  labelText: label,
+                  hintText: 'Fadlan geli $label',
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Fadlan geli $label';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Fadlan geli tiro sax ah';
+                    }
+                    return null;
+                  },
+                ),
+              );
+            }),
+
             const SizedBox(height: 30),
 
-            // Calculate button or loading indicator
             widget.isCalculating
                 ? const Center(child: Loader())
                 : CustomButton(
                   onTap: () async {
                     if (!formKey.currentState!.validate()) return;
 
-                    // Start calculation
                     widget.onCalculationStart();
-
-                    // Simulate delay
                     await Future.delayed(const Duration(seconds: 1));
 
-                    // Perform zakat calculation
                     final zakatMap = viewModel.calculateZakat(
                       widget.metalPrices,
                     );
@@ -146,7 +183,6 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
                       _showResult = true;
                     });
 
-                    // End calculation
                     widget.onCalculationEnd();
                   },
                   text: 'Xisaabi Zakaatul Maal',
@@ -154,7 +190,6 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
 
             const SizedBox(height: 20),
 
-            // Display results after first calculation
             if (_showResult) ...[
               ListTile(
                 contentPadding: EdgeInsets.zero,
@@ -162,8 +197,8 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
                 trailing: Text(
                   '\$${NumberFormat('#,##0.00').format(_totalAssets)} USD',
                   style: const TextStyle(
-                    fontSize: 18, // Increased font size
-                    fontWeight: FontWeight.bold, // Bolder font
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -178,17 +213,15 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 10),
-
-              // Pay Now button only if zakat > 0
               if (_computedZakat > 0)
                 CustomButton(
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DonationScreen(amount: 2.0),
+                        builder:
+                            (context) => DonationScreen(amount: _computedZakat),
                       ),
                     );
                   },

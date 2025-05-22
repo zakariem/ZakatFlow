@@ -79,8 +79,8 @@ export const createPayment = asyncHandler(async (req, res) => {
         state: params.state,
         responseCode,
         responseMsg,
-        merchantCharges: parseFloat(params.merchantCharges),
-        txAmount: parseFloat(params.txAmount)
+        merchantCharges: isNaN(parseFloat(params.merchantCharges)) ? 0 : parseFloat(params.merchantCharges || 0),
+        txAmount: isNaN(parseFloat(params.txAmount)) ? 0 : parseFloat(params.txAmount || 0)
       },
       paidAt: new Date()
     });
