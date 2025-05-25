@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/theme/app_color.dart' show AppColors;
+import 'package:hijri/hijri_calendar.dart';
 import '../../../utils/widgets/loader.dart';
 import '../../../viewmodels/agent_view_model.dart';
 import '../../../providers/auth_providers.dart';
@@ -16,9 +17,12 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late HijriCalendar _hijriDate;
+
   @override
   void initState() {
     super.initState();
+    _hijriDate = HijriCalendar.now();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadAgents();
     });
@@ -28,7 +32,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final authState = ref.read(authViewModelProvider);
     final agentViewModel = ref.read(agentViewModelProvider);
     agentViewModel.loadAgents(authState.user!.token);
-    }
+  }
 
   final List<String> agents = [
     'Al-Ihsaan Foundation',
@@ -40,6 +44,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   final List<Map<String, String>> xadiithList = [
     {
+      'text': 'خذ من أموالهم صدقة تطهرهم وتزكيهم بها',
+      'translation':
+          'Ka qaado xoolahooda sadaqo aad ku daahiriso oo ku saafiso. - Suuratul Tawbah 9:103',
+    },
+    {
+      'text': 'وأقيموا الصلاة وآتوا الزكاة',
+      'translation':
+          'Aqiimaa salaadda oo bixiya Zakaadda. - Suuratul Baqarah 2:43',
+    },
+    {
       'text': 'الصدقة تطفئ غضب الرب وتدفع ميتة السوء',
       'translation':
           'Sadaqadu way damisaa xanaaqa Rabbiga waxayna ka ilaalisaa dhimashada xun. - Xadiithka Tirmidhi',
@@ -49,14 +63,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       'translation': 'Hanti kama yaraato sadaqo darteed. - Sahih Muslim',
     },
     {
-      'text': 'فضل المال بما أدخله الله عليه من الزكاة',
+      'text': 'والذين في أموالهم حق معلوم للسائل والمحروم',
       'translation':
-          'Fadliga maal waxaa sabab u ah in Zakaatku nadiifiso. - Xadiith',
+          'Kuwa xoolahooda ku jira xaq la yaqaan oo loogu talagalay masaakiinta iyo baahiyaysan. - Suuratul Ma\'aarij 70:24-25',
     },
     {
-      'text': 'خذ من أموالهم صدقة تطهرهم',
+      'text': 'مثل الذين ينفقون أموالهم في سبيل الله كمثل حبة أنبتت سبع سنابل',
       'translation':
-          'Ka qaado xoolahooda sadaqo aad ku daahiriso. - Al-Qurʼaan 9:103',
+          'Kuwa xoolahooda jidka Allaah ugu bixiya waxay u ekaadaan sida iniino baxday toddoba sabuul. - Suuratul Baqarah 2:261',
+    },
+    {
+      'text': 'من أدى زكاة ماله فقد ذهب عنه شره',
+      'translation':
+          'Kii bixiyay Zakaadda maalkiisa, waxaa ka tagay xumaantiisa. - Xadiithka Ibn Khuzaymah',
+    },
+    {
+      'text': 'وما تنفقوا من خير فلأنفسكم',
+      'translation':
+          'Wax kasta oo wanaagsan oo aad bixisaan, waxaa loo bixiyaa naftiinna. - Suuratul Baqarah 2:272',
+    },
+    {
+      'text': 'يمحق الله الربا ويربي الصدقات',
+      'translation':
+          'Allaah wuxuu baabbi\'iyaa ribada wuxuuna kordhiyaa sadaqooyinka. - Suuratul Baqarah 2:276',
+    },
+    {
+      'text': 'الصدقة برهان',
+      'translation': 'Sadaqadu waa caddayn (iimaan). - Sahih Muslim',
     },
   ];
 
@@ -107,7 +140,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   Icon(Icons.calendar_today, color: AppColors.textSecondary),
                   const SizedBox(width: 8),
                   Text(
-                    'Taariikhda Hijri: 15 Ramadan 1446 AH',
+                    'Taariikhda Hijri: ${_hijriDate.hDay} ${_getHijriMonthName(_hijriDate.hMonth)} ${_hijriDate.hYear} AH',
                     style: TextStyle(
                       fontSize: 16,
                       color: AppColors.textSecondary,
@@ -133,9 +166,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               _buildAgentsCarousel(),
               const SizedBox(height: 24),
 
-              // Xadiith Section
+              // Xadiith and Ayat Section
               Text(
-                'Xadiithyo ku saabsan Zakaat',
+                'Aayado iyo Xadiithyo ku saabsan Zakaat iyo Sadaqo',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -355,6 +388,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             );
           }).toList(),
     );
+  }
+
+  String _getHijriMonthName(int month) {
+    const List<String> hijriMonths = [
+      'Muharram',
+      'Safar',
+      'Rabii al-Awwal',
+      'Rabii al-Thani',
+      'Jumada al-Awwal',
+      'Jumada al-Thani',
+      'Rajab',
+      'Sha\'ban',
+      'Ramadan',
+      'Shawwal',
+      'Dhul Qi\'dah',
+      'Dhul Hijjah',
+    ];
+    return hijriMonths[month - 1];
   }
 
   Widget _buildSectionHeader({
