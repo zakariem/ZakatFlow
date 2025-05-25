@@ -10,10 +10,10 @@ import 'client/profile/profile_screen.dart';
 class ClientMainScreen extends ConsumerWidget {
   const ClientMainScreen({super.key});
 
-  static const List<Widget> _screens = [
+  static final List<Widget> _screens = [
     HomeScreen(),
     TabScreen(),
-   
+
     HistoryScreen(),
     ProfileScreen(),
   ];
