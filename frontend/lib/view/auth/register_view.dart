@@ -62,7 +62,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             builder:
                 (context) =>
                     state.isAdmin
-                        ? const AdminMainScreen()
+                        ? AdminMainScreen(token: state.user!.token)
                         : const ClientMainScreen(),
           ),
           (route) => false,

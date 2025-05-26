@@ -60,4 +60,61 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
       state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
+
+  Future<void> getAllPayments() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _service.getAllPayments(token);
+      final responseBody = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(isLoading: false, data: responseBody['data']);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: responseBody['message'] ?? 'Failed to fetch payments',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  Future<void> getUserPayments() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _service.getUserPayments(token);
+      final responseBody = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(isLoading: false, data: responseBody['data']);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: responseBody['message'] ?? 'Failed to fetch user payments',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
+
+  Future<void> getAgentPayments() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final response = await _service.getAgentPayments(token);
+      final responseBody = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        state = state.copyWith(isLoading: false, data: responseBody['data']);
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: responseBody['message'] ?? 'Failed to fetch agent payments',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+    }
+  }
 }

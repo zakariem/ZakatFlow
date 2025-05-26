@@ -63,7 +63,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             builder:
                 (context) =>
                     state.isAdmin
-                        ? const AdminMainScreen()
+                        ?  AdminMainScreen(token: state.user!.token)
                         : (role == 'agent'
                             ? const AgentMainScreen()
                             : const ClientMainScreen()),

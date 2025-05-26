@@ -29,7 +29,7 @@ class AuthGate extends ConsumerWidget {
     final role = authState.user?.role.toLowerCase();
     debugPrint(role);
     if (authState.isAdmin) {
-      return const AdminMainScreen();
+      return AdminMainScreen(token: authState.user!.token);
     } else if (role == 'agent') {
       return const AgentMainScreen();
     } else {
