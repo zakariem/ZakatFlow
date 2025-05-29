@@ -57,16 +57,11 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
       print(
         'Payment state changed: isLoading=${next.isLoading}, error=${next.error}, data=${next.data != null}',
       );
-      if (!next.isLoading) {
-        if (next.error != null) {
-          print('Payment error: ${next.error}');
-          ErrorScanckbar.showSnackBar(context, next.error!);
-        } else if (next.data != null) {
-          // Success - navigate back
-          Navigator.pop(context);
-          ref.read(clientNavigationProvider.notifier).setIndex(2);
-        }
+      if (!next.isLoading && next.error != null) {
+        print('Payment error: ${next.error}');
+        ErrorScanckbar.showSnackBar(context, next.error!);
       }
+      // Note: Success case is handled in _handleDonation method
     });
 
     return Scaffold(
@@ -119,6 +114,10 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                                     selectedAgent.profileImageUrl!,
                                   ),
                                   fit: BoxFit.cover,
+                                  onError: (exception, stackTrace) {
+                                    print('Error loading image: $exception');
+                                    return;
+                                  },
                                 )
                                 : null,
                         color:
@@ -422,12 +421,28 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
 
       if (!context.mounted) return;
 
+      // Create donation data to pass to history screen
+      final donationData = {
+        'userFullName': user.fullName,
+        'userAccountNo': phoneNumber,
+        'agentId': selectedAgent.id,
+        'agentName': selectedAgent.fullName,
+        'amount': amount,
+        'currency': 'USD',
+      };
+
       // Success: close dialogs and navigate
       Navigator.pop(dialogContext); // close payment dialog
+      Navigator.pop(context);
 
       // Clear input fields
       _amountController.clear();
       _phoneController.clear();
+
+      // Navigate to history tab with donation data
+      ref
+          .read(clientNavigationProvider.notifier)
+          .setIndex(2, donationData: donationData);
     } catch (e) {
       if (!context.mounted) return;
 

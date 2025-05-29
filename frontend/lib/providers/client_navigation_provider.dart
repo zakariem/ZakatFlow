@@ -1,12 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final clientNavigationProvider = StateNotifierProvider<NavigationNotifier, int>(
-  (ref) => NavigationNotifier(),
-);
+class NavigationState {
+  final int index;
+  final Map<String, dynamic>? donationData;
 
-class NavigationNotifier extends StateNotifier<int> {
-  NavigationNotifier() : super(0);
+  NavigationState({required this.index, this.donationData});
+}
 
-  void setIndex(int index) => state = index;
-  void reset() => state = 0;
+final clientNavigationProvider =
+    StateNotifierProvider<NavigationNotifier, NavigationState>(
+      (ref) => NavigationNotifier(),
+    );
+
+class NavigationNotifier extends StateNotifier<NavigationState> {
+  NavigationNotifier() : super(NavigationState(index: 0));
+
+  void setIndex(int index, {Map<String, dynamic>? donationData}) =>
+      state = NavigationState(index: index, donationData: donationData);
+
+  void reset() => state = NavigationState(index: 0);
 }

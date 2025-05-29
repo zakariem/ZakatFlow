@@ -86,9 +86,26 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
         if (next.error != null) {
           ErrorScanckbar.showSnackBar(context, next.error!);
         } else if (next.data != null) {
-          // Navigate to HistoryScreen with success message
+          // Create donation data to pass to history screen
+          final agent = ref
+              .read(agentViewModelProvider)
+              .agents
+              .firstWhere((a) => a.id == selectedAgentId);
+          
+          final donationData = {
+            'userFullName': ref.read(authViewModelProvider).user!.fullName,
+            'userAccountNo': _phoneController.text.trim(),
+            'agentId': agent.id,
+            'agentName': agent.fullName,
+            'amount': widget.amount,
+            'currency': 'USD',
+          };
+          
+          // Navigate back
           Navigator.of(context).pop();
-          ref.read(clientNavigationProvider.notifier).setIndex(2);
+          
+          // Set index to history tab and pass donation data
+          ref.read(clientNavigationProvider.notifier).setIndex(2, donationData: donationData);
         }
       }
     });
@@ -175,12 +192,12 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
                 onPressed: paymentState.isLoading ? null : _handleSubmit,
                 child:
                     paymentState.isLoading
-                        ? Loader() // You can customize this Loader
+                        ? const Loader() // You can customize this Loader
                         : Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
-                            Icon(Icons.payment, color: AppColors.primaryGold),
+                            Icon(Icons.payment, color: Colors.white),
                             SizedBox(width: 8),
                             Text('Bixid'),
                           ],

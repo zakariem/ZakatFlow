@@ -103,136 +103,244 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
-        title: Text(
-          'ZakatFlow',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
+        title: CircleAvatar(
+          backgroundColor: Colors.transparent,
+          radius: 20,
+          backgroundImage: AssetImage('assets/images/app.png'),
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome and Intro
-              Text(
-                'Ku soo dhawoow Barnaamijka ZakatFlow!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Hero Section with Gradient Background
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 30, 20, 40),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    AppColors.primaryGold.withOpacity(0.15),
+                    AppColors.backgroundLight,
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Halkan waxaad ka xisaabin kartaa Zakaat-kaaga maal iyo xoolo, kadibna waxaad u diri kartaa hay\'adaha aad dooratay.',
-                style: TextStyle(fontSize: 16, color: AppColors.textGray),
-              ),
-              const SizedBox(height: 24),
-
-              // Islamic Date
-              Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.calendar_today, color: AppColors.textSecondary),
-                  const SizedBox(width: 8),
+                  // Welcome Text with Animation
+                  TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 800),
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.translate(
+                          offset: Offset(0, 20 * (1 - value)),
+                          child: Text(
+                            'Ku soo dhawoow Barnaamijka ZakatFlow!',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  // Description Text
                   Text(
-                    'Taariikhda Hijri: ${_hijriDate.hDay} ${_getHijriMonthName(_hijriDate.hMonth)} ${_hijriDate.hYear} AH',
+                    'Halkan waxaad ka xisaabin kartaa Zakaat-kaaga maal iyo xoolo, kadibna waxaad u diri kartaa hay\'adaha aad dooratay.',
                     style: TextStyle(
                       fontSize: 16,
-                      color: AppColors.textSecondary,
+                      color: AppColors.textGray,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  // Islamic Date Card
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryBeige.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.shadowLight.withOpacity(0.1),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          color: AppColors.primaryGold,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Taariikhda Hijri: ${_hijriDate.hDay} ${_getHijriMonthName(_hijriDate.hMonth)} ${_hijriDate.hYear} AH',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+            ),
 
-              // Hay'adaha Section
-              _buildSectionHeader(
-                title: 'Hay\'adaha',
-                onViewAll: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AllAgentsScreen(),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              _buildAgentsCarousel(),
-              const SizedBox(height: 24),
+            // Quick Actions Section
 
-              // Xadiith and Ayat Section
-              Text(
-                'Aayado iyo Xadiithyo ku saabsan Zakaat iyo Sadaqo',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 180,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 6),
-                  enlargeCenterPage: true,
-                ),
-                items:
-                    xadiithList.map((xadiith) {
-                      return Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryBeige,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.shadowLight,
-                              blurRadius: 6,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              xadiith['text']!,
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primaryBlack,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              xadiith['translation']!,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: AppColors.textGray,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+            // Hay'adaha Section with Enhanced Design
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader(
+                    title: 'Hay\'adaha',
+                    onViewAll: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AllAgentsScreen(),
                         ),
                       );
-                    }).toList(),
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  _buildAgentsCarousel(),
+                ],
               ),
-              const SizedBox(height: 40),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // Xadiith and Ayat Section with Enhanced Design
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Aayado iyo Xadiithyo',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Ku saabsan Zakaat iyo Sadaqo',
+                    style: TextStyle(fontSize: 14, color: AppColors.textGray),
+                  ),
+                  const SizedBox(height: 15),
+                  _buildEnhancedXadiithCarousel(),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 40),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildEnhancedXadiithCarousel() {
+    return CarouselSlider(
+      options: CarouselOptions(
+        height: 200,
+        autoPlay: true,
+        autoPlayInterval: const Duration(seconds: 6),
+        enlargeCenterPage: true,
+        viewportFraction: 0.85,
+        aspectRatio: 16 / 9,
+      ),
+      items:
+          xadiithList.map((xadiith) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5.0),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.secondaryBeige,
+                    AppColors.secondaryBeige.withOpacity(0.8),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.shadowLight.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Stack(
+                children: [
+                  // Decorative elements
+                  Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Icon(
+                      Icons.format_quote,
+                      color: AppColors.primaryGold.withOpacity(0.2),
+                      size: 40,
+                    ),
+                  ),
+                  // Content
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          xadiith['text']!,
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryBlack,
+                            height: 1.4,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          xadiith['translation']!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textGray,
+                            height: 1.4,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
     );
   }
 
@@ -242,19 +350,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final isLoading = agentViewModel.isLoading;
 
     if (isLoading) {
-      return SizedBox(height: 160, child: const Center(child: Loader()));
+      return SizedBox(height: 180, child: const Center(child: Loader()));
     }
 
     if (agents.isEmpty) {
       return Container(
-        height: 160,
+        height: 180,
         decoration: BoxDecoration(
-          color: AppColors.accentLightGold,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadowLight,
-              blurRadius: 6,
+              color: AppColors.shadowLight.withOpacity(0.1),
+              blurRadius: 8,
               offset: const Offset(0, 3),
             ),
           ],
@@ -263,12 +371,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.business_outlined,
-                size: 40,
-                color: AppColors.textSecondary,
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.accentLightGold.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.business_outlined,
+                  size: 40,
+                  color: AppColors.textSecondary,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Text(
                 'Hay\'ad lama helin',
                 style: TextStyle(
@@ -276,6 +391,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Fadlan ku soo noqo mar dambe',
+                style: TextStyle(fontSize: 14, color: AppColors.textGray),
               ),
             ],
           ),
@@ -285,10 +405,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     return CarouselSlider(
       options: CarouselOptions(
-        height: 160,
+        height: 180,
         autoPlay: true,
         autoPlayInterval: const Duration(seconds: 4),
         enlargeCenterPage: true,
+        viewportFraction: 0.8,
       ),
       items:
           agents.take(5).map((agent) {
@@ -302,20 +423,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 );
               },
               child: Container(
-                width: MediaQuery.of(context).size.width * 0.8,
-                margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                margin: const EdgeInsets.symmetric(horizontal: 5.0),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.shadowLight,
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
+                      color: AppColors.shadowLight.withOpacity(0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   child: Stack(
                     children: [
                       // Background Image or Color
@@ -332,7 +452,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   : null,
                           color:
                               agent.profileImageUrl == null
-                                  ? AppColors.accentLightGold
+                                  ? AppColors.accentLightGold.withOpacity(0.2)
                                   : null,
                         ),
                         child:
@@ -355,29 +475,41 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              Colors.black.withOpacity(0.6),
+                              Colors.black.withOpacity(0.7),
                             ],
+                            stops: const [0.6, 1.0],
                           ),
                         ),
                       ),
 
-                      // Agent Name
+                      // Agent Name with improved styling
                       Positioned(
                         bottom: 0,
                         left: 0,
                         right: 0,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            agent.fullName,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(16, 30, 16, 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                agent.fullName,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 3.0,
+                                      color: Colors.black45,
+                                      offset: Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -425,12 +557,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         ),
         TextButton(
           onPressed: onViewAll,
-          child: Text(
-            'Dhammaan',
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
+          style: TextButton.styleFrom(
+            foregroundColor: AppColors.textSecondary,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
             ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Dhammaan',
+                style: TextStyle(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 12,
+                color: AppColors.textSecondary,
+              ),
+            ],
           ),
         ),
       ],
