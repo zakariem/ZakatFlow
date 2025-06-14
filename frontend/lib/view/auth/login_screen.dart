@@ -92,103 +92,262 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: size.width * 0.1),
-        child:
-            authState.isLoading
-                ? const Loader()
-                : LayoutBuilder(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFF7F1E3), // Light beige
+              Color(0xFFFFFFFF), // White
+              Color(0xFFF9F9F9), // Light gray
+            ],
+            stops: [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: SafeArea(
+          child: authState.isLoading
+              ? const Loader()
+              : LayoutBuilder(
                   builder: (context, constraints) {
                     return SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
                           minHeight: constraints.maxHeight,
                         ),
-                        child: Center(
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(height: size.height * 0.05),
-                                Text(
-                                  'Soo gal',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: size.width * 0.08,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textPrimary,
-                                  ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: size.width * 0.08,
+                            vertical: size.height * 0.02,
+                          ),
+                          child: Column(
+                            children: [
+                              // App Logo Section
+                              Container(
+                                margin: EdgeInsets.only(
+                                  top: size.height * 0.06,
+                                  bottom: size.height * 0.04,
                                 ),
-                                SizedBox(height: size.height * 0.02),
-                                Text(
-                                  'Salaan, ku soo dhawoow mar kale, waan kuu xiiseynay',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: size.width * 0.04,
-                                    color: AppColors.textGray,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: size.height * 0.05),
-                                CustomField(
-                                  controller: _emailController,
-                                  hintText: 'Email',
-                                  validator: ValidationUtils.validateEmail,
-                                  keyboardType: TextInputType.emailAddress,
-                                ),
-                                SizedBox(height: size.height * 0.023),
-                                CustomField(
-                                  controller: _passwordController,
-                                  hintText: 'Password',
-                                  isPassword: true,
-                                  obscureText: _isObscure,
-                                  toggleVisibility: () {
-                                    setState(() {
-                                      _isObscure = !_isObscure;
-                                    });
-                                  },
-                                  validator: ValidationUtils.validatePassword,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  textInputAction: TextInputAction.done,
-                                ),
-                                SizedBox(height: size.height * 0.04),
-                                CustomButton(text: 'Soo gal', onTap: _login),
-                                SizedBox(height: size.height * 0.02),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                child: Column(
                                   children: [
-                                    Text(
-                                      "Ma lihid akoonto? ",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: size.width * 0.04,
-                                        color: AppColors.textGray,
+                                    // Logo with shadow and animation
+                                    Container(
+                                      width: size.width * 0.25,
+                                      height: size.width * 0.25,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: AppColors.primaryGold.withOpacity(0.3),
+                                            blurRadius: 20,
+                                            offset: const Offset(0, 10),
+                                            spreadRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: Image.asset(
+                                          'assets/images/app.png',
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
-                                    InkWell(
-                                      onTap:
-                                          () => Navigator.push(
-                                            context,
-                                            RegisterScreen.route(),
-                                          ),
+                                    SizedBox(height: size.height * 0.02),
+                                    // App name with gradient text
+                                    ShaderMask(
+                                      shaderCallback: (bounds) => const LinearGradient(
+                                        colors: [
+                                          AppColors.primaryGold,
+                                          AppColors.accentDarkGold,
+                                        ],
+                                      ).createShader(bounds),
                                       child: Text(
-                                        'Isdiiwaangeli',
+                                        'ZakatFlow',
                                         style: GoogleFonts.poppins(
-                                          fontSize: size.width * 0.04,
+                                          fontSize: size.width * 0.07,
                                           fontWeight: FontWeight.bold,
-                                          color: AppColors.textSecondary,
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
+                              ),
+                              
+                              // Login Form Card
+                              Container(
+                                width: double.infinity,
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: size.width * 0.02,
+                                ),
+                                padding: EdgeInsets.all(size.width * 0.08),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.08),
+                                      blurRadius: 30,
+                                      offset: const Offset(0, 15),
+                                      spreadRadius: 0,
+                                    ),
+                                    BoxShadow(
+                                      color: AppColors.primaryGold.withOpacity(0.1),
+                                      blurRadius: 20,
+                                      offset: const Offset(0, 5),
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                ),
+                                child: Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Welcome Text
+                                      Center(
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              'Soo gal',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: size.width * 0.08,
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.textPrimary,
+                                              ),
+                                            ),
+                                            SizedBox(height: size.height * 0.01),
+                                            Text(
+                                              'Salaan, ku soo dhawoow mar kale, waan kuu xiiseynay',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: size.width * 0.035,
+                                                color: AppColors.textGray,
+                                                height: 1.4,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: size.height * 0.04),
+                                      
+                                      // Email Field
+                                      Text(
+                                        'Email',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.04,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      SizedBox(height: size.height * 0.01),
+                                      CustomField(
+                                        controller: _emailController,
+                                        hintText: 'Gali email-kaaga',
+                                        validator: ValidationUtils.validateEmail,
+                                        keyboardType: TextInputType.emailAddress,
+                                      ),
+                                      SizedBox(height: size.height * 0.025),
+                                      
+                                      // Password Field
+                                      Text(
+                                        'Password',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: size.width * 0.04,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                      SizedBox(height: size.height * 0.01),
+                                      CustomField(
+                                        controller: _passwordController,
+                                        hintText: 'Gali password-kaaga',
+                                        isPassword: true,
+                                        obscureText: _isObscure,
+                                        toggleVisibility: () {
+                                          setState(() {
+                                            _isObscure = !_isObscure;
+                                          });
+                                        },
+                                        validator: ValidationUtils.validatePassword,
+                                        keyboardType: TextInputType.visiblePassword,
+                                        textInputAction: TextInputAction.done,
+                                      ),
+                                      
+                                      SizedBox(height: size.height * 0.04),
+                                      
+                                      // Login Button
+                                      CustomButton(
+                                        text: 'Soo gal',
+                                        onTap: _login,
+                                      ),
+                                      
+                                      SizedBox(height: size.height * 0.03),
+                                      
+                                      // Register Link
+                                      Center(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Ma lihid akoonto? ",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: size.width * 0.038,
+                                                color: AppColors.textGray,
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () => Navigator.push(
+                                                context,
+                                                RegisterScreen.route(),
+                                              ),
+                                              borderRadius: BorderRadius.circular(8),
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 4,
+                                                  vertical: 2,
+                                                ),
+                                                child: Text(
+                                                  'Isdiiwaangeli',
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: size.width * 0.038,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: AppColors.primaryGold,
+                                                    decoration: TextDecoration.underline,
+                                                    decorationColor: AppColors.primaryGold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              
+                              SizedBox(height: size.height * 0.04),
+                              
+                              // Footer
+                              Text(
+                                '© ${DateTime.now().year} ZakatFlow. Dhammaan xuquuqda way dhowran yihiin.',
+                                style: GoogleFonts.poppins(
+                                  fontSize: size.width * 0.03,
+                                  color: AppColors.textGray.withOpacity(0.7),
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     );
                   },
                 ),
+        ),
       ),
     );
   }
