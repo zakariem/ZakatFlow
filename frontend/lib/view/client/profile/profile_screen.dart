@@ -21,7 +21,41 @@ class ProfileScreen extends ConsumerStatefulWidget {
   ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+class _ProfileScreenState extends ConsumerState<ProfileScreen>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 1200),
+      vsync: this,
+    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutBack,
+    ));
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
   void _handleLogout() async {
     try {
       // Reset all zakat-related providers
@@ -117,72 +151,52 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      appBar: AppBar(
-        backgroundColor: AppColors.backgroundLight,
-        title: Text(
-          'Profile',
-          style: GoogleFonts.poppins(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.backgroundLight,
+              AppColors.backgroundLight.withOpacity(0.8),
+              AppColors.accentLightGold.withOpacity(0.1),
+            ],
           ),
         ),
-        elevation: 0,
-        actions: [
-          PopupMenuButton<String>(
-            color: AppColors.backgroundLight,
-            onSelected: (value) async {
-              if (value == 'logout') {
-                _handleLogout();
-              } else if (value == 'delete') {
-                _showDeleteConfirmation();
-              }
-            },
-            itemBuilder:
-                (context) => [
-                  PopupMenuItem<String>(
-                    value: 'logout',
-                    child: Row(
-                      children: [
-                        const Icon(Icons.logout, color: Colors.black54),
-                        const SizedBox(width: 10),
-                        Text('Logout', style: GoogleFonts.poppins()),
-                      ],
-                    ),
-                  ),
-                  PopupMenuItem<String>(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.delete,
-                          color: AppColors.buttonWarning,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'Delete Account',
-                          style: GoogleFonts.poppins(
-                            color: AppColors.buttonWarning,
+        child: SafeArea(
+          child: Column(
+            children: [
+              _buildModernAppBar(),
+              Expanded(
+                child: AnimatedBuilder(
+                  animation: _animationController,
+                  builder: (context, child) {
+                    return FadeTransition(
+                      opacity: _fadeAnimation,
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 30),
+                              _buildProfileImage(avatarRadius, authState),
+                              const SizedBox(height: 30),
+                              _buildUserInfoCard(authState),
+                              const SizedBox(height: 30),
+                              _buildActionButtons(),
+                              const SizedBox(height: 40),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            _buildProfileImage(avatarRadius, authState),
-            const SizedBox(height: 20),
-            _buildUserInfoCard(authState),
-            const SizedBox(height: 20),
-            _buildEditProfileButton(),
-          ],
         ),
       ),
     );
@@ -190,63 +204,192 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _buildProfileImage(double avatarRadius, dynamic authState) {
     return Center(
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          CircleAvatar(
-            radius: avatarRadius,
-            backgroundImage:
-                authState.user!.profileImageUrl.isNotEmpty
-                    ? NetworkImage(authState.user!.profileImageUrl)
-                    : const AssetImage('assets/images/default_avatar.png')
-                        as ImageProvider,
-            backgroundColor: AppColors.secondaryGray,
-          ),
-          CircleAvatar(
-            radius: avatarRadius * 0.30,
-            backgroundColor: AppColors.accentLightGold,
-            child: IconButton(
-              icon: Icon(
-                Icons.camera_alt,
-                size: avatarRadius * 0.3 * 0.8,
-                color: AppColors.textWhite,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const UploadScreen()),
-                );
-              },
+      child: Hero(
+        tag: 'profile_avatar',
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                AppColors.primaryGold.withOpacity(0.3),
+                AppColors.accentLightGold.withOpacity(0.6),
+                AppColors.primaryGold.withOpacity(0.3),
+              ],
             ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryGold.withOpacity(0.3),
+                blurRadius: 20,
+                spreadRadius: 5,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-        ],
+          padding: const EdgeInsets.all(4),
+          child: Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white,
+                    width: 3,
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: avatarRadius,
+                  backgroundImage:
+                      authState.user!.profileImageUrl.isNotEmpty
+                          ? NetworkImage(authState.user!.profileImageUrl)
+                          : const AssetImage('assets/images/default_avatar.png')
+                              as ImageProvider,
+                  backgroundColor: AppColors.secondaryGray,
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      AppColors.accentLightGold,
+                      AppColors.primaryGold,
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryGold.withOpacity(0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(avatarRadius * 0.30),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const UploadScreen()),
+                      );
+                    },
+                    child: Container(
+                      width: avatarRadius * 0.60,
+                      height: avatarRadius * 0.60,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.camera_alt_rounded,
+                        size: avatarRadius * 0.25,
+                        color: AppColors.textWhite,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildUserInfoCard(dynamic authState) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 4,
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white,
+            Colors.white.withOpacity(0.9),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryGold.withOpacity(0.1),
+            blurRadius: 20,
+            spreadRadius: 0,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 0,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primaryGold.withOpacity(0.1),
+                    AppColors.accentLightGold.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                'Welcome Back!',
+                style: GoogleFonts.poppins(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.primaryGold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             Text(
               authState.user!.fullName,
               overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
-                fontSize: 26,
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
+                letterSpacing: 0.5,
               ),
             ),
             const SizedBox(height: 8),
-            Text(
-              authState.user!.email,
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                color: AppColors.textSecondary,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.secondaryGray.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.email_outlined,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    authState.user!.email,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -255,23 +398,175 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        _buildEditProfileButton(),
+        const SizedBox(height: 16),
+        _buildQuickActionsRow(),
+      ],
+    );
+  }
+
   Widget _buildEditProfileButton() {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.buttonPrimary,
-        foregroundColor: AppColors.textWhite,
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        elevation: 4,
+    return Container(
+      width: double.infinity,
+      height: 56,
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.buttonPrimary,
+            AppColors.primaryGold,
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryGold.withOpacity(0.3),
+            blurRadius: 12,
+            spreadRadius: 0,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      icon: const Icon(Icons.edit, color: AppColors.textWhite),
-      label: Text('Edit Profile', style: GoogleFonts.poppins()),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const ProfileUpdateView()),
-        );
-      },
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfileUpdateView()),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.edit_rounded,
+                  color: AppColors.textWhite,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Edit Profile',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textWhite,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActionsRow() {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildQuickActionButton(
+            icon: Icons.logout_rounded,
+            label: 'Logout',
+            color: AppColors.textSecondary,
+            onTap: _handleLogout,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildQuickActionButton(
+            icon: Icons.delete_outline_rounded,
+            label: 'Delete Account',
+            color: AppColors.buttonWarning,
+            onTap: _showDeleteConfirmation,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      height: 48,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(12),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: color,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: color,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernAppBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Row(
+        children: [
+          Text(
+            'Profile',
+            style: GoogleFonts.poppins(
+              fontSize: 28,
+              color: AppColors.textPrimary,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
