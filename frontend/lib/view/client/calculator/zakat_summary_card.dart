@@ -24,7 +24,7 @@ class ZakatSummaryCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Text(
-          'Sida Zakaatul Maalka loo xisaabiyo .............',
+          'Sida Zakaatul Maalka loo xisaabiyo iyadoo la raacayo habka dhaqanka Soomaaliyeed...',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       );
@@ -40,32 +40,32 @@ class ZakatSummaryCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '💡 Sida Zakaatka Loo Xisaabiyo',
+            '💡 Habka Xisaabinta Zakaatul Maal (Dhaqanka Soomaaliyeed)',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
-            'Zakaatku waa waajib sannadle ah oo saaran Muslim kasta oo qaangaar ah oo haysta hanti ka badan xadka Nisabka muddo sannad dayaxeed buuxa ah. Waxaa laga xisaabiyaa 2.5% ee hantida laga bixiyo Zakaatka, oo lagu daro wixii waajibyo dheeraad ah sida Zakaatka xoolaha.',
+            'Zakaatul Maal ee dhaqanka Soomaaliyeed waxaa lagu xisaabiyaa 10% marka hantidaadu gaarto qiimaha 200g ee qalinka (silver). Tani waa hab sahlan oo dad badan ay fahmaan.',
           ),
           const SizedBox(height: 12),
           const Text(
-            '✅ Waxa la Xisaabinayo:',
+            '✅ Waxa La Xisaabinayo:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            '• Hantida laga bixiyo Zakaat: Dahab, lacag caddaan ah, kayd, hanti ganacsi, maalgashi, iyo xoolo.\n'
-            '• Muddada Haynta: Waa in la hayay ugu yaraan hal sannad dayaxeed buuxa.',
+            '• Lacagta caddaanka ah, dahabka, ganacsiga iyo wixii la mid ah\n'
+            '• Waa in hantidu gaarto ama dhaafto qiimaha 200 garaam ee qalinka\n'
+            '• Muddada haynta: ugu yaraan 1 sannad dayaxeed',
           ),
           const SizedBox(height: 8),
           const Text(
-            '➖ Waxa la Ka Jarayo:',
+            '➖ Waxa La Ka Jarayo:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SelectableText(
-            '• Deymaha la bixinayo 12-ka bilood ee soo socda\n'
-            '• Bixino dib u dhacay\n'
-            '• Ilaa 12 bilood oo ka mid ah deyn muddo-dheer ah\n\n'
-            'Ogeysiis: Kharashaadka aan weli la gaarin waqtigooda, deymaha ka badan 12 bilood, iyo ribada (riba) lama jarayo.',
+            '• Deymaha degdegga ah ee la bixinayo sanadkan\n'
+            '• Kharashaadka daruuriga ah ee la qorsheeyay\n\n'
+            'Fiiro gaar ah: Deymaha aan caddayn ama aan degdeg ahayn lama jarayo.',
           ),
           const SizedBox(height: 8),
           const Text(
@@ -73,28 +73,26 @@ class ZakatSummaryCard extends ConsumerWidget {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            'Hanti Saafi ah = Wadarta Hantida laga bixiyo Zakaat – Waajibaadka laga jari karo',
+            'Hanti Saafi ah = Wadarta Hantida – Deymaha la jarayo\nZakaatul Maal = 10% ee hantida saafi ah (keliya haddii ay ka badan tahay 200g qalinka)',
           ),
           const SizedBox(height: 8),
           const Text(
-            '📉 Xadka Nisabka ee 2025:',
+            '📉 Xadka Dhaqameed ee Nisabka:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           SelectableText(
-            '• Marka la adeegsado Qalin (595 garaam) ≈  \$${nisab['silver']?.toStringAsFixed(2) ?? "N/A"}\n'
-            '• Marka la adeegsado Dahab (85 garaam) ≈  \$${nisab['gold']?.toStringAsFixed(2) ?? "N/A"}\n\n'
-            'Zakaat bixi oo keliya haddii hantidaada saafi ah ay ka badan tahay mid ka mid ah qiimayaashan.',
+            '• Marka la adeegsado Qalin (200 garaam) ≈  \$${nisab['silver']?.toStringAsFixed(2) ?? "N/A"}\n\n'
+            'Zakaat bixi haddii hantidaada saafi ah ay ka badan tahay qiimahan.',
           ),
           const SizedBox(height: 8),
           const Text(
-            '📌 Fahamka Labada Nooc ee Nisabka:',
+            '📌 Fiiro Gaar ah:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            '• Qalin (595g): Waxaa badanaa lagu xisaabiyaa lacagta caddaanka ah iyo hantida la midka ah. Waxa uu leeyahay qiimo hoose, sidaas darteed dad badan ayaa waajib ku noqonaya.\n\n'
-            '• Dahab (85g): Waxaa loo isticmaalaa haddii qofka uu yahay mid sabool ah ama dakhligiisu hooseeyo, si aan culays loogu noqon.\n\n'
-            '🔹 Talo: Waxaa la doorbidaa in la isticmaalo Qalinka (Silver) maadaama uu dadka masaakiinta ah faa’iido u yahay, dadka badanna uu waajibinayo.\n'
-            '🔹 Qofku wuu dooran karaa midka uu rabbo, laakiin waxaa habboon in la doorto midka ugu habboon xaaladdiisa iyo cibaadadiisa.',
+            '• Habkan dhaqameed wuxuu fududeeyaa xisaabinta Zakaatul Maalka.\n'
+            '• Waxaa lagu talinayaa in laga bilaabo marka hantidaadu gaarto qiimaha 200g ee qalinka.\n'
+            '• Tusaale ahaan: haddii aad haysato \$400 → Zakaatul Maalkaagu waa \$40 (10%).',
           ),
         ],
       ),

@@ -26,34 +26,28 @@ class ZakatViewModel {
     final loans = double.tryParse(ref.read(loansProvider)) ?? 0;
     final investments = double.tryParse(ref.read(investmentsProvider)) ?? 0;
     final stock = double.tryParse(ref.read(stockProvider)) ?? 0;
-    double assets =
-        goldValue +
-        silverValue +
-        cash +
-        deposited +
-        loans +
-        investments +
-        stock;
+
+    double assets = goldValue + silverValue + cash + deposited + loans + investments + stock;
 
     // Retrieve liabilities values
     final borrowed = double.tryParse(ref.read(borrowedProvider)) ?? 0;
     final wages = double.tryParse(ref.read(wagesProvider)) ?? 0;
     final taxes = double.tryParse(ref.read(taxesProvider)) ?? 0;
-    double liabilities = borrowed + wages + taxes;
 
+    double liabilities = borrowed + wages + taxes;
     double netAssets = assets - liabilities;
     double financialZakat = 0;
 
-    // Determine whether to use the gold or silver nisab threshold
+    // Zakat calculation: Dahab (2.5%) vs. Qalin (10%)
     if (basis == 'Dahab') {
-      final goldNisab = 85 * goldPricePerGram;
+      final goldNisab = 20 * goldPricePerGram;
       if (netAssets >= goldNisab) {
-        financialZakat = netAssets * 0.025;
+        financialZakat = netAssets * 0.10;
       }
     } else {
-      final silverNisab = 595 * silverPricePerGram;
+      final silverNisab = 200 * silverPricePerGram; // Practical Somali nisab
       if (netAssets >= silverNisab) {
-        financialZakat = netAssets * 0.025;
+        financialZakat = netAssets * 0.10;
       }
     }
 
@@ -61,6 +55,7 @@ class ZakatViewModel {
     double camelCount = double.tryParse(ref.read(camelValueProvider)) ?? 0;
     double cowCount = double.tryParse(ref.read(cowValueProvider)) ?? 0;
     double sheepCount = double.tryParse(ref.read(sheepValueProvider)) ?? 0;
+
     String camelZakat = _calculateCamelZakat(camelCount);
     String cowZakat = _calculateCowZakat(cowCount);
     String sheepZakat = _calculateSheepZakat(sheepCount);
@@ -80,7 +75,11 @@ class ZakatViewModel {
   Map<String, double> getNisabThresholds(Map<String, double> metalPrices) {
     final goldPrice = metalPrices['goldGram24k'] ?? 0;
     final silverPrice = metalPrices['silverGram999'] ?? 0;
-    return {'gold': 85 * goldPrice, 'silver': 595 * silverPrice};
+
+    return {
+      'gold': 20 * goldPrice,
+      'silver': 200 * silverPrice, // Somali practical nisab
+    };
   }
 
   String _calculateCamelZakat(double count) {
@@ -89,24 +88,12 @@ class ZakatViewModel {
     if (count >= 10 && count < 15) return '2 ido ama 2 ari';
     if (count >= 15 && count < 20) return '3 ido ama 3 ari';
     if (count >= 20 && count < 25) return '4 ido ama 4 ari';
-    if (count >= 25 && count < 36) {
-      return '1 neef geel dhedig ah oo hal sano jirsatay (bint makaad)';
-    }
-    if (count >= 36 && count < 46) {
-      return '1 neef geel dhedig ah oo laba sano jirsatay (bint laboon)';
-    }
-    if (count >= 46 && count < 61) {
-      return '1 neef geel dhedig ah oo saddex sano jirsatay (hiqqa)';
-    }
-    if (count >= 61 && count < 76) {
-      return '1 neef geel dhedig ah oo afar sano jirsatay (jadh’a)';
-    }
-    if (count >= 76 && count < 91) {
-      return '2 neef geel dhedig ah oo laba sano jirsatay';
-    }
-    if (count >= 91 && count < 121) {
-      return '2 neef geel dhedig ah oo saddex sano jirsatay';
-    }
+    if (count >= 25 && count < 36) return '1 neef geel dhedig ah oo hal sano jirsatay (bint makaad)';
+    if (count >= 36 && count < 46) return '1 neef geel dhedig ah oo laba sano jirsatay (bint laboon)';
+    if (count >= 46 && count < 61) return '1 neef geel dhedig ah oo saddex sano jirsatay (hiqqa)';
+    if (count >= 61 && count < 76) return '1 neef geel dhedig ah oo afar sano jirsatay (jadh’a)';
+    if (count >= 76 && count < 91) return '2 neef geel dhedig ah oo laba sano jirsatay';
+    if (count >= 91 && count < 121) return '2 neef geel dhedig ah oo saddex sano jirsatay';
 
     int extra = ((count - 120) / 40).floor();
     return 'Zakada waa ${extra + 3} neef geel (hal neef 40 kii neefba kadib)';
@@ -118,7 +105,6 @@ class ZakatViewModel {
     int tabaahCount = 0;
     int musinnahCount = 0;
 
-    // Start calculation for each range
     if (count >= 30 && count <= 39) {
       tabaahCount = 1;
     } else if (count >= 40 && count <= 59) {
@@ -140,13 +126,10 @@ class ZakatViewModel {
       musinnahCount = 2;
     } else if (count >= 120) {
       double remaining = count - 120;
-      tabaahCount =
-          (remaining / 30).floor() +
-          4; // 4 taba'ahs for the first 120 cows, then 1 taba'ah for each 30 extra cows
-      musinnahCount = (remaining / 30).floor() + 3; // Similarly for musinnahs
+      tabaahCount = (remaining / 30).floor() + 4;
+      musinnahCount = (remaining / 30).floor() + 3;
     }
 
-    // Return zakat calculation in Af-Soomaali
     if (tabaahCount > 0 && musinnahCount > 0) {
       return '$tabaahCount taba’ah iyo $musinnahCount musinnah';
     } else if (tabaahCount > 0) {
@@ -163,6 +146,6 @@ class ZakatViewModel {
     if (count <= 120) return '1 ido ama 1 ari';
     if (count <= 200) return '2 ido ama 2 ari';
     int extra = ((count - 200) ~/ 100);
-    return '${2 + extra} sheep';
+    return '${2 + extra} ido ama 2 ari';
   }
 }
