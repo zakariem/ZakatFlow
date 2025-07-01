@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FiUser, FiMail, FiPhone, FiMapPin, FiCamera, FiArrowLeft, FiEdit3, FiCheck, FiX, FiInfo } from 'react-icons/fi';
 import { adminApi } from "../api/adminApi";
 import dashboardColors from "../theme/dashboardColors";
 
@@ -90,10 +91,16 @@ function EditAgent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: dashboardColors.background.main }}>
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 mx-auto mb-4" style={{ borderColor: dashboardColors.primary.gold }}></div>
-          <p style={{ color: dashboardColors.text.secondary }}>Loading agent data...</p>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+        <div className="text-center p-8 rounded-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
+          <div className="relative w-20 h-20 mx-auto mb-6">
+            <div className="absolute inset-0 rounded-full" style={{ background: dashboardColors.gradient.primary, animation: 'pulse 2s infinite' }}></div>
+            <div className="absolute inset-2 rounded-full flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.white }}>
+              <FiEdit3 className="w-8 h-8" style={{ color: dashboardColors.primary.gold }} />
+            </div>
+          </div>
+          <h3 className="text-xl font-semibold mb-2" style={{ color: dashboardColors.text.primary }}>Loading Agent Data</h3>
+          <p style={{ color: dashboardColors.text.secondary }}>Please wait while we fetch the agent information...</p>
         </div>
       </div>
     );
@@ -101,19 +108,19 @@ function EditAgent() {
 
   if (error && !loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: dashboardColors.background.main }}>
-        <div className="text-center">
-          <div className="text-red-500 mb-4">
-            <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-            </svg>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+        <div className="text-center p-8 rounded-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: dashboardColors.status.error + '20' }}>
+            <FiX className="w-10 h-10" style={{ color: dashboardColors.status.error }} />
           </div>
-          <p className="text-red-600 mb-4">{error}</p>
+          <h3 className="text-xl font-semibold mb-2" style={{ color: dashboardColors.text.primary }}>Error Loading Agent</h3>
+          <p className="mb-6" style={{ color: dashboardColors.text.secondary }}>{error}</p>
           <button 
             onClick={() => navigate(-1)}
-            className="px-4 py-2 rounded-lg text-white"
-            style={{ background: dashboardColors.gradient.primary }}
+            className="px-6 py-3 rounded-xl text-white font-semibold transition-all duration-200 hover:scale-105 flex items-center gap-2 mx-auto"
+            style={{ background: dashboardColors.gradient.primary, boxShadow: dashboardColors.shadow.md }}
           >
+            <FiArrowLeft className="w-5 h-5" />
             Go Back
           </button>
         </div>
@@ -126,23 +133,26 @@ function EditAgent() {
          style={{ background: dashboardColors.background.main }}>
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="flex items-center mb-8">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="mr-4 p-2 rounded-lg transition-all duration-200 hover:scale-110"
-            style={{ 
-              color: dashboardColors.text.secondary,
-              backgroundColor: dashboardColors.background.white,
-              boxShadow: dashboardColors.shadow.sm 
-            }}
-          >
-            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <h1 className="text-3xl font-bold" style={{ color: dashboardColors.text.primary }}>
-            Edit Agent
-          </h1>
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-6">
+            <button 
+              onClick={() => navigate(-1)}
+              className="group p-3 rounded-xl transition-all duration-200 hover:scale-105"
+              style={{ 
+                backgroundColor: dashboardColors.background.light,
+                boxShadow: dashboardColors.shadow.sm
+              }}
+            >
+              <FiArrowLeft className="w-5 h-5 transition-colors duration-200 group-hover:text-opacity-70" style={{ color: dashboardColors.text.secondary }} />
+            </button>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold bg-gradient-to-r bg-clip-text text-transparent" style={{ backgroundImage: dashboardColors.gradient.primary }}>Edit Agent</h1>
+              <p className="mt-2 flex items-center gap-2" style={{ color: dashboardColors.text.secondary }}>
+                <FiEdit3 className="w-4 h-4" />
+                Update agent profile information
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Form Card */}
@@ -151,58 +161,57 @@ function EditAgent() {
           
           {/* Success Message */}
           {success && (
-            <div className="mb-6 p-4 rounded-lg text-sm animate-pulse" 
-                 style={{ backgroundColor: '#D1FAE5', color: dashboardColors.status.success }}>
-              <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                {success}
-              </div>
+            <div className="mb-6 p-4 rounded-xl flex items-center gap-3 animate-slideDown" style={{ 
+              backgroundColor: dashboardColors.status.success + '20', 
+              color: dashboardColors.status.success, 
+              border: `1px solid ${dashboardColors.status.success}40`,
+              boxShadow: dashboardColors.shadow.sm
+            }}>
+              <FiCheck className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">{success}</span>
             </div>
           )}
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 p-4 rounded-lg text-sm animate-shake" 
-                 style={{ backgroundColor: '#FEE2E2', color: dashboardColors.status.error }}>
-              <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                </svg>
-                {error}
-              </div>
+            <div className="mb-6 p-4 rounded-xl flex items-center gap-3 animate-slideDown" style={{ 
+              backgroundColor: dashboardColors.status.error + '20', 
+              color: dashboardColors.status.error, 
+              border: `1px solid ${dashboardColors.status.error}40`,
+              boxShadow: dashboardColors.shadow.sm
+            }}>
+              <FiX className="w-5 h-5 flex-shrink-0" />
+              <span className="font-medium">{error}</span>
             </div>
           )}
 
           {/* Profile Image Section */}
           <div className="flex flex-col items-center mb-8">
             <div className="relative group">
-              <div className="w-32 h-32 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-105" 
-                   style={{ boxShadow: dashboardColors.shadow.md }}>
+              <div className="w-36 h-36 rounded-full flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-105 border-4" 
+                   style={{ 
+                     backgroundColor: dashboardColors.background.light,
+                     borderColor: dashboardColors.border.light,
+                     boxShadow: dashboardColors.shadow.lg 
+                   }}>
                 {profileImage ? (
                   <img src={profileImage} alt="Profile Preview" className="w-full h-full object-cover" />
                 ) : (
-                  <svg width="60" height="60" fill="none" viewBox="0 0 60 60" style={{ color: dashboardColors.text.muted }}>
-                    <circle cx="30" cy="30" r="28" stroke="currentColor" strokeWidth="2"/>
-                    <circle cx="30" cy="24" r="8" fill="currentColor"/>
-                    <path d="M30 36c-8 0-14 4-14 8v2h28v-2c0-4-6-8-14-8z" fill="currentColor"/>
-                  </svg>
+                  <FiUser className="w-16 h-16" style={{ color: dashboardColors.text.muted }} />
                 )}
               </div>
               <label htmlFor="profile-upload" 
-                     className="absolute bottom-2 right-2 rounded-full p-3 cursor-pointer border-4 border-white transition-all duration-200 hover:scale-110"
+                     className="absolute bottom-2 right-2 rounded-full p-3 cursor-pointer border-4 border-white transition-all duration-200 hover:scale-110 group"
                      style={{ 
                        background: dashboardColors.gradient.primary,
                        boxShadow: dashboardColors.shadow.md 
                      }}>
-                <svg width="20" height="20" fill="white" viewBox="0 0 20 20">
-                  <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm8 3a1 1 0 112 0 1 1 0 01-2 0zM4 5h1.172a2 2 0 001.414-.586l.828-.828A2 2 0 018.828 3h2.344a2 2 0 011.414.586l.828.828A2 2 0 0014.828 5H16v2H4V5zm0 4h12v6a1 1 0 01-1 1H5a1 1 0 01-1-1V9zm3 2a2 2 0 114 0 2 2 0 01-4 0z" />
-                </svg>
+                <FiCamera className="w-5 h-5 text-white transition-transform duration-200 group-hover:rotate-12" />
                 <input id="profile-upload" type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
               </label>
             </div>
-            <p className="mt-3 text-sm" style={{ color: dashboardColors.text.muted }}>
+            <p className="mt-4 text-sm flex items-center gap-2" style={{ color: dashboardColors.text.muted }}>
+              <FiCamera className="w-4 h-4" />
               Click the camera icon to update profile picture
             </p>
           </div>
@@ -210,130 +219,157 @@ function EditAgent() {
           {/* Form Fields */}
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
-                <label className="text-sm font-medium" style={{ color: dashboardColors.text.primary }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold flex items-center gap-2" style={{ color: dashboardColors.text.primary }}>
+                  <FiUser className="w-4 h-4" />
                   Full Name *
                 </label>
-                <input 
-                  name="fullName" 
-                  type="text" 
-                  placeholder="Enter full name" 
-                  value={form.fullName} 
-                  onChange={handleChange} 
-                  className="w-full px-4 py-3 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2" 
-                  style={{ 
-                    borderColor: dashboardColors.border.light,
-                    focusRingColor: dashboardColors.primary.gold 
-                  }}
-                  required
-                />
+                <div className="relative">
+                  <input 
+                    name="fullName" 
+                    type="text" 
+                    placeholder="Enter full name" 
+                    value={form.fullName} 
+                    onChange={handleChange} 
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
+                    style={{ 
+                      borderColor: dashboardColors.border.light,
+                      backgroundColor: dashboardColors.background.white,
+                      boxShadow: dashboardColors.shadow.sm
+                    }}
+                    required
+                  />
+                  <FiUser className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
+                </div>
               </div>
               
-              <div className="space-y-1">
-                <label className="text-sm font-medium" style={{ color: dashboardColors.text.primary }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold flex items-center gap-2" style={{ color: dashboardColors.text.primary }}>
+                  <FiMail className="w-4 h-4" />
                   Email Address *
                 </label>
-                <input 
-                  name="email" 
-                  type="email" 
-                  placeholder="Enter email address" 
-                  value={form.email} 
-                  onChange={handleChange} 
-                  className="w-full px-4 py-3 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2" 
-                  style={{ 
-                    borderColor: dashboardColors.border.light,
-                    focusRingColor: dashboardColors.primary.gold 
-                  }}
-                  required
-                />
+                <div className="relative">
+                  <input 
+                    name="email" 
+                    type="email" 
+                    placeholder="Enter email address" 
+                    value={form.email} 
+                    onChange={handleChange} 
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
+                    style={{ 
+                      borderColor: dashboardColors.border.light,
+                      backgroundColor: dashboardColors.background.white,
+                      boxShadow: dashboardColors.shadow.sm
+                    }}
+                    required
+                  />
+                  <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
+                </div>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-1">
-                <label className="text-sm font-medium" style={{ color: dashboardColors.text.primary }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold flex items-center gap-2" style={{ color: dashboardColors.text.primary }}>
+                  <FiPhone className="w-4 h-4" />
                   Phone Number *
                 </label>
-                <input 
-                  name="phoneNumber" 
-                  type="tel" 
-                  placeholder="Enter phone number" 
-                  value={form.phoneNumber} 
-                  onChange={handleChange} 
-                  className="w-full px-4 py-3 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2" 
-                  style={{ 
-                    borderColor: dashboardColors.border.light,
-                    focusRingColor: dashboardColors.primary.gold 
-                  }}
-                  required
-                />
+                <div className="relative">
+                  <input 
+                    name="phoneNumber" 
+                    type="tel" 
+                    placeholder="Enter phone number" 
+                    value={form.phoneNumber} 
+                    onChange={handleChange} 
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
+                    style={{ 
+                      borderColor: dashboardColors.border.light,
+                      backgroundColor: dashboardColors.background.white,
+                      boxShadow: dashboardColors.shadow.sm
+                    }}
+                    required
+                  />
+                  <FiPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
+                </div>
               </div>
               
-              <div className="space-y-1">
-                <label className="text-sm font-medium" style={{ color: dashboardColors.text.primary }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold flex items-center gap-2" style={{ color: dashboardColors.text.primary }}>
+                  <FiMapPin className="w-4 h-4" />
                   Address *
                 </label>
-                <input 
-                  name="address" 
-                  type="text" 
-                  placeholder="Enter address" 
-                  value={form.address} 
-                  onChange={handleChange} 
-                  className="w-full px-4 py-3 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2" 
-                  style={{ 
-                    borderColor: dashboardColors.border.light,
-                    focusRingColor: dashboardColors.primary.gold 
-                  }}
-                  required
-                />
+                <div className="relative">
+                  <input 
+                    name="address" 
+                    type="text" 
+                    placeholder="Enter address" 
+                    value={form.address} 
+                    onChange={handleChange} 
+                    className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
+                    style={{ 
+                      borderColor: dashboardColors.border.light,
+                      backgroundColor: dashboardColors.background.white,
+                      boxShadow: dashboardColors.shadow.sm
+                    }}
+                    required
+                  />
+                  <FiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
+                </div>
               </div>
             </div>
 
             {/* Note about password */}
-            <div className="p-4 rounded-lg" style={{ backgroundColor: dashboardColors.background.light }}>
-              <div className="flex items-center">
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" style={{ color: dashboardColors.primary.gold }}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>
-                  Password cannot be changed through this form for security reasons. Contact system administrator to reset password if needed.
-                </p>
+            <div className="p-4 rounded-xl border" style={{ 
+              backgroundColor: dashboardColors.background.light,
+              borderColor: dashboardColors.border.light,
+              boxShadow: dashboardColors.shadow.sm
+            }}>
+              <div className="flex items-start gap-3">
+                <FiInfo className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: dashboardColors.primary.gold }} />
+                <div>
+                  <h4 className="text-sm font-semibold mb-1" style={{ color: dashboardColors.text.primary }}>Password Security Notice</h4>
+                  <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>
+                    Password cannot be changed through this form for security reasons. Contact system administrator to reset password if needed.
+                  </p>
+                </div>
               </div>
             </div>
             
             {/* Submit Button */}
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-4 pt-6">
               <button 
                 type="button"
                 onClick={() => navigate(-1)}
-                className="flex-1 py-3 px-4 rounded-lg font-semibold transition-all duration-200 hover:opacity-80"
+                className="flex-1 py-4 px-6 rounded-xl font-semibold transition-all duration-200 hover:scale-105 flex items-center justify-center gap-2"
                 style={{ 
                   color: dashboardColors.text.secondary,
                   backgroundColor: dashboardColors.background.light,
-                  border: `1px solid ${dashboardColors.border.medium}`
+                  border: `2px solid ${dashboardColors.border.medium}`,
+                  boxShadow: dashboardColors.shadow.sm
                 }}
               >
+                <FiArrowLeft className="w-5 h-5" />
                 Cancel
               </button>
               <button 
                 type="submit" 
                 disabled={updating}
-                className="flex-1 py-3 px-4 rounded-lg text-white font-semibold transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="flex-1 py-4 px-6 rounded-xl text-white font-semibold transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                 style={{ 
                   background: updating ? dashboardColors.text.muted : dashboardColors.gradient.primary,
-                  boxShadow: dashboardColors.shadow.md 
+                  boxShadow: dashboardColors.shadow.lg 
                 }}
               >
                 {updating ? (
-                  <div className="flex items-center justify-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                     Updating Agent...
-                  </div>
+                  </>
                 ) : (
-                  'Update Agent'
+                  <>
+                    <FiEdit3 className="w-5 h-5" />
+                    Update Agent
+                  </>
                 )}
               </button>
             </div>
