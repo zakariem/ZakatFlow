@@ -108,10 +108,17 @@ function Sidebar() {
 
         {/* Mobile Footer */}
         <div className="absolute bottom-6 left-4 right-4">
-          <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+          <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
             <p className="text-sm" style={{ color: dashboardColors.background.white, opacity: 0.8 }}>Admin Dashboard</p>
             <p className="text-xs mt-1" style={{ color: dashboardColors.background.white, opacity: 0.6 }}>Manage your Zakat operations</p>
           </div>
+          <button
+            onClick={() => { localStorage.removeItem('authToken'); navigate('/'); }}
+            className="w-full py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
+            style={{ backgroundColor: dashboardColors.status.error, color: dashboardColors.background.white }}
+          >
+            Logout
+          </button>
         </div>
       </div>
 
@@ -170,7 +177,7 @@ function Sidebar() {
 
         {/* Desktop Footer */}
         <div className="p-6">
-          <div className="p-4 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
+          <div className="p-4 rounded-xl mb-4" style={{ backgroundColor: 'rgba(255,255,255,0.1)' }}>
             <div className="flex items-center">
               <div className="w-8 h-8 rounded-full mr-3 flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.white }}>
                 <span className="text-sm font-bold" style={{ color: dashboardColors.primary.gold }}>A</span>
@@ -181,6 +188,13 @@ function Sidebar() {
               </div>
             </div>
           </div>
+          <button
+            onClick={() => { localStorage.removeItem('authToken'); navigate('/'); }}
+            className="w-full py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
+            style={{ backgroundColor: dashboardColors.status.error, color: dashboardColors.background.white }}
+          >
+            Logout
+          </button>
         </div>
       </aside>
     </>

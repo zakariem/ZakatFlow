@@ -113,7 +113,7 @@ function PaymentManagement() {
       title: "Total Payments",
       value: filteredPayments.length.toLocaleString(),
       icon: <FiTrendingUp />,
-      gradient: dashboardColors.gradient.secondary,
+      gradient: dashboardColors.primary.lightGold,
       change: "+12%",
       changeType: "positive"
     },
@@ -121,7 +121,7 @@ function PaymentManagement() {
       title: "Today's Payments",
       value: todaysPayments.toLocaleString(),
       icon: <FaCalendarAlt />,
-      gradient: dashboardColors.gradient.accent,
+      gradient: dashboardColors.primary.lightGold,
       change: "+5%",
       changeType: "positive"
     }
@@ -254,7 +254,7 @@ function PaymentManagement() {
                 <th className="text-left py-4 px-6 font-semibold" style={{ color: dashboardColors.text.primary }}>Agent</th>
                 <th className="text-left py-4 px-6 font-semibold" style={{ color: dashboardColors.text.primary }}>Date</th>
                 <th className="text-left py-4 px-6 font-semibold" style={{ color: dashboardColors.text.primary }}>Status</th>
-                <th className="text-left py-4 px-6 font-semibold" style={{ color: dashboardColors.text.primary }}>Actions</th>
+                
               </tr>
             </thead>
             <tbody>
@@ -300,15 +300,6 @@ function PaymentManagement() {
                       }`}>
                         {payment.waafiResponse && payment.waafiResponse.state || 'Completed'}
                       </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <button 
-                        className="p-2 rounded-lg transition-all duration-200 hover:scale-110"
-                        style={{ backgroundColor: dashboardColors.background.light, color: dashboardColors.primary.gold }}
-                        title="View Details"
-                      >
-                        <FaEye />
-                      </button>
                     </td>
                   </tr>
                 ))

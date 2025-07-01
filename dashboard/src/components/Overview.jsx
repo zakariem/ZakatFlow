@@ -96,7 +96,7 @@ const Overview = () => {
       title: "Total Amount",
       value: `$${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
       icon: <FaChartLine />,
-      gradient: dashboardColors.gradient.secondary,
+      gradient: dashboardColors.primary.lightGold,
       change: "+8.5%",
       changeType: "positive"
     },
@@ -104,7 +104,7 @@ const Overview = () => {
       title: "Today's Payments",
       value: todaysPaymentsCount.toLocaleString(),
       icon: <FaCalendarDay />,
-      gradient: dashboardColors.gradient.accent,
+      gradient: dashboardColors.status.success,
       change: "+15%",
       changeType: "positive"
     },
@@ -112,7 +112,7 @@ const Overview = () => {
       title: "Today's Amount",
       value: `$${todaysAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
       icon: <FiTrendingUp />,
-      gradient: dashboardColors.gradient.success,
+      gradient: dashboardColors.status.success,
       change: "+22%",
       changeType: "positive"
     }

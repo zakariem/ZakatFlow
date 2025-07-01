@@ -154,7 +154,7 @@ const AgentManagement = () => {
       title: "Active Agents",
       value: agents.filter(agent => agent.status === 'active').length.toLocaleString(),
       icon: <FaUserCheck />,
-      gradient: dashboardColors.gradient.secondary,
+      gradient: dashboardColors.primary.darkGold,
       change: "+3",
       changeType: "positive"
     },
@@ -162,16 +162,16 @@ const AgentManagement = () => {
       title: "New This Month",
       value: "12",
       icon: <FaUserPlus />,
-      gradient: dashboardColors.gradient.accent,
+      gradient: dashboardColors.primary.gold,
       change: "+12",
       changeType: "positive"
     }
   ];
 
   return (
-    <div className="flex min-h-screen" style={{ background: dashboardColors.background.main }}>
+    <>
       <Sidebar />
-      <main className="flex-1 ml-56 p-6 transition-all duration-300">
+      <main className="flex-1 ml-10 p-6 transition-all duration-300">
         <div className="space-y-8 animate-fadeIn">
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -250,7 +250,7 @@ const AgentManagement = () => {
             ))}
           </div>
 
-          {/* Search and Filter Bar */}
+          {/* Search Bar */}
           <div 
             className="rounded-2xl p-6 transition-all duration-300 hover:shadow-lg animate-slideUp"
             style={{ 
@@ -274,19 +274,7 @@ const AgentManagement = () => {
                   }}
                 />
               </div>
-              <div className="flex gap-3">
-                <button 
-                  className="flex items-center px-4 py-3 rounded-xl transition-all duration-200 hover:scale-105"
-                  style={{ 
-                    backgroundColor: dashboardColors.background.light, 
-                    color: dashboardColors.text.primary,
-                    border: `1px solid ${dashboardColors.border.light}`
-                  }}
-                >
-                  <FaFilter className="mr-2" />
-                  Filter
-                </button>
-              </div>
+              
             </div>
             
             {/* Bulk Actions */}
@@ -494,7 +482,7 @@ const AgentManagement = () => {
         )}
       </div>
     </main>
-  </div>
+  </>
 );
 };
 
