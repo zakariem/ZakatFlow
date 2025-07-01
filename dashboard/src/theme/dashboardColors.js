@@ -1,37 +1,58 @@
-const dashboardColors = {
-  primaryGold: '#C1914D',
-  primaryBlack: '#121212',
-  secondaryWhite: '#FFFFFF',
-  secondaryGray: '#E0E0E0',
-  secondaryBeige: '#F7F1E3',
-  accentDarkGold: '#8D6E3C',
-  accentLightGold: '#FFD700',
-  textPrimary: '#1E1E1E',
-  textSecondary: '#8D6E3C',
-  textWhite: '#FFFFFF',
-  textGray: '#757575',
-  textError: '#D32F2F',
-  buttonPrimary: '#C1914D',
-  buttonSecondary: '#121212',
-  buttonSuccess: '#2E7D32',
-  buttonError: '#D32F2F',
-  buttonWarning: '#FFC107',
-  backgroundDark: '#1C1C1C',
-  backgroundLight: '#F9F9F9',
-  backgroundGray: '#E0E0E0',
-  backgroundSuccess: '#E8F5E9',
-  backgroundError: '#FFEBEE',
-  backgroundWarning: '#FFF8E1',
-  backgroundInfo: '#E3F2FD',
-  success: '#4CAF50',
-  error: '#D32F2F',
-  warning: '#FFC107',
-  info: '#2196F3',
-  borderPrimary: '#BDBDBD',
-  borderError: '#D32F2F',
-  borderSuccess: '#4CAF50',
-  shadowLight: 'rgba(189,189,189,0.5)',
-  shadowDark: 'rgba(0,0,0,0.5)',
+export const dashboardColors = {
+  // Primary Colors
+  primary: {
+    gold: '#B88A4C',
+    darkGold: '#9A7540',
+    lightGold: '#D4B574',
+    cream: '#FAF9F6',
+  },
+  
+  // Background Colors
+  background: {
+    main: '#F4F6FA',
+    white: '#FFFFFF',
+    light: '#FAFBFC',
+    card: '#FFFFFF',
+    overlay: 'rgba(0, 0, 0, 0.5)',
+  },
+  
+  // Text Colors
+  text: {
+    primary: '#1A202C',
+    secondary: '#4A5568',
+    muted: '#718096',
+    light: '#A0AEC0',
+    white: '#FFFFFF',
+  },
+  
+  // Status Colors
+  status: {
+    success: '#48BB78',
+    error: '#F56565',
+    warning: '#ED8936',
+    info: '#4299E1',
+  },
+  
+  // Border Colors
+  border: {
+    light: '#E2E8F0',
+    medium: '#CBD5E0',
+    dark: '#A0AEC0',
+  },
+  
+  // Shadow Colors
+  shadow: {
+    sm: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+  },
+  
+  // Gradient Colors
+  gradient: {
+    primary: 'linear-gradient(135deg, #B88A4C 0%, #D4B574 100%)',
+    secondary: 'linear-gradient(135deg, #F4F6FA 0%, #FFFFFF 100%)',
+  },
 };
 
 export default dashboardColors;
