@@ -36,26 +36,30 @@ function PaymentManagement() {
   }, []);
 
   // Filtering logic
-  const today = new Date();
-  const startOfWeek = new Date(today);
-  startOfWeek.setDate(today.getDate() - today.getDay());
-  startOfWeek.setHours(0, 0, 0, 0);
-  const endOfWeek = new Date(startOfWeek);
-  endOfWeek.setDate(startOfWeek.getDate() + 6);
-  endOfWeek.setHours(23, 59, 59, 999);
-
   const filteredPayments = payments.filter(payment => {
-    const paidAt = payment.paidAt ? new Date(payment.paidAt) : null;
-    if (!paidAt) return false;
+    if (!payment.paidAt) return false;
+    const paidAt = new Date(payment.paidAt);
+    if (isNaN(paidAt)) return false;
+
+    const now = new Date();
+
     if (selectedFilter === "Today") {
-      return paidAt.getFullYear() === today.getFullYear() &&
-        paidAt.getMonth() === today.getMonth() &&
-        paidAt.getDate() === today.getDate();
+      return paidAt.getFullYear() === now.getFullYear() &&
+        paidAt.getMonth() === now.getMonth() &&
+        paidAt.getDate() === now.getDate();
     } else if (selectedFilter === "This Week") {
-      return paidAt >= startOfWeek && paidAt <= endOfWeek;
+      // Start of week (Monday)
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7)); // Monday as start
+      weekStart.setHours(0, 0, 0, 0);
+      // End of week (Sunday)
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999);
+      return paidAt >= weekStart && paidAt <= weekEnd;
     } else if (selectedFilter === "This Month") {
-      return paidAt.getFullYear() === today.getFullYear() &&
-        paidAt.getMonth() === today.getMonth();
+      return paidAt.getFullYear() === now.getFullYear() &&
+        paidAt.getMonth() === now.getMonth();
     }
     return true; // All
   });
@@ -66,10 +70,12 @@ function PaymentManagement() {
   const todaysPayments = payments.filter(p => {
     const paidAt = p.paidAt ? new Date(p.paidAt) : null;
     return paidAt &&
-      paidAt.getFullYear() === today.getFullYear() &&
-      paidAt.getMonth() === today.getMonth() &&
-      paidAt.getDate() === today.getDate();
+      paidAt.getFullYear() === new Date().getFullYear() &&
+      paidAt.getMonth() === new Date().getMonth() &&
+      paidAt.getDate() === new Date().getDate();
   }).length;
+
+  console.log('Filtered Payments:', filteredPayments);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;

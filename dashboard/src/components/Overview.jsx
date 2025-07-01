@@ -126,7 +126,7 @@ const Overview = () => {
               </div>
               <div>
                 <div className="font-semibold">{agent.fullName}</div>
-                <div className="text-gray-500 text-sm">Payments: {agent.totalDonation}</div>
+                <div className="text-gray-500 text-sm">Payments: {agent.totalDonation.toFixed(2)}</div>
               </div>
             </div>
           ))}
