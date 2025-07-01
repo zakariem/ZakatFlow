@@ -35,16 +35,36 @@ function PaymentManagement() {
     fetchData();
   }, []);
 
-  // Calculate summary values from payments
-  const totalPayments = Array.isArray(payments) ? payments.length : 0;
-  const totalAmount = Array.isArray(payments) ? payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0) : 0;
+  // Filtering logic
   const today = new Date();
-  const todaysPayments = Array.isArray(payments) ? payments.filter(p => {
+  const filteredPayments = payments.filter(payment => {
+    const paidAt = new Date(payment.paidAt || payment.date);
+    if (selectedFilter === "Today") {
+      return paidAt.getFullYear() === today.getFullYear() &&
+        paidAt.getMonth() === today.getMonth() &&
+        paidAt.getDate() === today.getDate();
+    } else if (selectedFilter === "This Week") {
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      return paidAt >= startOfWeek && paidAt <= endOfWeek;
+    } else if (selectedFilter === "This Month") {
+      return paidAt.getFullYear() === today.getFullYear() &&
+        paidAt.getMonth() === today.getMonth();
+    }
+    return true; // All
+  });
+
+  // Calculate summary values from payments
+  const totalPayments = payments.length;
+  const totalAmount = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+  const todaysPayments = payments.filter(p => {
     const paidAt = new Date(p.paidAt || p.date);
     return paidAt.getFullYear() === today.getFullYear() &&
       paidAt.getMonth() === today.getMonth() &&
       paidAt.getDate() === today.getDate();
-  }).length : 0;
+  }).length;
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -115,7 +135,7 @@ function PaymentManagement() {
         ))}
       </div>
       <div className="space-y-4">
-        {Array.isArray(payments) && payments.map((payment, idx) => (
+        {filteredPayments.map((payment, idx) => (
           <div
             key={payment.id || payment._id || idx}
             className="bg-white rounded-xl shadow-sm p-4 flex flex-col md:flex-row md:items-center md:justify-between"
@@ -144,7 +164,7 @@ function PaymentManagement() {
               </svg>
               <div>
                 <div className="text-lg font-bold">
-                  {payment.currency} {payment.amount}
+                  {(payment.currency || '$') + ' ' + (parseFloat(payment.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
                 </div>
                 <div className="text-gray-500 text-sm">{payment.date}</div>
               </div>

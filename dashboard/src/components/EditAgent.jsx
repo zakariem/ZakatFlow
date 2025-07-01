@@ -23,14 +23,14 @@ function EditAgent() {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           }
         });
-        const agentData = response.data;
+        const agentData = response.data && response.data.data ? response.data.data : response.data;
         setForm({
           fullName: agentData.fullName || "",
           email: agentData.email || "",
           phoneNumber: agentData.phoneNumber || agentData.phone || "",
           address: agentData.address || ""
         });
-        setProfileImage(agentData.profileImage || agentData.image);
+        setProfileImage(agentData.profileImage || agentData.image || agentData.profileImageUrl || null);
       } catch (err) {
         setError(err.response?.data?.message || err.message || "Failed to fetch agent data");
       } finally {

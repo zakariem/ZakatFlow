@@ -289,8 +289,16 @@ const AgentManagement = () => {
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-medium mr-3">
-                            {agent.fullName?.charAt(0)?.toUpperCase() || 'A'}
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-medium mr-3 overflow-hidden">
+                            {agent.profileImage || agent.profileImageUrl || agent.image ? (
+                              <img
+                                src={agent.profileImage || agent.profileImageUrl || agent.image}
+                                alt={agent.fullName}
+                                className="w-full h-full object-cover rounded-full"
+                              />
+                            ) : (
+                              agent.fullName?.charAt(0)?.toUpperCase() || 'A'
+                            )}
                           </div>
                           <div>
                             <div className="font-medium" style={{ color: dashboardColors.text.primary }}>
