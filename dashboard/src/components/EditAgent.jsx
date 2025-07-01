@@ -91,7 +91,7 @@ function EditAgent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+      <>
         <div className="text-center p-8 rounded-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
           <div className="relative w-20 h-20 mx-auto mb-6">
             <div className="absolute inset-0 rounded-full" style={{ background: dashboardColors.gradient.primary, animation: 'pulse 2s infinite' }}></div>
@@ -102,13 +102,13 @@ function EditAgent() {
           <h3 className="text-xl font-semibold mb-2" style={{ color: dashboardColors.text.primary }}>Loading Agent Data</h3>
           <p style={{ color: dashboardColors.text.secondary }}>Please wait while we fetch the agent information...</p>
         </div>
-      </div>
+      </>
     );
   }
 
   if (error && !loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+      <>
         <div className="text-center p-8 rounded-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
           <div className="w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center" style={{ backgroundColor: dashboardColors.status.error + '20' }}>
             <FiX className="w-10 h-10" style={{ color: dashboardColors.status.error }} />
@@ -124,13 +124,12 @@ function EditAgent() {
             Go Back
           </button>
         </div>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen px-4 py-6 transition-all duration-500" 
-         style={{ background: dashboardColors.background.main }}>
+    <>
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -376,7 +375,7 @@ function EditAgent() {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

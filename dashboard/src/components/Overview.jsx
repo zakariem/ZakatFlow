@@ -122,9 +122,10 @@ const Overview = () => {
     <div className="space-y-8 animate-fadeIn">
       {/* Header */}
       <div className="text-center lg:text-left">
-        <h1 className="text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-          Dashboard Overview
-        </h1>
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+  Dashboard Overview
+</h1>
+
         <p className="text-lg" style={{ color: dashboardColors.text.secondary }}>
           Welcome back! Here's what's happening with your Zakat operations today.
         </p>

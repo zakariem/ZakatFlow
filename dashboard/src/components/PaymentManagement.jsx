@@ -132,9 +132,13 @@ function PaymentManagement() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-          <h1 className="text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-            Payment Management
-          </h1>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight tracking-tight">
+  <span className="inline-block w-full bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+    Payment Management
+  </span>
+</h1>
+
+
           <p className="text-lg" style={{ color: dashboardColors.text.secondary }}>
             Monitor and manage all Zakat payments
           </p>

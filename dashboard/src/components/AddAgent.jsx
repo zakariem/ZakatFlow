@@ -69,8 +69,7 @@ function AddAgent() {
   };
 
   return (
-    <div className="min-h-screen px-4 py-6 transition-all duration-500" 
-         style={{ background: dashboardColors.background.main }}>
+    <>
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -335,7 +334,7 @@ function AddAgent() {
           </form>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
