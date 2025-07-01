@@ -16,8 +16,8 @@ const Sidebar = () => {
       style={{ background: dashboardColors.primary.gold }}
       className="h-full w-64 fixed top-0 left-0 flex flex-col z-20 shadow-lg"
     >
-      <div className="h-20 flex items-center justify-center font-extrabold text-2xl border-b border-gray-200 tracking-wide" style={{ color: dashboardColors.text.white }}>
-        <span style={{ color: dashboardColors.primary.cream }}>ZakatFlow</span>
+      <div className="h-20 flex items-center justify-center border-b border-gray-200">
+        <img src="/logo.png" alt="App Logo" className="h-14" />
       </div>
       <nav className="flex-1 flex flex-col gap-2 p-6">
         {navItems.map((item) => (

@@ -37,17 +37,21 @@ function PaymentManagement() {
 
   // Filtering logic
   const today = new Date();
+  const startOfWeek = new Date(today);
+  startOfWeek.setDate(today.getDate() - today.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 6);
+  endOfWeek.setHours(23, 59, 59, 999);
+
   const filteredPayments = payments.filter(payment => {
-    const paidAt = new Date(payment.paidAt || payment.date);
+    const paidAt = payment.paidAt ? new Date(payment.paidAt) : null;
+    if (!paidAt) return false;
     if (selectedFilter === "Today") {
       return paidAt.getFullYear() === today.getFullYear() &&
         paidAt.getMonth() === today.getMonth() &&
         paidAt.getDate() === today.getDate();
     } else if (selectedFilter === "This Week") {
-      const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay());
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6);
       return paidAt >= startOfWeek && paidAt <= endOfWeek;
     } else if (selectedFilter === "This Month") {
       return paidAt.getFullYear() === today.getFullYear() &&
@@ -60,8 +64,9 @@ function PaymentManagement() {
   const totalPayments = payments.length;
   const totalAmount = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
   const todaysPayments = payments.filter(p => {
-    const paidAt = new Date(p.paidAt || p.date);
-    return paidAt.getFullYear() === today.getFullYear() &&
+    const paidAt = p.paidAt ? new Date(p.paidAt) : null;
+    return paidAt &&
+      paidAt.getFullYear() === today.getFullYear() &&
       paidAt.getMonth() === today.getMonth() &&
       paidAt.getDate() === today.getDate();
   }).length;
@@ -135,69 +140,74 @@ function PaymentManagement() {
         ))}
       </div>
       <div className="space-y-4">
-        {filteredPayments.map((payment, idx) => (
-          <div
-            key={payment.id || payment._id || idx}
-            className="bg-white rounded-xl shadow-sm p-4 flex flex-col md:flex-row md:items-center md:justify-between"
-          >
-            <div className="flex items-center mb-2 md:mb-0">
-              <svg
-                width="36"
-                height="36"
-                fill="none"
-                viewBox="0 0 36 36"
-                className="mr-4"
-              >
-                <rect width="36" height="36" rx="10" fill="#F5F7FA" />
-                <path
-                  d="M10 14A3 3 0 0 1 13 11h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3v-8Z"
-                  fill="#2196F3"
-                />
-                <rect
-                  x="13"
-                  y="17"
-                  width="10"
-                  height="3"
-                  rx="1.5"
-                  fill="#90CAF9"
-                />
-              </svg>
-              <div>
-                <div className="text-lg font-bold">
-                  {(payment.currency || '$') + ' ' + (parseFloat(payment.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
+        {filteredPayments.length === 0 ? (
+          <div className="text-center text-gray-500 py-8">No payments found for this filter.</div>
+        ) : (
+          filteredPayments.map((payment, idx) => (
+            <div
+              key={payment._id || idx}
+              className="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between mb-2"
+            >
+              <div className="flex items-center mb-2 md:mb-0">
+                <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                  <svg
+                    width="28"
+                    height="28"
+                    fill="none"
+                    viewBox="0 0 36 36"
+                  >
+                    <rect width="28" height="28" rx="10" fill="#F5F7FA" />
+                    <path
+                      d="M10 14A3 3 0 0 1 13 11h10a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H13a3 3 0 0 1-3-3v-8Z"
+                      fill="#2196F3"
+                    />
+                    <rect
+                      x="13"
+                      y="17"
+                      width="10"
+                      height="3"
+                      rx="1.5"
+                      fill="#90CAF9"
+                    />
+                  </svg>
                 </div>
-                <div className="text-gray-500 text-sm">{payment.date}</div>
+                <div>
+                  <div className="text-lg font-bold">
+                    {(payment.currency || '$') + ' ' + (parseFloat(payment.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
+                  </div>
+                  <div className="text-gray-500 text-sm">{payment.paidAt ? new Date(payment.paidAt).toLocaleString() : ''}</div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-2 flex-1">
+                <div>
+                  <div className="text-xs text-gray-400">Payer</div>
+                  <div className="font-semibold">{payment.userFullName}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400">Agent</div>
+                  <div className="font-semibold">{payment.agentName}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400">Phone</div>
+                  <div className="font-semibold">{payment.userAccountNo}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400">Method</div>
+                  <div className="font-semibold">{payment.paymentMethod}</div>
+                </div>
+                <div>
+                  <div className="text-xs text-gray-400">Transaction ID</div>
+                  <div className="font-semibold">{payment.waafiResponse && payment.waafiResponse.transactionId}</div>
+                </div>
+              </div>
+              <div className="flex items-center mt-4 md:mt-0">
+                <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-semibold">
+                  {payment.waafiResponse && payment.waafiResponse.state}
+                </span>
               </div>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-8 gap-y-2 flex-1">
-              <div>
-                <div className="text-xs text-gray-400">Payer</div>
-                <div className="font-semibold">{payment.payer}</div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400">Agent</div>
-                <div className="font-semibold">{payment.agent}</div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400">Phone</div>
-                <div className="font-semibold">{payment.phone}</div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400">Method</div>
-                <div className="font-semibold">{payment.method}</div>
-              </div>
-              <div>
-                <div className="text-xs text-gray-400">Transaction ID</div>
-                <div className="font-semibold">{payment.transactionId}</div>
-              </div>
-            </div>
-            <div className="flex items-center mt-4 md:mt-0">
-              <span className="bg-green-100 text-green-700 px-4 py-1 rounded-full text-xs font-semibold">
-                {payment.status}
-              </span>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </>
   );
