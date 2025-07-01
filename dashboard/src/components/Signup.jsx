@@ -4,7 +4,8 @@ import axios from "axios";
 import { adminApi } from "../api/adminApi";
 import dashboardColors from "../theme/dashboardColors";
 
-const Signup = () => {
+// Renamed from Signup to Login for clarity
+const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -23,17 +24,29 @@ const Signup = () => {
     setError("");
     
     try {
-      // For admin login, we'll use a mock authentication for now
-      if (form.email === "admin@zakatflow.com" && form.password === "admin123") {
-        localStorage.setItem('authToken', 'admin-token-' + Date.now());
+      // --- START: API Integration ---
+      // Make a POST request to the login endpoint with user credentials
+      const response = await axios.post(adminApi.loginUser, form);
+      // Assuming the backend responds with a data object containing a token
+      if (response.data) {
+        // Store the token for future authenticated requests
+        localStorage.setItem('authToken', response.data.data.token);
+        
+        // Navigate to the dashboard on successful login
         navigate("/dashboard");
       } else {
-        setError("Invalid email or password");
+        // Handle unexpected response format from the server
+        setError("Login failed: Invalid response from server.");
       }
-    } catch (error) {
-      console.error("Login failed", error);
-      setError("Login failed. Please try again.");
+      // --- END: API Integration ---
+
+    } catch (err) {
+      // Set error message from the server response, or a generic one
+      const message = err.response?.data?.message || "Login failed. Please check your credentials and try again.";
+      setError(message);
+      console.error("Login failed", err);
     } finally {
+      // Ensure the loading state is turned off
       setLoading(false);
     }
   };
@@ -115,14 +128,9 @@ const Signup = () => {
                   style={{ color: dashboardColors.primary.gold }}
                 >
                   {showPassword ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
                   ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
-                    </svg>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" /></svg>
                   )}
                 </button>
               </div>
@@ -139,10 +147,7 @@ const Signup = () => {
             >
               {loading ? (
                 <div className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                   Signing in...
                 </div>
               ) : (
@@ -153,7 +158,7 @@ const Signup = () => {
           
           <div className="mt-6 text-center">
             <p className="text-sm" style={{ color: dashboardColors.text.muted }}>
-              Demo credentials: admin@zakatflow.com / admin123
+              Enter your admin credentials to continue.
             </p>
           </div>
         </div>
@@ -162,4 +167,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Login;

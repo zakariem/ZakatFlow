@@ -24,7 +24,15 @@ const AgentManagement = () => {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
           }
         });
-        setAgents(response.data || []);
+        // Ensure agents is always an array
+        let data = response.data;
+        if (Array.isArray(data)) {
+          setAgents(data);
+        } else if (Array.isArray(data.data)) {
+          setAgents(data.data);
+        } else {
+          setAgents([]);
+        }
       } catch (err) {
         setError(err.response?.data?.message || err.message || 'Failed to fetch agents');
       } finally {
