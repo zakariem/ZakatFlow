@@ -2,8 +2,30 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { adminApi } from "../api/adminApi";
 import { dashboardColors } from "../theme/dashboardColors";
-import { FaMoneyBillWave, FaUsers, FaCalendarDay, FaCrown, FaChartLine } from "react-icons/fa";
-import { FiTrendingUp } from 'react-icons/fi';
+import { FaCrown } from "react-icons/fa";
+import { Line, Bar } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Overview = () => {
   const [payments, setPayments] = useState([]);
@@ -48,20 +70,65 @@ const Overview = () => {
   const todaysPaymentsCount = todaysPayments.length;
   const todaysAmount = todaysPayments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
 
-  // Top agents by number of payments (or by totalDonation if available)
-  const agentPaymentCounts = {};
-  payments.forEach(p => {
-    if (p.agent) {
-      agentPaymentCounts[p.agent] = (agentPaymentCounts[p.agent] || 0) + 1;
-    }
-  });
-  const topAgents = agents
-    .map(agent => ({
-      ...agent,
-      paymentCount: agentPaymentCounts[agent.fullName] || 0
-    }))
-    .sort((a, b) => b.paymentCount - a.paymentCount)
-    .slice(0, 3);
+  // Prepare chart data
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    return date;
+  }).reverse();
+
+  const dailyPayments = last7Days.map(date => ({
+    date: date.toLocaleDateString('en-US', { weekday: 'short' }),
+    amount: payments
+      .filter(p => {
+        const paidAt = new Date(p.paidAt || p.date);
+        return paidAt.getDate() === date.getDate() &&
+               paidAt.getMonth() === date.getMonth() &&
+               paidAt.getFullYear() === date.getFullYear();
+      })
+      .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
+    count: payments
+      .filter(p => {
+        const paidAt = new Date(p.paidAt || p.date);
+        return paidAt.getDate() === date.getDate() &&
+               paidAt.getMonth() === date.getMonth() &&
+               paidAt.getFullYear() === date.getFullYear();
+      }).length
+  }));
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+    },
+  };
+
+  const amountChartData = {
+    labels: dailyPayments.map(day => day.date),
+    datasets: [
+      {
+        label: 'Daily Amount ($)',
+        data: dailyPayments.map(day => day.amount),
+        borderColor: dashboardColors.primary.gold,
+        backgroundColor: dashboardColors.primary.lightGold,
+        fill: true,
+      },
+    ],
+  };
+
+  const paymentsChartData = {
+    labels: dailyPayments.map(day => day.date),
+    datasets: [
+      {
+        label: 'Number of Payments',
+        data: dailyPayments.map(day => day.count),
+        backgroundColor: dashboardColors.primary.gold,
+      },
+    ],
+  };
 
   if (loading) {
     return (
@@ -83,91 +150,100 @@ const Overview = () => {
     );
   }
 
-  const statsCards = [
-    {
-      title: "Total Payments",
-      value: totalPayments.toLocaleString(),
-      icon: <FaMoneyBillWave />,
-      gradient: dashboardColors.gradient.primary,
-      change: "+12%",
-      changeType: "positive"
-    },
-    {
-      title: "Total Amount",
-      value: `$${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-      icon: <FaChartLine />,
-      gradient: dashboardColors.primary.lightGold,
-      change: "+8.5%",
-      changeType: "positive"
-    },
-    {
-      title: "Today's Payments",
-      value: todaysPaymentsCount.toLocaleString(),
-      icon: <FaCalendarDay />,
-      gradient: dashboardColors.status.success,
-      change: "+15%",
-      changeType: "positive"
-    },
-    {
-      title: "Today's Amount",
-      value: `$${todaysAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
-      icon: <FiTrendingUp />,
-      gradient: dashboardColors.status.success,
-      change: "+22%",
-      changeType: "positive"
-    }
-  ];
-
   return (
     <div className="space-y-8 animate-fadeIn">
       {/* Header */}
       <div className="text-center lg:text-left">
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-  Dashboard Overview
-</h1>
-
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+          Dashboard Overview
+        </h1>
         <p className="text-lg" style={{ color: dashboardColors.text.secondary }}>
           Welcome back! Here's what's happening with your Zakat operations today.
         </p>
       </div>
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {statsCards.map((card, index) => (
-          <div 
-            key={index}
-            className="relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slideUp group cursor-pointer"
-            style={{ 
-              background: card.gradient,
-              boxShadow: dashboardColors.shadow.lg,
-              animationDelay: `${index * 100}ms`
-            }}
-          >
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
-                  <span className="text-2xl text-white group-hover:scale-110 transition-transform duration-200">
-                    {card.icon}
-                  </span>
-                </div>
-                <div className="text-right">
-                  <span className={`text-sm px-2 py-1 rounded-full font-medium ${
-                    card.changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {card.change}
-                  </span>
-                </div>
-              </div>
-              <h3 className="text-white/90 text-sm font-medium mb-2">{card.title}</h3>
-              <p className="text-white text-3xl font-bold group-hover:scale-105 transition-transform duration-200">
-                {card.value}
-              </p>
-            </div>
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-16 -translate-y-8" 
-                 style={{ backgroundColor: dashboardColors.background.white }}>
-            </div>
+
+      {/* Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Amount Chart */}
+        <div 
+          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
+          style={{ 
+            backgroundColor: dashboardColors.background.white,
+            boxShadow: dashboardColors.shadow.lg
+          }}
+        >
+          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Payment Amounts Trend</h3>
+          <div className="h-80">
+            <Line options={chartOptions} data={amountChartData} />
           </div>
-        ))}
+        </div>
+
+        {/* Payments Count Chart */}
+        <div 
+          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
+          style={{ 
+            backgroundColor: dashboardColors.background.white,
+            boxShadow: dashboardColors.shadow.lg
+          }}
+        >
+          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Number of Payments</h3>
+          <div className="h-80">
+            <Bar options={chartOptions} data={paymentsChartData} />
+          </div>
+        </div>
       </div>
+
+      {/* Summary Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <div 
+          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
+          style={{ 
+            background: dashboardColors.gradient.primary,
+            boxShadow: dashboardColors.shadow.lg
+          }}
+        >
+          <h3 className="text-white/90 text-sm font-medium mb-2">Total Payments</h3>
+          <p className="text-white text-3xl font-bold">{totalPayments.toLocaleString()}</p>
+        </div>
+
+        <div 
+          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
+          style={{ 
+            background: dashboardColors.gradient.primary,
+            boxShadow: dashboardColors.shadow.lg
+          }}
+        >
+          <h3 className="text-white/90 text-sm font-medium mb-2">Total Amount</h3>
+          <p className="text-white text-3xl font-bold">
+            ${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </p>
+        </div>
+
+        <div 
+          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
+          style={{ 
+            background: dashboardColors.gradient.primary,
+            boxShadow: dashboardColors.shadow.lg
+          }}
+        >
+          <h3 className="text-white/90 text-sm font-medium mb-2">Today's Payments</h3>
+          <p className="text-white text-3xl font-bold">{todaysPaymentsCount.toLocaleString()}</p>
+        </div>
+
+        <div 
+          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
+          style={{ 
+            background: dashboardColors.gradient.primary,
+            boxShadow: dashboardColors.shadow.lg
+          }}
+        >
+          <h3 className="text-white/90 text-sm font-medium mb-2">Today's Amount</h3>
+          <p className="text-white text-3xl font-bold">
+            ${todaysAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+          </p>
+        </div>
+      </div>
+
       {/* Top Agents Section */}
       <div 
         className="rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl animate-slideUp"
@@ -187,10 +263,11 @@ const Overview = () => {
           </div>
         </div>
         
-        {topAgents.length > 0 ? (
+        {agents.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...topAgents]
+            {[...agents]
               .sort((a, b) => (b.totalDonation || 0) - (a.totalDonation || 0))
+              .slice(0, 3)
               .map((agent, index) => (
                 <div 
                   key={agent._id || agent.id || index} 
@@ -248,10 +325,8 @@ const Overview = () => {
               ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <FaUsers className="text-6xl mx-auto mb-4" style={{ color: dashboardColors.text.muted }} />
-            <h3 className="text-xl font-semibold mb-2" style={{ color: dashboardColors.text.secondary }}>No Agents Found</h3>
-            <p style={{ color: dashboardColors.text.muted }}>Add some agents to see their performance here.</p>
+          <div className="text-center p-8" style={{ color: dashboardColors.text.secondary }}>
+            No agents data available
           </div>
         )}
       </div>
