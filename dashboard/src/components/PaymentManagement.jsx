@@ -141,19 +141,7 @@ function PaymentManagement() {
             Monitor and manage all Zakat payments
           </p>
         </div>
-        <div className="flex gap-3">
-          <button 
-            className="flex items-center px-4 py-2 rounded-xl transition-all duration-200 hover:scale-105"
-            style={{ 
-              backgroundColor: dashboardColors.primary.gold, 
-              color: dashboardColors.background.white,
-              boxShadow: dashboardColors.shadow.md
-            }}
-          >
-            <FaFileExport className="mr-2" />
-            Export
-          </button>
-        </div>
+        
       </div>
       
       {/* Filter Buttons */}
