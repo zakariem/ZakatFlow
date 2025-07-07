@@ -99,6 +99,7 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
             'agentId': agent.id,
             'agentName': agent.fullName,
             'amount': widget.amount, // Store full zakat amount in history
+            'actualZakatAmount': widget.amount is num ? widget.amount : 0.0,
             'currency': 'USD',
           };
 

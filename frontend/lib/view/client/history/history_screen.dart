@@ -178,11 +178,11 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                   children: [
                     _buildInfoRow(
                       'Test Payment',
-                      '${(widget.donationData!['actualZakatAmount'] as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
+                      '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}'
                     ),
                     _buildInfoRow(
                       'Actual Zakat',
-                      '${(widget.donationData!['actualZakatAmount'] as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
+                      '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}'
                     ),
                     _buildInfoRow('Recipient', widget.donationData!['agentName']),
                     _buildInfoRow('Account', widget.donationData!['userAccountNo']),
