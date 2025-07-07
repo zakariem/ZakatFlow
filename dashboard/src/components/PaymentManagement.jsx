@@ -88,7 +88,7 @@ function PaymentManagement() {
       </div>
     );
   }
-  
+
   if (error) {
     return (
       <div className="text-center p-8">
@@ -106,22 +106,22 @@ function PaymentManagement() {
       value: `$${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
       icon: <FaMoneyBillWave />,
       gradient: dashboardColors.gradient.primary,
-     
+
     },
     {
       title: "Total Payments",
       value: filteredPayments.length.toLocaleString(),
       icon: <FiTrendingUp />,
       gradient: dashboardColors.primary.lightGold,
-      
+
     },
     {
       title: "Today's Payments",
       value: todaysPayments.toLocaleString(),
       icon: <FaCalendarAlt />,
       gradient: dashboardColors.primary.lightGold,
-      
-      
+
+
     }
   ];
 
@@ -130,31 +130,30 @@ function PaymentManagement() {
       {/* Header */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight tracking-tight">
-  <span className="inline-block w-full bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-    Payment Management
-  </span>
-</h1>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight tracking-tight">
+            <span className="inline-block w-full bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+              Payment Management
+            </span>
+          </h1>
 
 
           <p className="text-lg" style={{ color: dashboardColors.text.secondary }}>
             Monitor and manage all Zakat payments
           </p>
         </div>
-        
+
       </div>
-      
+
       {/* Filter Buttons */}
       <div className="flex flex-wrap gap-3">
         {["All", "Today", "This Week", "This Month"].map((filter, index) => (
           <button
             key={filter}
             onClick={() => setSelectedFilter(filter)}
-            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${
-              selectedFilter === filter
+            className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105 ${selectedFilter === filter
                 ? "shadow-lg transform scale-105"
                 : "hover:shadow-md"
-            }`}
+              }`}
             style={{
               backgroundColor: selectedFilter === filter ? dashboardColors.primary.gold : dashboardColors.background.white,
               color: selectedFilter === filter ? dashboardColors.background.white : dashboardColors.text.primary,
@@ -170,10 +169,10 @@ function PaymentManagement() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {summaryCards.map((card, index) => (
-          <div 
+          <div
             key={index}
             className="relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slideUp group cursor-pointer"
-            style={{ 
+            style={{
               background: card.gradient,
               boxShadow: dashboardColors.shadow.lg,
               animationDelay: `${index * 100}ms`
@@ -186,23 +185,23 @@ function PaymentManagement() {
                     {card.icon}
                   </span>
                 </div>
-                
+
               </div>
               <h3 className="text-white/90 text-sm font-medium mb-2">{card.title}</h3>
               <p className="text-white text-3xl font-bold group-hover:scale-105 transition-transform duration-200">
                 {card.value}
               </p>
             </div>
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-16 -translate-y-8" 
-                 style={{ backgroundColor: dashboardColors.background.white }}>
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-16 -translate-y-8"
+              style={{ backgroundColor: dashboardColors.background.white }}>
             </div>
           </div>
         ))}
       </div>
       {/* Payments Table */}
-      <div 
+      <div
         className="rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-2xl animate-slideUp"
-        style={{ 
+        style={{
           backgroundColor: dashboardColors.background.white,
           boxShadow: dashboardColors.shadow.lg,
           animationDelay: '300ms'
@@ -212,22 +211,11 @@ function PaymentManagement() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h2 className="text-2xl font-bold" style={{ color: dashboardColors.text.primary }}>Payment Records</h2>
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: dashboardColors.text.muted }} />
-                <input
-                  type="text"
-                  placeholder="Search payments..."
-                  className="pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2"
-                  style={{ 
-                    borderColor: dashboardColors.border.light,
-                    focusRingColor: dashboardColors.primary.lightGold
-                  }}
-                />
-              </div>
+
             </div>
           </div>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead style={{ backgroundColor: dashboardColors.background.light }}>
@@ -238,7 +226,7 @@ function PaymentManagement() {
                 <th className="text-left py-4 px-6 font-semibold" style={{ color: dashboardColors.text.primary }}>Agent</th>
                 <th className="text-left py-4 px-6 font-semibold" style={{ color: dashboardColors.text.primary }}>Date</th>
                 <th className="text-left py-4 px-6 font-semibold" style={{ color: dashboardColors.text.primary }}>Status</th>
-                
+
               </tr>
             </thead>
             <tbody>
@@ -277,11 +265,10 @@ function PaymentManagement() {
                       }) : 'N/A'}
                     </td>
                     <td className="py-4 px-6">
-                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        payment.waafiResponse && payment.waafiResponse.state === 'APPROVED'
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${payment.waafiResponse && payment.waafiResponse.state === 'APPROVED'
                           ? 'bg-green-100 text-green-700'
                           : 'bg-orange-100 text-orange-700'
-                      }`}>
+                        }`}>
                         {payment.waafiResponse && payment.waafiResponse.state || 'Completed'}
                       </span>
                     </td>
