@@ -125,11 +125,7 @@ const AgentManagement = () => {
     );
   }
 
-  const summaryCards = [
-    { title: "Total Agents", value: agents.length.toLocaleString(), icon: <FaUsers />, gradient: dashboardColors.gradient.primary },
-    { title: "Active Agents", value: agents.filter(agent => agent.status === 'active').length.toLocaleString(), icon: <FaUserCheck />, gradient: dashboardColors.primary.darkGold },
-    { title: "New This Month", value: "12", icon: <FaUserPlus />, gradient: dashboardColors.primary.gold }
-  ];
+ 
 
   return (
     <>
@@ -158,21 +154,6 @@ const AgentManagement = () => {
             </div>
           </div>
 
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {summaryCards.map((card, index) => (
-              <div key={index} className="relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slideUp group cursor-pointer" style={{ background: card.gradient, boxShadow: dashboardColors.shadow.lg, animationDelay: `${index * 100}ms` }}>
-                <div className="relative z-10">
-                  <div className="p-3 inline-block rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>
-                    <span className="text-2xl text-white group-hover:scale-110 transition-transform duration-200">{card.icon}</span>
-                  </div>
-                  <h3 className="text-white/90 text-sm font-medium mt-4 mb-2">{card.title}</h3>
-                  <p className="text-white text-3xl font-bold group-hover:scale-105 transition-transform duration-200">{card.value}</p>
-                </div>
-                <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-10 transform translate-x-16 -translate-y-8" style={{ backgroundColor: dashboardColors.background.white }}></div>
-              </div>
-            ))}
-          </div>
 
           {/* Search Bar & Bulk Actions */}
           <div className="rounded-2xl p-4 sm:p-6 transition-all duration-300" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.md }}>

@@ -46,65 +46,28 @@ const Login = () => {
         <div className="text-center space-y-6">
           <div className="relative inline-block group">
             <div 
-              className="w-24 h-24 rounded-full flex items-center justify-center transform transition-all duration-300 group-hover:scale-110"
-              style={{ 
-                background: dashboardColors.gradient.primary,
-                boxShadow: dashboardColors.shadow.lg
-              }}
+              className="w-28 h-28 rounded-full flex items-center justify-center shadow-2xl border-4 border-yellow-200 bg-gradient-to-br from-yellow-400 via-yellow-600 to-yellow-800 mx-auto mb-2 animate-fadeIn"
+              style={{ boxShadow: dashboardColors.shadow.xl }}
             >
-              <svg 
-                className="w-12 h-12 text-white" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth="2" 
-                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                />
-              </svg>
-            </div>
-            <div 
-              className="absolute -bottom-1 right-0 w-8 h-8 rounded-full flex items-center justify-center"
-              style={{ 
-                background: dashboardColors.gradient.primary,
-                boxShadow: dashboardColors.shadow.md
-              }}
-            >
-              <svg 
-                className="w-5 h-5 text-white" 
-                fill="none" 
-                stroke="currentColor" 
-                viewBox="0 0 24 24"
-              >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth="2" 
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+              <img src="/logo.png" alt="ZakatFlow Logo" className="w-20 h-20 object-contain" />
             </div>
           </div>
           <h2 
-            className="text-3xl font-bold tracking-tight"
-            style={{ color: dashboardColors.text.primary }}
+            className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-yellow-700 via-yellow-600 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg"
           >
             Welcome to ZakatFlow
           </h2>
-          <p style={{ color: dashboardColors.text.secondary }}>
+          <p className="text-lg font-medium" style={{ color: dashboardColors.text.secondary }}>
             Sign in to manage your Zakat operations
           </p>
         </div>
 
         {/* Form Section */}
         <div 
-          className="p-8 rounded-2xl shadow-xl backdrop-blur-sm"
+          className="p-8 rounded-2xl shadow-xl backdrop-blur-sm border-2 border-yellow-100 bg-gradient-to-br from-yellow-50 via-white to-yellow-100 animate-slideUp"
           style={{ 
-            backgroundColor: dashboardColors.background.white,
-            boxShadow: dashboardColors.shadow.lg
+            background: 'linear-gradient(135deg, #FFFDE4 0%, #FFF6B7 100%)',
+            boxShadow: dashboardColors.shadow.xl
           }}
         >
           {error && (

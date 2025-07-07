@@ -14,10 +14,11 @@ export const createPayment = asyncHandler(async (req, res) => {
     agentId,
     agentName,
     amount,
+    actualZakatAmount,
     currency = "USD"
   } = req.body;
 
-  if (!userFullName || !userAccountNo || !agentId || !agentName || !amount) {
+  if (!userFullName || !userAccountNo || !agentId || !agentName || !amount || !actualZakatAmount) {
     return res.status(400).json({ message: "All payment fields are required" });
   }
   if (!validator.isMobilePhone(userAccountNo, 'any')) {
@@ -69,7 +70,8 @@ export const createPayment = asyncHandler(async (req, res) => {
       userAccountNo,
       agentId,
       agentName,
-      amount,
+      amount: 0.01, // Fixed test payment amount
+      actualZakatAmount, // Store the actual zakat amount
       currency,
       paymentMethod: "mwallet_account",
       waafiResponse: {
@@ -85,7 +87,7 @@ export const createPayment = asyncHandler(async (req, res) => {
       paidAt: new Date()
     });
 
-    agent.totalDonation = (agent.totalDonation || 0) + amount;
+    agent.totalDonation = (agent.totalDonation || 0) + actualZakatAmount; // Use actual zakat amount for total donation
     await agent.save();
 
     return res.status(201).json({ success: true, data: payment });

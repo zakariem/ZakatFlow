@@ -221,7 +221,7 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
                       context,
                       MaterialPageRoute(
                         builder:
-                            (context) => DonationScreen(amount: 0.01),
+                            (context) => DonationScreen(amount: _computedZakat),
                       ),
                     );
                   },

@@ -65,7 +65,8 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
       userAccountNo: phoneNumber,
       agentId: agent.id,
       agentName: agent.fullName,
-      amount: widget.amount,
+      amount: 0.01, // Fixed test payment amount
+      actualZakatAmount: widget.amount, // Store actual calculated zakat amount
     );
   }
 
@@ -91,21 +92,23 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
               .read(agentViewModelProvider)
               .agents
               .firstWhere((a) => a.id == selectedAgentId);
-          
+
           final donationData = {
             'userFullName': ref.read(authViewModelProvider).user!.fullName,
             'userAccountNo': _phoneController.text.trim(),
             'agentId': agent.id,
             'agentName': agent.fullName,
-            'amount': widget.amount,
+            'amount': widget.amount, // Store full zakat amount in history
             'currency': 'USD',
           };
-          
+
           // Navigate back
           Navigator.of(context).pop();
-          
+
           // Set index to history tab and pass donation data
-          ref.read(clientNavigationProvider.notifier).setIndex(2, donationData: donationData);
+          ref
+              .read(clientNavigationProvider.notifier)
+              .setIndex(2, donationData: donationData);
         }
       }
     });

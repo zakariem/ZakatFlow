@@ -5,6 +5,7 @@ class HistoryModel {
   final String agentId;
   final String agentName;
   final double amount;
+  final double actualZakatAmount;
   final String currency;
   final String paymentMethod;
   final DateTime paidAt;
@@ -17,6 +18,7 @@ class HistoryModel {
     required this.agentId,
     required this.agentName,
     required this.amount,
+    required this.actualZakatAmount,
     required this.currency,
     required this.paymentMethod,
     required this.paidAt,
@@ -31,6 +33,7 @@ class HistoryModel {
       agentId: json['agentId'] ?? '',
       agentName: json['agentName'] ?? '',
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      actualZakatAmount: (json['actualZakatAmount'] as num?)?.toDouble() ?? 0.0,
       currency: json['currency'] ?? '',
       paymentMethod: json['paymentMethod'] ?? '',
       paidAt: DateTime.parse(json['paidAt']),

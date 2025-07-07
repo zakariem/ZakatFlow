@@ -49,6 +49,16 @@ const PaymentSchema = new mongoose.Schema(
         message: props => `Amount must be greater than zero, got ${props.value}`
       }
     },
+    actualZakatAmount: {
+      type: Number,
+      required: [true, "Actual zakat amount is required"],
+      validate: {
+        validator: function (v) {
+          return v > 0;
+        },
+        message: props => `Actual zakat amount must be greater than zero, got ${props.value}`
+      }
+    },
     currency: {
       type: String,
       default: "USD",

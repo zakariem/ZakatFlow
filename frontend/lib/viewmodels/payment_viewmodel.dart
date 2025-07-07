@@ -32,6 +32,7 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
     required String agentId,
     required String agentName,
     required double amount,
+    required double actualZakatAmount,
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -41,12 +42,14 @@ class PaymentNotifier extends StateNotifier<PaymentState> {
         agentId: agentId,
         agentName: agentName,
         amount: amount,
+        actualZakatAmount: actualZakatAmount,
       );
+
       final response = await _service.createPayment(payment, token);
       final responseBody = jsonDecode(response.body);
 
       if (response.statusCode == 201) {
-        state = state.copyWith(isLoading: false, data: response.body);
+        state = state.copyWith(isLoading: false, data: responseBody);
       } else {
         state = state.copyWith(
           isLoading: false,

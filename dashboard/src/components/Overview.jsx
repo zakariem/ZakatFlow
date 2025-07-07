@@ -3,7 +3,7 @@ import axios from "axios";
 import { adminApi } from "../api/adminApi";
 import { dashboardColors } from "../theme/dashboardColors";
 import { FaCrown } from "react-icons/fa";
-import { Line, Bar } from 'react-chartjs-2';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,6 +11,7 @@ import {
   PointElement,
   LineElement,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -22,6 +23,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
+  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -59,7 +61,7 @@ const Overview = () => {
 
   // Calculate summary values
   const totalPayments = payments.length;
-  const totalAmount = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+  const totalAmount = payments.reduce((sum, p) => sum + (parseFloat(p.actualZakatAmount) || parseFloat(p.amount) || 0), 0);
   const today = new Date();
   const todaysPayments = payments.filter(p => {
     const paidAt = new Date(p.paidAt || p.date);
@@ -68,34 +70,66 @@ const Overview = () => {
       paidAt.getDate() === today.getDate();
   });
   const todaysPaymentsCount = todaysPayments.length;
-  const todaysAmount = todaysPayments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+  const todaysAmount = todaysPayments.reduce((sum, p) => sum + (parseFloat(p.actualZakatAmount) || parseFloat(p.amount) || 0), 0);
 
-  // Prepare chart data
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
+  // 14-day trend
+  const last14Days = Array.from({ length: 14 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() - i);
     return date;
   }).reverse();
 
-  const dailyPayments = last7Days.map(date => ({
-    date: date.toLocaleDateString('en-US', { weekday: 'short' }),
-    amount: payments
-      .filter(p => {
-        const paidAt = new Date(p.paidAt || p.date);
-        return paidAt.getDate() === date.getDate() &&
-               paidAt.getMonth() === date.getMonth() &&
-               paidAt.getFullYear() === date.getFullYear();
-      })
-      .reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0),
-    count: payments
-      .filter(p => {
-        const paidAt = new Date(p.paidAt || p.date);
-        return paidAt.getDate() === date.getDate() &&
-               paidAt.getMonth() === date.getMonth() &&
-               paidAt.getFullYear() === date.getFullYear();
-      }).length
-  }));
+  // Filter out payments with invalid dates
+  const validPayments = payments.filter(p => {
+    const paidAt = new Date(p.paidAt || p.date);
+    return paidAt instanceof Date && !isNaN(paidAt);
+  });
 
+  const dailyPayments = last14Days.map(date => {
+    const label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const filtered = validPayments.filter(p => {
+      const paidAt = new Date(p.paidAt || p.date);
+      return paidAt.getDate() === date.getDate() &&
+             paidAt.getMonth() === date.getMonth() &&
+             paidAt.getFullYear() === date.getFullYear();
+    });
+    return {
+      date: label,
+      amount: filtered.reduce((sum, p) => sum + (parseFloat(p.actualZakatAmount) || parseFloat(p.amount) || 0), 0),
+      count: filtered.length
+    };
+  });
+
+  // Payment status breakdown (doughnut)
+  const statusCounts = validPayments.reduce((acc, p) => {
+    const status = (p.waafiResponse && p.waafiResponse.state) || p.status || 'Unknown';
+    acc[status] = (acc[status] || 0) + 1;
+    return acc;
+  }, {});
+  const statusLabels = Object.keys(statusCounts);
+  const statusData = Object.values(statusCounts);
+  const statusColors = [
+    '#4CAF50', // Approved/Success
+    '#FFC107', // Pending
+    '#F44336', // Failed
+    '#2196F3', // Other
+    '#9C27B0',
+    '#FF9800',
+    '#607D8B',
+    '#795548',
+    '#00BCD4',
+    '#E91E63',
+  ];
+
+  // Top 5 agents by total collection
+  const topAgents = [...(Array.isArray(agents) ? agents : [])]
+    .filter(a => a && a.fullName)
+    .sort((a, b) => (b.totalDonation || 0) - (a.totalDonation || 0))
+    .slice(0, 5);
+  const topAgentLabels = topAgents.map(a => a.fullName);
+  const topAgentData = topAgents.map(a => a.totalDonation || 0);
+
+  // Chart options
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -103,6 +137,23 @@ const Overview = () => {
       legend: {
         position: 'top',
       },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) label += ': ';
+            if (context.parsed.y !== null) label += '$' + context.parsed.y.toLocaleString();
+            return label;
+          }
+        }
+      },
+    },
+    interaction: {
+      mode: 'nearest',
+      axis: 'x',
+      intersect: false
     },
   };
 
@@ -113,7 +164,10 @@ const Overview = () => {
         label: 'Daily Amount ($)',
         data: dailyPayments.map(day => day.amount),
         borderColor: dashboardColors.primary.gold,
-        backgroundColor: dashboardColors.primary.lightGold,
+        backgroundColor: 'rgba(255, 215, 64, 0.2)',
+        pointBackgroundColor: dashboardColors.primary.gold,
+        pointBorderColor: dashboardColors.primary.gold,
+        tension: 0.4,
         fill: true,
       },
     ],
@@ -125,7 +179,38 @@ const Overview = () => {
       {
         label: 'Number of Payments',
         data: dailyPayments.map(day => day.count),
+        backgroundColor: dashboardColors.primary.lightGold,
+        borderColor: dashboardColors.primary.gold,
+        borderWidth: 2,
+        borderRadius: 6,
+        maxBarThickness: 24,
+      },
+    ],
+  };
+
+  const doughnutChartData = {
+    labels: statusLabels,
+    datasets: [
+      {
+        label: 'Payments by Status',
+        data: statusData,
+        backgroundColor: statusLabels.map((_, i) => statusColors[i % statusColors.length]),
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const agentBarChartData = {
+    labels: topAgentLabels,
+    datasets: [
+      {
+        label: 'Total Collected ($)',
+        data: topAgentData,
         backgroundColor: dashboardColors.primary.gold,
+        borderColor: dashboardColors.primary.lightGold,
+        borderWidth: 2,
+        borderRadius: 6,
+        maxBarThickness: 32,
       },
     ],
   };
@@ -162,33 +247,50 @@ const Overview = () => {
         </p>
       </div>
 
-      {/* Charts Grid */}
+      {/* Enhanced Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Amount Chart */}
-        <div 
-          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
-          style={{ 
-            backgroundColor: dashboardColors.background.white,
-            boxShadow: dashboardColors.shadow.lg
-          }}
-        >
-          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Payment Amounts Trend</h3>
-          <div className="h-80">
-            <Line options={chartOptions} data={amountChartData} />
+        {/* Amount Trend Chart */}
+        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
+          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Payment Amounts Trend (Last 14 Days)</h3>
+          <div className="h-80 flex items-center justify-center">
+            {dailyPayments.every(day => day.amount === 0) ? (
+              <span className="text-gray-400">No payment data for the last 14 days.</span>
+            ) : (
+              <Line options={chartOptions} data={amountChartData} />
+            )}
           </div>
         </div>
-
         {/* Payments Count Chart */}
-        <div 
-          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
-          style={{ 
-            backgroundColor: dashboardColors.background.white,
-            boxShadow: dashboardColors.shadow.lg
-          }}
-        >
-          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Number of Payments</h3>
-          <div className="h-80">
-            <Bar options={chartOptions} data={paymentsChartData} />
+        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
+          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Number of Payments (Last 14 Days)</h3>
+          <div className="h-80 flex items-center justify-center">
+            {dailyPayments.every(day => day.count === 0) ? (
+              <span className="text-gray-400">No payment count data for the last 14 days.</span>
+            ) : (
+              <Bar options={chartOptions} data={paymentsChartData} />
+            )}
+          </div>
+        </div>
+        {/* Payment Status Doughnut Chart */}
+        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
+          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Payments by Status</h3>
+          <div className="h-80 flex items-center justify-center">
+            {statusLabels.length === 0 || statusData.every(v => v === 0) ? (
+              <span className="text-gray-400">No payment status data available.</span>
+            ) : (
+              <Doughnut data={doughnutChartData} options={{ ...chartOptions, cutout: '70%' }} />
+            )}
+          </div>
+        </div>
+        {/* Top Agents Bar Chart */}
+        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
+          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Top 5 Agents by Collection</h3>
+          <div className="h-80 flex items-center justify-center">
+            {topAgentLabels.length === 0 || topAgentData.every(v => v === 0) ? (
+              <span className="text-gray-400">No agent collection data available.</span>
+            ) : (
+              <Bar data={agentBarChartData} options={{ ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } } }} />
+            )}
           </div>
         </div>
       </div>

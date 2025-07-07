@@ -147,7 +147,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     final totalPayments = payments.length;
     final totalAmount = payments.fold<double>(
       0.0,
-      (sum, payment) => sum + payment.amount,
+      (sum, payment) => sum + payment.actualZakatAmount,
     );
     final todayPayments =
         payments.where((payment) {
@@ -163,7 +163,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
               payment.paidAt.month == today.month &&
               payment.paidAt.day == today.day;
         })
-        .fold<double>(0.0, (sum, payment) => sum + payment.amount);
+        .fold<double>(0.0, (sum, payment) => sum + payment.actualZakatAmount);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,7 +366,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     final dailyPayments = <String, double>{};
     for (final payment in payments) {
       final dateKey = DateFormat('MM/dd').format(payment.paidAt);
-      dailyPayments[dateKey] = (dailyPayments[dateKey] ?? 0) + payment.amount;
+      dailyPayments[dateKey] = (dailyPayments[dateKey] ?? 0) + payment.actualZakatAmount;
     }
 
     final spots =
@@ -635,7 +635,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '${payment.currency} ${payment.amount.toStringAsFixed(2)}',
+                        '${payment.currency} ${payment.actualZakatAmount.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

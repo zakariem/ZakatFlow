@@ -4,6 +4,7 @@ class PaymentModel {
   final String agentId;
   final String agentName;
   final double amount;
+  final double actualZakatAmount;
   final String currency;
 
   PaymentModel({
@@ -12,6 +13,7 @@ class PaymentModel {
     required this.agentId,
     required this.agentName,
     required this.amount,
+    required this.actualZakatAmount,
     this.currency = 'USD',
   });
 
@@ -22,6 +24,7 @@ class PaymentModel {
       'agentId': agentId,
       'agentName': agentName,
       'amount': amount,
+      'actualZakatAmount': actualZakatAmount,
       'currency': currency,
     };
   }

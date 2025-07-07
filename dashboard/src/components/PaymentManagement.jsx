@@ -69,7 +69,7 @@ function PaymentManagement() {
 
   // Calculate summary values from payments
   const totalPayments = payments.length;
-  const totalAmount = payments.reduce((sum, p) => sum + (parseFloat(p.amount) || 0), 0);
+  const totalAmount = payments.reduce((sum, p) => sum + (parseFloat(p.actualZakatAmount) || 0), 0);
   const todaysPayments = payments.filter(p => {
     const paidAt = p.paidAt ? new Date(p.paidAt) : null;
     return paidAt &&
@@ -106,24 +106,22 @@ function PaymentManagement() {
       value: `$${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
       icon: <FaMoneyBillWave />,
       gradient: dashboardColors.gradient.primary,
-      change: "+8.2%",
-      changeType: "positive"
+     
     },
     {
       title: "Total Payments",
       value: filteredPayments.length.toLocaleString(),
       icon: <FiTrendingUp />,
       gradient: dashboardColors.primary.lightGold,
-      change: "+12%",
-      changeType: "positive"
+      
     },
     {
       title: "Today's Payments",
       value: todaysPayments.toLocaleString(),
       icon: <FaCalendarAlt />,
       gradient: dashboardColors.primary.lightGold,
-      change: "+5%",
-      changeType: "positive"
+      
+      
     }
   ];
 
@@ -200,13 +198,7 @@ function PaymentManagement() {
                     {card.icon}
                   </span>
                 </div>
-                <div className="text-right">
-                  <span className={`text-sm px-2 py-1 rounded-full font-medium ${
-                    card.changeType === 'positive' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                  }`}>
-                    {card.change}
-                  </span>
-                </div>
+                
               </div>
               <h3 className="text-white/90 text-sm font-medium mb-2">{card.title}</h3>
               <p className="text-white text-3xl font-bold group-hover:scale-105 transition-transform duration-200">
@@ -278,7 +270,7 @@ function PaymentManagement() {
                     </td>
                     <td className="py-4 px-6">
                       <span className="text-xl font-bold" style={{ color: dashboardColors.primary.gold }}>
-                        {(payment.currency || '$') + ' ' + (parseFloat(payment.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }))}
+                        {(payment.currency || '$') + ' ' + (parseFloat(payment.actualZakatAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 }))}
                       </span>
                     </td>
                     <td className="py-4 px-6">

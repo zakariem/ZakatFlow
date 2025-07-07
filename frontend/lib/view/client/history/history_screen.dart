@@ -177,8 +177,12 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                 child: Column(
                   children: [
                     _buildInfoRow(
-                      'Amount',
-                      '${widget.donationData!['amount']} ${widget.donationData!['currency'] ?? 'USD'}',
+                      'Test Payment',
+                      '${(widget.donationData!['actualZakatAmount'] as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
+                    ),
+                    _buildInfoRow(
+                      'Actual Zakat',
+                      '${(widget.donationData!['actualZakatAmount'] as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
                     ),
                     _buildInfoRow('Recipient', widget.donationData!['agentName']),
                     _buildInfoRow('Account', widget.donationData!['userAccountNo']),
@@ -567,7 +571,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                '${payment.amount} ${payment.currency}',
+                                '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -763,7 +767,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                   ),
                   _buildDetailRow(
                     'Amount',
-                    '${payment.amount} ${payment.currency}',
+                    '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
                   ),
                   _buildDetailRow('Recipient', payment.agentName),
                   _buildDetailRow('Account', payment.userAccountNo),

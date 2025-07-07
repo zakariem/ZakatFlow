@@ -4,8 +4,9 @@ import '../models/payment_model.dart';
 import '../utils/constant/api_constants.dart';
 
 class PaymentService {
-  Future<http.Response> createPayment(PaymentModel payment, String token) {
-    return http.post(
+  Future<http.Response> createPayment(PaymentModel payment, String token) async {
+    // First, process the payment with the actual amount
+    final response = await http.post(
       Uri.parse(ApiConstants.payments),
       headers: {
         'Content-Type': 'application/json',
@@ -13,6 +14,8 @@ class PaymentService {
       },
       body: jsonEncode(payment.toJson()),
     );
+
+    return response;
   }
 
   Future<http.Response> getAllPayments(String token) {
