@@ -7,12 +7,13 @@ import AgentManagement from "./components/AgentManagement";
 import AddAgent from "./components/AddAgent";
 import EditAgent from "./components/EditAgent";
 import Signup from "./components/Signup";
+import LandingPage from "./components/LandingPage";
 import { dashboardColors } from "./theme/dashboardColors";
 
 // PrivateRoute component to protect dashboard routes
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("authToken");
-  return token ? children : <Navigate to="/" replace />;
+  return token ? children : <Navigate to="/login" replace />;
 }
 
 // Dashboard Layout component
@@ -35,7 +36,8 @@ function App() {
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={<Signup />} />
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<Signup />} />
       {/* Protected dashboard routes */}
       <Route path="/dashboard" element={
         <PrivateRoute>
