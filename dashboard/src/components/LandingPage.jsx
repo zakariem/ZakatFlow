@@ -96,26 +96,6 @@ const LandingPage = () => {
             <span className="font-semibold" style={{ color: dashboardColors.primary.darkGold }}>Streamline operations, track payments, and manage agents</span> all in one secure place.
           </p>
 
-          {/* Enhanced Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
-            <button 
-              onClick={handleAdminAccess}
-              className="group px-10 py-5 rounded-2xl text-white font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl relative overflow-hidden"
-              style={{ 
-                background: dashboardColors.gradient.primary,
-                boxShadow: dashboardColors.shadow.xl 
-              }}
-            >
-              <span className="relative z-10 flex items-center gap-3">
-                Get Started Now
-                <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </span>
-              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-            </button>
-          </div>
-
           {/* Download Section */}
           <div className="relative inline-block mb-16">
             <button
