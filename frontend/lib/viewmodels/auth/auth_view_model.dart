@@ -52,7 +52,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
       
       // If we get here, login was successful, so store the user data
       await _storeUserData(user);
-      state = state.copyWith(user: user, isAdmin: user.isAdmin, isLoading: false);
+      state = state.copyWith(user: user, isLoading: false);
     } catch (e) {
       _handleError(e);
     }
@@ -116,7 +116,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
       if (JwtDecoder.isExpired(token)) {
         await logout();
       } else {
-        state = state.copyWith(user: user, isAdmin: user.isAdmin);
+        state = state.copyWith(user: user);
       }
     } catch (e) {
       state = state.copyWith(error: 'Failed to check authentication status');
@@ -131,7 +131,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
       
       final user = await authMethod();
       await _storeUserData(user);
-      state = state.copyWith(user: user, isAdmin: user.isAdmin);
+      state = state.copyWith(user: user);
     } catch (e) {
       _handleError(e);
     } finally {
@@ -160,7 +160,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
   }
 
   Future<void> updateUser(User user) async {
-    state = state.copyWith(user: user, isAdmin: user.isAdmin);
+    state = state.copyWith(user: user);
     await _storeUserData(user);
   }
 }

@@ -4,7 +4,6 @@ import '../../../providers/client_navigation_provider.dart';
 import '../../../providers/auth_providers.dart';
 import '../../../providers/payment_provider.dart';
 import '../../../utils/theme/app_color.dart';
-import '../../../utils/widgets/loader.dart';
 import '../../../utils/widgets/custom/custom_field.dart';
 import '../../../utils/constant/validation_utils.dart';
 import '../../../utils/widgets/snackbar/error_scanckbar.dart';

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
+
 import 'package:frontend/utils/widgets/loader.dart';
 import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
 import 'package:frontend/utils/widgets/snackbar/success_snackbar.dart';
@@ -12,6 +14,8 @@ import '../viewmodels/agent_view_model.dart';
 import '../viewmodels/history_viewmodel.dart';
 import 'auth/login_screen.dart';
 
+/// Main screen for agent users displaying dashboard with payment analytics,
+/// summary cards, charts, and payment history with filtering capabilities.
 class AgentMainScreen extends ConsumerStatefulWidget {
   const AgentMainScreen({super.key});
 
@@ -34,6 +38,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     _loadData();
   }
 
+  /// Loads agent data and payment history from the server
   Future<void> _loadData() async {
     final authState = ref.read(authViewModelProvider);
     final agentViewModel = ref.read(agentViewModelProvider);
@@ -65,77 +70,194 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     final isLoading = agentViewModel.isLoading;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        backgroundColor: AppColors.backgroundLight,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: CircleAvatar(
-            backgroundImage:
-                agent?.profileImageUrl != null
-                    ? NetworkImage(agent!.profileImageUrl!)
-                    : null,
-            child:
-                agent?.profileImageUrl == null
-                    ? const Icon(Icons.person)
-                    : null,
+      backgroundColor: AppColors.backgroundLight,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.backgroundLight,
+              AppColors.secondaryBeige.withOpacity(0.3),
+              AppColors.backgroundLight,
+            ],
           ),
         ),
-        title: Text(
-          agent?.fullName ?? 'Agent Dashboard',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
-            onPressed: _loadData,
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
-            onPressed: () async {
-              try {
-                await ref.read(authViewModelProvider.notifier).logout();
-                if (!mounted) return;
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (_) => false,
-                );
-              } catch (e) {
-                if (!mounted) return;
-                ErrorScanckbar.showSnackBar(context, 'Logout failed: $e');
-              }
-            },
-          ),
-        ],
-      ),
-      body:
-          isLoading
-              ? const Center(child: Loader())
-              : agent == null
-              ? const Center(child: Text("Hay'ad lama helin"))
-              : RefreshIndicator(
-                onRefresh: _loadData,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSummaryCards(),
-                      const SizedBox(height: 24),
-                      _buildChartsSection(),
-                      const SizedBox(height: 24),
-                      _buildFilterSection(),
-                      const SizedBox(height: 16),
-                      _buildPaymentHistory(),
-                    ],
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              floating: false,
+              pinned: true,
+              elevation: 4,
+              expandedHeight: 120,
+              backgroundColor: AppColors.primaryGold,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [AppColors.primaryGold, AppColors.accentDarkGold],
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Row(
+                        children: [
+                          // Profile picture on the left
+                          CircleAvatar(
+                            radius: 25,
+                            backgroundImage:
+                                agent?.profileImageUrl != null
+                                    ? NetworkImage(agent!.profileImageUrl!)
+                                    : null,
+                            backgroundColor: AppColors.secondaryWhite,
+                            child:
+                                agent?.profileImageUrl == null
+                                    ? const Icon(
+                                      Icons.person,
+                                      color: AppColors.primaryGold,
+                                      size: 30,
+                                    )
+                                    : null,
+                          ),
+                          const SizedBox(width: 16),
+                          // Agent name in the center
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  agent != null ? agent!.fullName : 'Agent Dashboard',
+                                  style: const TextStyle(
+                                    color: AppColors.textWhite,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                if (agent != null)
+                                  Text(
+                                    'Agent Dashboard',
+                                    style: TextStyle(
+                                      color: AppColors.textWhite.withOpacity(0.8),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
+              actions: [
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.textWhite.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.refresh, color: AppColors.textWhite),
+                    tooltip: 'Refresh',
+                    onPressed: _loadData,
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.textWhite.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.logout, color: AppColors.textWhite),
+                    tooltip: 'Logout',
+                    onPressed: () async {
+                      try {
+                        await ref.read(authViewModelProvider.notifier).logout();
+                        if (!mounted) return;
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (_) => const LoginScreen(),
+                          ),
+                          (_) => false,
+                        );
+                      } catch (e) {
+                        if (!mounted) return;
+                        ErrorScanckbar.showSnackBar(
+                          context,
+                          'Logout failed: $e',
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            SliverList(
+              delegate: SliverChildListDelegate([
+                isLoading
+                    ? SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      child: const Center(child: Loader()),
+                    )
+                    : agent == null
+                    ? SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.6,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.person_off,
+                              size: 80,
+                              color: AppColors.textGray,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              "Hay'ad lama helin",
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.textGray,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    : RefreshIndicator(
+                      onRefresh: _loadData,
+                      color: AppColors.primaryGold,
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSummaryCards(),
+                            const SizedBox(height: 32),
+                            _buildChartsSection(),
+                            const SizedBox(height: 32),
+                            _buildFilterSection(),
+                            const SizedBox(height: 24),
+                            _buildPaymentHistory(),
+                            const SizedBox(height: 100), // Bottom padding
+                          ],
+                        ),
+                      ),
+                    ),
+              ]),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -168,42 +290,81 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Performance Overview',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primaryGold.withOpacity(0.2),
+                    AppColors.accentLightGold.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.primaryGold.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                '📊 PERFORMANCE',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryGold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
+        Text(
+          'Performance Overview',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 20),
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 1.5,
+          childAspectRatio: 1.4,
           children: [
             _buildSummaryCard(
               'Total Payments',
               totalPayments.toString(),
-              Icons.payment,
-              Colors.blue,
+              Icons.payment_rounded,
+              [AppColors.info, AppColors.info.withOpacity(0.7)],
+              '💳',
             ),
             _buildSummaryCard(
               'Total Amount',
               formatter.format(totalAmount),
-              Icons.attach_money,
-              Colors.green,
+              Icons.attach_money_rounded,
+              [AppColors.success, AppColors.success.withOpacity(0.7)],
+              '💰',
             ),
             _buildSummaryCard(
               'Today\'s Payments',
               todayPayments.toString(),
-              Icons.today,
-              Colors.orange,
+              Icons.today_rounded,
+              [AppColors.warning, AppColors.warning.withOpacity(0.7)],
+              '📅',
             ),
             _buildSummaryCard(
               'Today\'s Amount',
               formatter.format(todayAmount),
-              Icons.trending_up,
-              Colors.purple,
+              Icons.trending_up_rounded,
+              [AppColors.primaryGold, AppColors.accentDarkGold],
+              '📈',
             ),
           ],
         ),
@@ -215,47 +376,99 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     String title,
     String value,
     IconData icon,
-    Color color,
+    List<Color> gradientColors,
+    String emoji,
   ) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.secondaryWhite,
+            AppColors.secondaryBeige.withOpacity(0.3),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: AppColors.shadowLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: gradientColors[0].withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: AppColors.borderPrimary.withOpacity(0.1),
+          width: 1,
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Icon(icon, color: color, size: 24),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(icon, color: color, size: 16),
-              ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.7),
             ],
           ),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-        ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: gradientColors),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: gradientColors[0].withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Icon(icon, color: AppColors.textWhite, size: 24),
+                ),
+                Text(emoji, style: const TextStyle(fontSize: 24)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.textGray,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -264,11 +477,46 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Analytics',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.info.withOpacity(0.2),
+                    AppColors.info.withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: AppColors.info.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Text(
+                '📈 ANALYTICS',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.info,
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
+        Text(
+          'Analytics Dashboard',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 20),
         Row(
           children: [
             Expanded(child: _buildPaymentMethodChart()),
@@ -320,37 +568,65 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
         }).toList();
 
     return Container(
-      height: 200,
-      padding: const EdgeInsets.all(16),
+      height: 220,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.secondaryWhite,
+            AppColors.secondaryBeige.withOpacity(0.2),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: AppColors.shadowLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(
+          color: AppColors.borderPrimary.withOpacity(0.1),
+          width: 1,
+        ),
       ),
-      child: Column(
-        children: [
-          const Text(
-            'Payment Methods',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.7),
+            ],
           ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: PieChart(
-              PieChartData(
-                sections: sections,
-                centerSpaceRadius: 30,
-                sectionsSpace: 2,
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Payment Methods',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Expanded(
+              child: PieChart(
+                PieChartData(
+                  sections: sections,
+                  centerSpaceRadius: 30,
+                  sectionsSpace: 2,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -366,7 +642,8 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     final dailyPayments = <String, double>{};
     for (final payment in payments) {
       final dateKey = DateFormat('MM/dd').format(payment.paidAt);
-      dailyPayments[dateKey] = (dailyPayments[dateKey] ?? 0) + payment.actualZakatAmount;
+      dailyPayments[dateKey] =
+          (dailyPayments[dateKey] ?? 0) + payment.actualZakatAmount;
     }
 
     final spots =
@@ -375,127 +652,327 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
         }).toList();
 
     return Container(
-      height: 200,
-      padding: const EdgeInsets.all(16),
+      height: 220,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.secondaryWhite,
+            AppColors.secondaryBeige.withOpacity(0.2),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: AppColors.shadowLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(
+          color: AppColors.borderPrimary.withOpacity(0.1),
+          width: 1,
+        ),
       ),
-      child: Column(
-        children: [
-          const Text(
-            'Daily Payments',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.7),
+            ],
           ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: LineChart(
-              LineChartData(
-                gridData: const FlGridData(show: false),
-                titlesData: const FlTitlesData(show: false),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: spots,
-                    isCurved: true,
-                    color: Colors.blue,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: const FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      color: Colors.blue.withOpacity(0.1),
-                    ),
-                  ),
-                ],
+        ),
+        child: Column(
+          children: [
+            Text(
+              'Daily Payments',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Expanded(
+              child: LineChart(
+                LineChartData(
+                  gridData: const FlGridData(show: false),
+                  titlesData: const FlTitlesData(show: false),
+                  borderData: FlBorderData(show: false),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: spots,
+                      isCurved: true,
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primaryGold,
+                          AppColors.accentLightGold,
+                        ],
+                      ),
+                      barWidth: 4,
+                      isStrokeCapRound: true,
+                      dotData: FlDotData(
+                        show: true,
+                        getDotPainter: (spot, percent, barData, index) {
+                          return FlDotCirclePainter(
+                            radius: 4,
+                            color: AppColors.primaryGold,
+                            strokeWidth: 2,
+                            strokeColor: AppColors.textWhite,
+                          );
+                        },
+                      ),
+                      belowBarData: BarAreaData(
+                        show: true,
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            AppColors.primaryGold.withOpacity(0.3),
+                            AppColors.primaryGold.withOpacity(0.05),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildEmptyChart(String title) {
     return Container(
-      height: 200,
-      padding: const EdgeInsets.all(16),
+      height: 220,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.secondaryWhite,
+            AppColors.secondaryBeige.withOpacity(0.2),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: AppColors.shadowLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(
+          color: AppColors.borderPrimary.withOpacity(0.1),
+          width: 1,
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.7),
+            ],
           ),
-          const SizedBox(height: 16),
-          Icon(Icons.bar_chart, size: 48, color: Colors.grey[400]),
-          const SizedBox(height: 8),
-          Text('No data available', style: TextStyle(color: Colors.grey[600])),
-        ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundGray.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.bar_chart_rounded,
+                size: 48,
+                color: AppColors.textGray,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'No data available',
+              style: TextStyle(
+                color: AppColors.textGray,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFilterSection() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          Text(
-            'Filter:',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children:
-                    _filterOptions.map((filter) {
-                      final isSelected = _selectedFilter == filter;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: FilterChip(
-                          label: Text(filter),
-                          selected: isSelected,
-                          onSelected: (selected) {
-                            setState(() {
-                              _selectedFilter = filter;
-                            });
-                          },
-                          backgroundColor: Colors.grey[200],
-                          selectedColor: Colors.blue[100],
-                          checkmarkColor: Colors.blue[600],
-                        ),
-                      );
-                    }).toList(),
-              ),
-            ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.secondaryWhite,
+            AppColors.secondaryBeige.withOpacity(0.2),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
+        border: Border.all(
+          color: AppColors.borderPrimary.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.7),
+            ],
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryGold,
+                        AppColors.accentLightGold,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.filter_list_rounded,
+                    color: AppColors.textWhite,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Filter by Time Period',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
+              children:
+                  _filterOptions.map((filter) {
+                    final isSelected = _selectedFilter == filter;
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedFilter = filter;
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient:
+                              isSelected
+                                  ? LinearGradient(
+                                    colors: [
+                                      AppColors.primaryGold,
+                                      AppColors.accentLightGold,
+                                    ],
+                                  )
+                                  : null,
+                          color:
+                              isSelected
+                                  ? null
+                                  : AppColors.backgroundGray.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(25),
+                          border: Border.all(
+                            color:
+                                isSelected
+                                    ? AppColors.primaryGold
+                                    : AppColors.borderPrimary.withOpacity(0.3),
+                            width: 1,
+                          ),
+                          boxShadow:
+                              isSelected
+                                  ? [
+                                    BoxShadow(
+                                      color: AppColors.primaryGold.withOpacity(
+                                        0.3,
+                                      ),
+                                      spreadRadius: 0,
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                  : null,
+                        ),
+                        child: Text(
+                          filter,
+                          style: TextStyle(
+                            color:
+                                isSelected
+                                    ? AppColors.textWhite
+                                    : AppColors.textPrimary,
+                            fontWeight:
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -508,46 +985,164 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     }
 
     if (historyVm.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-            const SizedBox(height: 16),
-            Text(
-              'Error: ${historyVm.error}',
-              style: TextStyle(color: Colors.red[600], fontSize: 16),
-              textAlign: TextAlign.center,
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.secondaryWhite,
+              AppColors.secondaryBeige.withOpacity(0.2),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadowLight.withOpacity(0.1),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(onPressed: _loadData, child: const Text('Retry')),
           ],
+          border: Border.all(
+            color: AppColors.borderPrimary.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.9),
+                Colors.white.withOpacity(0.7),
+              ],
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  size: 48,
+                  color: Colors.red[400],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Error: ${historyVm.error}',
+                style: TextStyle(
+                  color: Colors.red[600],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _loadData,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryGold,
+                  foregroundColor: AppColors.textWhite,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
         ),
       );
     }
 
     if (historyVm.history.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.payment_outlined, size: 64, color: Colors.grey[400]),
-            const SizedBox(height: 16),
-            Text(
-              'No payments found',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Payments will appear here once users make donations',
-              style: TextStyle(color: Colors.grey[500], fontSize: 14),
-              textAlign: TextAlign.center,
+      return Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.secondaryWhite,
+              AppColors.secondaryBeige.withOpacity(0.2),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadowLight.withOpacity(0.1),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
+          border: Border.all(
+            color: AppColors.borderPrimary.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.white.withOpacity(0.9),
+                Colors.white.withOpacity(0.7),
+              ],
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundGray.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  Icons.payment_rounded,
+                  size: 48,
+                  color: AppColors.textGray,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'No payments found',
+                style: TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Payments will appear here once users make donations',
+                style: TextStyle(
+                  color: AppColors.textGray,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -557,9 +1152,59 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Payment History',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.primaryGold, AppColors.accentLightGold],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.history_rounded,
+                  color: AppColors.textWhite,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'PAYMENT HISTORY',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryGold.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: AppColors.primaryGold.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  '${filteredPayments.length} payments',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primaryGold,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         ListView.builder(
@@ -575,6 +1220,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     );
   }
 
+  /// Filters payments based on the selected time period
   List<dynamic> _filterPayments(List<dynamic> payments) {
     final now = DateTime.now();
 
@@ -606,95 +1252,171 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
   }
 
   Widget _buildPaymentCard(dynamic payment) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.secondaryWhite,
+            AppColors.secondaryBeige.withOpacity(0.2),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowLight.withOpacity(0.1),
+            spreadRadius: 0,
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        border: Border.all(
+          color: AppColors.borderPrimary.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.9),
+              Colors.white.withOpacity(0.7),
+            ],
+          ),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.green[100],
-                    borderRadius: BorderRadius.circular(8),
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryGold,
+                        AppColors.accentLightGold,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryGold.withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Icon(
-                    Icons.payment,
-                    color: Colors.green[600],
-                    size: 20,
+                    Icons.payment_rounded,
+                    color: AppColors.textWhite,
+                    size: 24,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '${payment.currency} ${payment.actualZakatAmount.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: TextStyle(
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: AppColors.textPrimary,
                         ),
                       ),
+                      const SizedBox(height: 4),
                       Text(
                         DateFormat(
                           'MMM dd, yyyy • hh:mm a',
                         ).format(payment.paidAt),
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textGray,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
+                    horizontal: 12,
+                    vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.green[100],
-                    borderRadius: BorderRadius.circular(12),
+                    gradient: LinearGradient(
+                      colors: [Colors.green[400]!, Colors.green[600]!],
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.green.withOpacity(0.3),
+                        spreadRadius: 0,
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
                   child: Text(
                     'APPROVED',
                     style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.green[700],
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textWhite,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoItem(
-                    'Payer',
-                    payment.userFullName,
-                    Icons.person,
-                  ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.backgroundGray.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: AppColors.borderPrimary.withOpacity(0.1),
+                  width: 1,
                 ),
-                Expanded(
-                  child: _buildInfoItem(
-                    'Phone',
-                    payment.userAccountNo,
-                    Icons.phone,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildInfoItem(
+                          'Payer',
+                          payment.userFullName,
+                          Icons.person_rounded,
+                        ),
+                      ),
+                      Expanded(
+                        child: _buildInfoItem(
+                          'Phone',
+                          payment.userAccountNo,
+                          Icons.phone_rounded,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            _buildInfoItem(
-              'Payment Method',
-              payment.paymentMethod,
-              Icons.credit_card,
+                  const SizedBox(height: 16),
+                  _buildInfoItem(
+                    'Payment Method',
+                    payment.paymentMethod,
+                    Icons.credit_card_rounded,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -705,8 +1427,15 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
   Widget _buildInfoItem(String label, String value, IconData icon) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Colors.grey[600]),
-        const SizedBox(width: 6),
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: AppColors.primaryGold.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, size: 16, color: AppColors.primaryGold),
+        ),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -714,45 +1443,24 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 10,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              Text(
-                value,
-                style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: AppColors.textGray,
+                  letterSpacing: 0.5,
                 ),
-                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
         ),
-      ],
-    );
-  }
-}
-
-class DividerWithText extends StatelessWidget {
-  final String text;
-  const DividerWithText(this.text, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const Expanded(child: Divider()),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text(
-            text,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-        const Expanded(child: Divider()),
       ],
     );
   }
