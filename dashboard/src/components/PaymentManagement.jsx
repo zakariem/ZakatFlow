@@ -127,21 +127,40 @@ function PaymentManagement() {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 leading-tight tracking-tight">
-            <span className="inline-block w-full bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-              Payment Management
-            </span>
-          </h1>
-
-
-          <p className="text-lg" style={{ color: dashboardColors.text.secondary }}>
-            Monitor and manage all Zakat payments
-          </p>
+      {/* Enhanced Header */}
+      <div className="relative overflow-hidden rounded-3xl p-8 mb-8" style={{ 
+        background: `linear-gradient(135deg, ${dashboardColors.status.info}15 0%, ${dashboardColors.primary.lightGold}10 50%, ${dashboardColors.background.white} 100%)`,
+        border: `1px solid ${dashboardColors.border.light}`,
+        boxShadow: dashboardColors.shadow.lg
+      }}>
+        <div className="relative z-10">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${dashboardColors.status.info} 0%, #2B6CB0 100%)` }}>
+                  <FaMoneyBillWave className="text-white text-xl" />
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
+                  Payment Management
+                </h1>
+              </div>
+              <p className="text-lg leading-relaxed" style={{ color: dashboardColors.text.secondary }}>
+                Monitor and manage all Zakat payments with comprehensive tracking and analytics
+              </p>
+            </div>
+            <div className="flex flex-col items-center lg:items-end gap-3">
+              <div className="text-center lg:text-right">
+                <p className="text-sm font-medium" style={{ color: dashboardColors.text.muted }}>Total Records</p>
+                <p className="text-2xl font-bold" style={{ color: dashboardColors.status.info }}>
+                  {filteredPayments.length.toLocaleString()}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-5 transform translate-x-32 -translate-y-32" style={{ backgroundColor: dashboardColors.status.info }}></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-5 transform -translate-x-24 translate-y-24" style={{ backgroundColor: dashboardColors.primary.lightGold }}></div>
       </div>
 
       {/* Filter Buttons */}
@@ -166,18 +185,27 @@ function PaymentManagement() {
         ))}
       </div>
 
-      {/* Summary Cards */}
+      {/* Enhanced Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {summaryCards.map((card, index) => (
           <div
             key={index}
             className="relative overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slideUp group cursor-pointer"
             style={{
-              background: card.gradient,
+              background: index === 0 ? `linear-gradient(135deg, ${dashboardColors.status.success} 0%, #38A169 100%)` :
+                        index === 1 ? `linear-gradient(135deg, ${dashboardColors.status.info} 0%, #2B6CB0 100%)` :
+                        `linear-gradient(135deg, ${dashboardColors.status.warning} 0%, #D69E2E 100%)`,
               boxShadow: dashboardColors.shadow.lg,
-              animationDelay: `${index * 100}ms`
+              animationDelay: `${index * 100}ms`,
+              border: `1px solid ${dashboardColors.border.light}`
             }}
           >
+            {/* Animated Background Elements */}
+            <div className="absolute top-0 right-0 w-20 h-20 rounded-full opacity-10 transform translate-x-6 -translate-y-6 group-hover:scale-150 transition-transform duration-500" 
+                 style={{ backgroundColor: dashboardColors.background.white }}></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full opacity-10 transform -translate-x-4 translate-y-4 group-hover:scale-125 transition-transform duration-700" 
+                 style={{ backgroundColor: dashboardColors.background.white }}></div>
+            
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
                 <div className="p-3 rounded-xl" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>

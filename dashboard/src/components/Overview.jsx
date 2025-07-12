@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { adminApi } from "../api/adminApi";
 import { dashboardColors } from "../theme/dashboardColors";
-import { FaCrown } from "react-icons/fa";
+import { FaCrown, FaMoneyBillWave, FaCalendarAlt, FaChartLine, FaChartPie, FaHome } from "react-icons/fa";
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -237,113 +237,219 @@ const Overview = () => {
 
   return (
     <div className="space-y-8 animate-fadeIn">
-      {/* Header */}
-      <div className="text-center lg:text-left">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
-          Dashboard Overview
-        </h1>
-        <p className="text-lg" style={{ color: dashboardColors.text.secondary }}>
-          Welcome back! Here's what's happening with your Zakat operations today.
-        </p>
+      {/* Enhanced Header with Welcome Card */}
+      <div className="relative overflow-hidden rounded-3xl p-8 mb-8" style={{ 
+        background: `linear-gradient(135deg, ${dashboardColors.primary.gold}15 0%, ${dashboardColors.primary.lightGold}10 50%, ${dashboardColors.background.white} 100%)`,
+        border: `1px solid ${dashboardColors.border.light}`,
+        boxShadow: dashboardColors.shadow.lg
+      }}>
+        <div className="relative z-10">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <div className="text-center lg:text-left">
+              <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: dashboardColors.gradient.primary }}>
+                  <FaHome className="text-white text-xl" />
+                </div>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+                  Dashboard Overview
+                </h1>
+              </div>
+              <p className="text-lg leading-relaxed" style={{ color: dashboardColors.text.secondary }}>
+                Welcome back! Here's what's happening with your Zakat operations today.
+              </p>
+            </div>
+            <div className="flex flex-col items-center lg:items-end gap-3">
+              <div className="text-center lg:text-right">
+                <p className="text-sm font-medium" style={{ color: dashboardColors.text.muted }}>Last Updated</p>
+                <p className="text-lg font-semibold" style={{ color: dashboardColors.text.primary }}>
+                  {new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-5 transform translate-x-32 -translate-y-32" style={{ backgroundColor: dashboardColors.primary.gold }}></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-5 transform -translate-x-24 translate-y-24" style={{ backgroundColor: dashboardColors.primary.lightGold }}></div>
       </div>
 
       {/* Enhanced Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Amount Trend Chart */}
-        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
-          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Payment Amounts Trend (Last 14 Days)</h3>
-          <div className="h-80 flex items-center justify-center">
-            {dailyPayments.every(day => day.amount === 0) ? (
-              <span className="text-gray-400">No payment data for the last 14 days.</span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {[
+          {
+            title: "Payment Amounts Trend",
+            subtitle: "Last 14 Days",
+            icon: <FaChartLine className="text-xl" />,
+            component: dailyPayments.every(day => day.amount === 0) ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="w-16 h-16 rounded-full mb-4 flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+                  <FaChartLine className="text-2xl" style={{ color: dashboardColors.text.muted }} />
+                </div>
+                <span className="text-lg font-medium" style={{ color: dashboardColors.text.muted }}>No payment data available</span>
+                <span className="text-sm" style={{ color: dashboardColors.text.light }}>for the last 14 days</span>
+              </div>
             ) : (
               <Line options={chartOptions} data={amountChartData} />
-            )}
-          </div>
-        </div>
-        {/* Payments Count Chart */}
-        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
-          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Number of Payments (Last 14 Days)</h3>
-          <div className="h-80 flex items-center justify-center">
-            {dailyPayments.every(day => day.count === 0) ? (
-              <span className="text-gray-400">No payment count data for the last 14 days.</span>
+            ),
+            delay: "0ms"
+          },
+          {
+            title: "Payment Count Trend",
+            subtitle: "Last 14 Days",
+            icon: <FaMoneyBillWave className="text-xl" />,
+            component: dailyPayments.every(day => day.count === 0) ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="w-16 h-16 rounded-full mb-4 flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+                  <FaMoneyBillWave className="text-2xl" style={{ color: dashboardColors.text.muted }} />
+                </div>
+                <span className="text-lg font-medium" style={{ color: dashboardColors.text.muted }}>No payment count data</span>
+                <span className="text-sm" style={{ color: dashboardColors.text.light }}>for the last 14 days</span>
+              </div>
             ) : (
               <Bar options={chartOptions} data={paymentsChartData} />
-            )}
-          </div>
-        </div>
-        {/* Payment Status Doughnut Chart */}
-        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
-          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Payments by Status</h3>
-          <div className="h-80 flex items-center justify-center">
-            {statusLabels.length === 0 || statusData.every(v => v === 0) ? (
-              <span className="text-gray-400">No payment status data available.</span>
+            ),
+            delay: "100ms"
+          },
+          {
+            title: "Payment Status Distribution",
+            subtitle: "Current Overview",
+            icon: <FaChartPie className="text-xl" />,
+            component: statusLabels.length === 0 || statusData.every(v => v === 0) ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="w-16 h-16 rounded-full mb-4 flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+                  <FaChartPie className="text-2xl" style={{ color: dashboardColors.text.muted }} />
+                </div>
+                <span className="text-lg font-medium" style={{ color: dashboardColors.text.muted }}>No status data available</span>
+                <span className="text-sm" style={{ color: dashboardColors.text.light }}>Check back later</span>
+              </div>
             ) : (
               <Doughnut data={doughnutChartData} options={{ ...chartOptions, cutout: '70%' }} />
-            )}
-          </div>
-        </div>
-        {/* Top Agents Bar Chart */}
-        <div className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl" style={{ backgroundColor: dashboardColors.background.white, boxShadow: dashboardColors.shadow.lg }}>
-          <h3 className="text-xl font-semibold mb-4" style={{ color: dashboardColors.text.primary }}>Top 5 Agents by Collection</h3>
-          <div className="h-80 flex items-center justify-center">
-            {topAgentLabels.length === 0 || topAgentData.every(v => v === 0) ? (
-              <span className="text-gray-400">No agent collection data available.</span>
+            ),
+            delay: "200ms"
+          },
+          {
+            title: "Top Performing Agents",
+            subtitle: "By Collection Amount",
+            icon: <FaCrown className="text-xl" />,
+            component: topAgentLabels.length === 0 || topAgentData.every(v => v === 0) ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="w-16 h-16 rounded-full mb-4 flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
+                  <FaCrown className="text-2xl" style={{ color: dashboardColors.text.muted }} />
+                </div>
+                <span className="text-lg font-medium" style={{ color: dashboardColors.text.muted }}>No agent data available</span>
+                <span className="text-sm" style={{ color: dashboardColors.text.light }}>Add agents to see rankings</span>
+              </div>
             ) : (
               <Bar data={agentBarChartData} options={{ ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } } }} />
-            )}
+            ),
+            delay: "300ms"
+          }
+        ].map((chart, index) => (
+          <div 
+            key={index}
+            className="group relative overflow-hidden rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl animate-slideUp"
+            style={{ 
+              backgroundColor: dashboardColors.background.white, 
+              boxShadow: dashboardColors.shadow.lg,
+              animationDelay: chart.delay,
+              border: `1px solid ${dashboardColors.border.light}`
+            }}
+          >
+            {/* Chart Header */}
+            <div className="p-6 border-b" style={{ borderColor: dashboardColors.border.light }}>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 rounded-lg group-hover:scale-110 transition-transform duration-200" style={{ backgroundColor: dashboardColors.primary.lightGold + '20' }}>
+                  <span style={{ color: dashboardColors.primary.gold }}>{chart.icon}</span>
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold group-hover:text-opacity-80 transition-colors duration-200" style={{ color: dashboardColors.text.primary }}>
+                    {chart.title}
+                  </h3>
+                  <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>{chart.subtitle}</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Chart Content */}
+            <div className="p-6">
+              <div className="h-80 flex items-center justify-center">
+                {chart.component}
+              </div>
+            </div>
+            
+            {/* Decorative Elements */}
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-5 transform translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-500" style={{ backgroundColor: dashboardColors.primary.gold }}></div>
           </div>
-        </div>
+        ))}
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        <div 
-          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
-          style={{ 
-            background: dashboardColors.gradient.primary,
-            boxShadow: dashboardColors.shadow.lg
-          }}
-        >
-          <h3 className="text-white/90 text-sm font-medium mb-2">Total Payments</h3>
-          <p className="text-white text-3xl font-bold">{totalPayments.toLocaleString()}</p>
-        </div>
-
-        <div 
-          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
-          style={{ 
-            background: dashboardColors.gradient.primary,
-            boxShadow: dashboardColors.shadow.lg
-          }}
-        >
-          <h3 className="text-white/90 text-sm font-medium mb-2">Total Amount</h3>
-          <p className="text-white text-3xl font-bold">
-            ${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </p>
-        </div>
-
-        <div 
-          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
-          style={{ 
-            background: dashboardColors.gradient.primary,
-            boxShadow: dashboardColors.shadow.lg
-          }}
-        >
-          <h3 className="text-white/90 text-sm font-medium mb-2">Today's Payments</h3>
-          <p className="text-white text-3xl font-bold">{todaysPaymentsCount.toLocaleString()}</p>
-        </div>
-
-        <div 
-          className="p-6 rounded-2xl transition-all duration-300 hover:shadow-2xl"
-          style={{ 
-            background: dashboardColors.gradient.primary,
-            boxShadow: dashboardColors.shadow.lg
-          }}
-        >
-          <h3 className="text-white/90 text-sm font-medium mb-2">Today's Amount</h3>
-          <p className="text-white text-3xl font-bold">
-            ${todaysAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </p>
-        </div>
+      {/* Enhanced Summary Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[
+          {
+            title: "Total Payments",
+            value: totalPayments.toLocaleString(),
+            icon: <FaMoneyBillWave className="text-2xl" />,
+            gradient: dashboardColors.gradient.primary,
+            delay: "0ms"
+          },
+          {
+            title: "Total Amount",
+            value: `$${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+            icon: <FaChartLine className="text-2xl" />,
+            gradient: `linear-gradient(135deg, ${dashboardColors.status.success} 0%, #38A169 100%)`,
+            delay: "100ms"
+          },
+          {
+            title: "Today's Payments",
+            value: todaysPaymentsCount.toLocaleString(),
+            icon: <FaCalendarAlt className="text-2xl" />,
+            gradient: `linear-gradient(135deg, ${dashboardColors.status.info} 0%, #2B6CB0 100%)`,
+            delay: "200ms"
+          },
+          {
+            title: "Today's Amount",
+            value: `$${todaysAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+            icon: <FaCrown className="text-2xl" />,
+            gradient: `linear-gradient(135deg, ${dashboardColors.status.warning} 0%, #D69E2E 100%)`,
+            delay: "300ms"
+          }
+        ].map((stat, index) => (
+          <div 
+            key={index}
+            className="group relative overflow-hidden p-6 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slideUp cursor-pointer"
+            style={{ 
+              background: stat.gradient,
+              boxShadow: dashboardColors.shadow.lg,
+              animationDelay: stat.delay
+            }}
+          >
+            <div className="relative z-10">
+              <div className="flex items-center justify-between mb-4">
+                <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white">{stat.icon}</span>
+                </div>
+                <div className="text-right">
+                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+              <h3 className="text-white/90 text-sm font-medium mb-2 group-hover:text-white transition-colors duration-200">{stat.title}</h3>
+              <p className="text-white text-3xl font-bold group-hover:scale-105 transition-transform duration-200">{stat.value}</p>
+            </div>
+            {/* Decorative Background Elements */}
+            <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/5 transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500"></div>
+            <div className="absolute bottom-0 left-0 w-16 h-16 rounded-full bg-white/5 transform -translate-x-4 translate-y-4 group-hover:scale-125 transition-transform duration-500"></div>
+            {/* Hover Glow Effect */}
+            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300 rounded-2xl"></div>
+          </div>
+        ))}
       </div>
 
       {/* Top Agents Section */}

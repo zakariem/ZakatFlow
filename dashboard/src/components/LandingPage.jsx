@@ -42,9 +42,29 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #FAF9F6 0%, #F4F6FA 50%, #FFFDE4 100%)' }}>
 
-      {/* Hero Section */}
-      <section className="relative px-4 sm:px-6 lg:px-8 py-20">
-        <div className="max-w-7xl mx-auto text-center">
+      {/* Enhanced Hero Section */}
+      <section className="relative px-4 sm:px-6 lg:px-8 py-24 overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 opacity-15">
+          <div className="absolute top-10 left-10 w-20 h-20 rounded-full animate-pulse" style={{ backgroundColor: dashboardColors.primary.lightGold, animationDelay: '0s' }}></div>
+          <div className="absolute top-32 right-20 w-16 h-16 rounded-full animate-pulse" style={{ backgroundColor: dashboardColors.primary.gold, animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 left-1/4 w-12 h-12 rounded-full animate-pulse" style={{ backgroundColor: dashboardColors.primary.darkGold, animationDelay: '2s' }}></div>
+          <div className="absolute bottom-32 right-1/3 w-24 h-24 rounded-full animate-pulse" style={{ backgroundColor: dashboardColors.primary.lightGold, animationDelay: '0.5s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 rounded-full animate-pulse" style={{ backgroundColor: dashboardColors.primary.cream, animationDelay: '1.5s' }}></div>
+        </div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto text-center">
+          {/* Trust Badge */}
+          <div className="mb-8">
+            <div className="inline-flex items-center px-6 py-3 rounded-full mb-6 border" style={{ 
+              backgroundColor: `${dashboardColors.primary.lightGold}20`,
+              borderColor: `${dashboardColors.primary.lightGold}40`,
+              color: dashboardColors.primary.darkGold
+            }}>
+              <span className="text-sm font-semibold">✨ Trusted by 1000+ Organizations</span>
+            </div>
+          </div>
+          
           {/* Main Logo */}
           <div className="mb-8">
             <div 
@@ -60,35 +80,61 @@ const LandingPage = () => {
 
           {/* Hero Text */}
           <h1 
-            className="text-5xl md:text-7xl font-extrabold mb-6 bg-gradient-to-r bg-clip-text text-transparent"
+            className="text-6xl md:text-7xl font-extrabold mb-8 bg-gradient-to-r bg-clip-text text-transparent relative"
             style={{ 
               backgroundImage: `linear-gradient(135deg, ${dashboardColors.primary.gold} 0%, ${dashboardColors.primary.darkGold} 100%)` 
             }}
           >
             ZakatFlow
+            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 rounded-full" style={{ background: dashboardColors.gradient.primary, opacity: 0.3 }}></div>
           </h1>
           <p 
-            className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl mb-12 max-w-4xl mx-auto leading-relaxed"
             style={{ color: dashboardColors.text.secondary }}
           >
-            The modern way to manage your Zakat obligations. Secure, transparent, and accessible from anywhere.
+            Transform your Zakat management with our intelligent platform. 
+            <span className="font-semibold" style={{ color: dashboardColors.primary.darkGold }}>Streamline operations, track payments, and manage agents</span> all in one secure place.
           </p>
+
+          {/* Enhanced Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <button 
+              onClick={handleAdminAccess}
+              className="group px-10 py-5 rounded-2xl text-white font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl relative overflow-hidden"
+              style={{ 
+                background: dashboardColors.gradient.primary,
+                boxShadow: dashboardColors.shadow.xl 
+              }}
+            >
+              <span className="relative z-10 flex items-center gap-3">
+                Get Started Now
+                <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </span>
+              <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            </button>
+          </div>
 
           {/* Download Section */}
           <div className="relative inline-block mb-16">
             <button
               onClick={() => setShowDownloadDropdown(!showDownloadDropdown)}
-              className="flex items-center space-x-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 shadow-lg"
+              className="group flex items-center space-x-3 px-10 py-5 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 shadow-lg border-2 relative overflow-hidden"
               style={{
-                background: dashboardColors.gradient.primary,
-                color: dashboardColors.background.white,
+                color: dashboardColors.primary.gold,
+                backgroundColor: dashboardColors.background.white,
+                borderColor: dashboardColors.primary.gold,
                 boxShadow: dashboardColors.shadow.lg,
                 focusRingColor: dashboardColors.primary.lightGold
               }}
             >
-              <FaDownload className="text-xl" />
-              <span>Download Mobile App</span>
-              <FaChevronDown className={`transition-transform duration-200 ${showDownloadDropdown ? 'rotate-180' : ''}`} />
+              <span className="relative z-10 flex items-center gap-3">
+                <FaDownload className="text-xl" />
+                <span>📱 Download Mobile App</span>
+                <FaChevronDown className={`transition-transform duration-200 ${showDownloadDropdown ? 'rotate-180' : ''}`} />
+              </span>
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300" style={{ background: dashboardColors.gradient.primary }}></div>
             </button>
 
             {/* Download Dropdown */}
@@ -139,21 +185,33 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-20" style={{ backgroundColor: dashboardColors.background.white }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 
-              className="text-4xl md:text-5xl font-bold mb-6"
-              style={{ color: dashboardColors.primary.gold }}
-            >
-              Why Choose ZakatFlow?
+      {/* Enhanced Features Section */}
+      <section className="px-4 sm:px-6 lg:px-8 py-24 relative overflow-hidden" style={{ backgroundColor: dashboardColors.background.white }}>
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 left-0 w-full h-full" style={{ 
+            backgroundImage: `radial-gradient(circle at 25% 25%, ${dashboardColors.primary.lightGold} 2px, transparent 2px), radial-gradient(circle at 75% 75%, ${dashboardColors.primary.gold} 1px, transparent 1px)`,
+            backgroundSize: '50px 50px'
+          }}></div>
+        </div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto">
+          <div className="text-center mb-20">
+            <div className="inline-flex items-center px-4 py-2 rounded-full mb-6" style={{ 
+              backgroundColor: `${dashboardColors.primary.lightGold}15`,
+              color: dashboardColors.primary.darkGold
+            }}>
+              <span className="text-sm font-semibold">🚀 POWERFUL FEATURES</span>
+            </div>
+            
+            <h2 className="text-5xl md:text-6xl font-bold mb-8" style={{ color: dashboardColors.text.primary }}>
+              Why Choose <span className="bg-gradient-to-r bg-clip-text text-transparent relative" style={{ backgroundImage: dashboardColors.gradient.primary }}>
+                ZakatFlow
+                <div className="absolute -bottom-1 left-0 right-0 h-1 rounded-full" style={{ background: dashboardColors.gradient.primary, opacity: 0.3 }}></div>
+              </span>?
             </h2>
-            <p 
-              className="text-xl max-w-3xl mx-auto"
-              style={{ color: dashboardColors.text.secondary }}
-            >
-              Experience the future of Zakat management with our comprehensive platform designed for modern Muslims.
+            <p className="text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed" style={{ color: dashboardColors.text.secondary }}>
+              Experience the future of Zakat management with our comprehensive, intelligent platform designed for modern organizations
             </p>
           </div>
 
@@ -161,36 +219,89 @@ const LandingPage = () => {
             {features.map((feature, index) => (
               <div 
                 key={index}
-                className="p-8 rounded-2xl text-center transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                className="group p-10 rounded-3xl text-center transition-all duration-500 hover:scale-105 hover:shadow-2xl relative overflow-hidden"
                 style={{ 
                   backgroundColor: dashboardColors.background.card,
                   border: `1px solid ${dashboardColors.border.light}`,
-                  boxShadow: dashboardColors.shadow.sm 
+                  boxShadow: dashboardColors.shadow.lg 
                 }}
               >
-                <div 
-                  className="w-16 h-16 rounded-xl mx-auto mb-6 flex items-center justify-center"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${dashboardColors.primary.lightGold}20, ${dashboardColors.primary.gold}20)`,
-                    color: dashboardColors.primary.gold 
-                  }}
-                >
-                  {feature.icon}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500" style={{ background: dashboardColors.gradient.primary }}></div>
+                
+                <div className="relative z-10">
+                  <div 
+                    className="w-20 h-20 rounded-2xl mx-auto mb-8 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
+                    style={{ 
+                      background: dashboardColors.gradient.primary,
+                      boxShadow: dashboardColors.shadow.lg,
+                      color: 'white'
+                    }}
+                  >
+                    {feature.icon}
+                  </div>
+                  <h3 
+                    className="text-2xl font-bold mb-6 transition-colors duration-300"
+                    style={{ color: dashboardColors.text.primary }}
+                  >
+                    {feature.title}
+                  </h3>
+                  <p 
+                    className="text-lg leading-relaxed"
+                    style={{ color: dashboardColors.text.secondary }}
+                  >
+                    {feature.description}
+                  </p>
+                  
+                  {/* Feature highlights */}
+                  <div className="mt-6 space-y-2">
+                    <div className="flex items-center justify-center gap-2 text-sm" style={{ color: dashboardColors.primary.darkGold }}>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dashboardColors.primary.gold }}></div>
+                      <span>Enterprise Grade</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-2 text-sm" style={{ color: dashboardColors.primary.darkGold }}>
+                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: dashboardColors.primary.gold }}></div>
+                      <span>24/7 Support</span>
+                    </div>
+                  </div>
                 </div>
-                <h3 
-                  className="text-xl font-bold mb-4"
-                  style={{ color: dashboardColors.text.primary }}
-                >
-                  {feature.title}
-                </h3>
-                <p 
-                  className="leading-relaxed"
-                  style={{ color: dashboardColors.text.secondary }}
-                >
-                  {feature.description}
-                </p>
               </div>
             ))}
+          </div>
+          
+          {/* Additional Features Grid */}
+          <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center p-6 rounded-2xl border transition-all duration-300 hover:scale-105" style={{ 
+              backgroundColor: dashboardColors.background.white,
+              borderColor: dashboardColors.border.light,
+              boxShadow: dashboardColors.shadow.sm
+            }}>
+              <div className="text-2xl mb-3">⚡</div>
+              <div className="text-sm font-semibold" style={{ color: dashboardColors.text.primary }}>Lightning Fast</div>
+            </div>
+            <div className="text-center p-6 rounded-2xl border transition-all duration-300 hover:scale-105" style={{ 
+              backgroundColor: dashboardColors.background.white,
+              borderColor: dashboardColors.border.light,
+              boxShadow: dashboardColors.shadow.sm
+            }}>
+              <div className="text-2xl mb-3">🔄</div>
+              <div className="text-sm font-semibold" style={{ color: dashboardColors.text.primary }}>Auto Sync</div>
+            </div>
+            <div className="text-center p-6 rounded-2xl border transition-all duration-300 hover:scale-105" style={{ 
+              backgroundColor: dashboardColors.background.white,
+              borderColor: dashboardColors.border.light,
+              boxShadow: dashboardColors.shadow.sm
+            }}>
+              <div className="text-2xl mb-3">🌍</div>
+              <div className="text-sm font-semibold" style={{ color: dashboardColors.text.primary }}>Global Access</div>
+            </div>
+            <div className="text-center p-6 rounded-2xl border transition-all duration-300 hover:scale-105" style={{ 
+              backgroundColor: dashboardColors.background.white,
+              borderColor: dashboardColors.border.light,
+              boxShadow: dashboardColors.shadow.sm
+            }}>
+              <div className="text-2xl mb-3">🎯</div>
+              <div className="text-sm font-semibold" style={{ color: dashboardColors.text.primary }}>Smart Targeting</div>
+            </div>
           </div>
         </div>
       </section>
