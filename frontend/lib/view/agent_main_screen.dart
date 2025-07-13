@@ -71,6 +71,94 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: AppColors.primaryGold,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.primaryGold, AppColors.accentDarkGold],
+            ),
+          ),
+        ),
+        title: Row(
+          children: [
+            // Profile picture on the left
+            CircleAvatar(
+              radius: 20,
+              backgroundImage: agent?.profileImageUrl != null
+                  ? NetworkImage(agent!.profileImageUrl!)
+                  : null,
+              backgroundColor: AppColors.secondaryWhite,
+              child: agent?.profileImageUrl == null
+                  ? const Icon(
+                      Icons.person,
+                      color: AppColors.primaryGold,
+                      size: 24,
+                    )
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            // Agent name in the center
+            Expanded(
+              child: Text(
+                agent != null ? agent!.fullName : 'Agent Dashboard',
+                style: const TextStyle(
+                  color: AppColors.textWhite,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: AppColors.textWhite.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.refresh, color: AppColors.textWhite),
+              tooltip: 'Refresh',
+              onPressed: _loadData,
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.only(right: 8),
+            decoration: BoxDecoration(
+              color: AppColors.textWhite.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.logout, color: AppColors.textWhite),
+              tooltip: 'Logout',
+              onPressed: () async {
+                try {
+                  await ref.read(authViewModelProvider.notifier).logout();
+                  if (!mounted) return;
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (_) => const LoginScreen(),
+                    ),
+                    (_) => false,
+                  );
+                } catch (e) {
+                  if (!mounted) return;
+                  ErrorScanckbar.showSnackBar(
+                    context,
+                    'Logout failed: $e',
+                  );
+                }
+              },
+            ),
+          ),
+        ],
+      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -83,180 +171,50 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
             ],
           ),
         ),
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              floating: false,
-              pinned: true,
-              elevation: 4,
-              expandedHeight: 120,
-              backgroundColor: AppColors.primaryGold,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [AppColors.primaryGold, AppColors.accentDarkGold],
+        child: isLoading
+            ? const Center(child: Loader())
+            : agent == null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person_off,
+                          size: 80,
+                          color: AppColors.textGray,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Hay'ad lama helin",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: AppColors.textGray,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Row(
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadData,
+                    color: AppColors.primaryGold,
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Profile picture on the left
-                          CircleAvatar(
-                            radius: 25,
-                            backgroundImage:
-                                agent?.profileImageUrl != null
-                                    ? NetworkImage(agent!.profileImageUrl!)
-                                    : null,
-                            backgroundColor: AppColors.secondaryWhite,
-                            child:
-                                agent?.profileImageUrl == null
-                                    ? const Icon(
-                                      Icons.person,
-                                      color: AppColors.primaryGold,
-                                      size: 30,
-                                    )
-                                    : null,
-                          ),
-                          const SizedBox(width: 16),
-                          // Agent name in the center
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  agent != null ? agent!.fullName : 'Agent Dashboard',
-                                  style: const TextStyle(
-                                    color: AppColors.textWhite,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                if (agent != null)
-                                  Text(
-                                    'Agent Dashboard',
-                                    style: TextStyle(
-                                      color: AppColors.textWhite.withOpacity(0.8),
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
+                          _buildSummaryCards(),
+                          const SizedBox(height: 32),
+                          _buildChartsSection(),
+                          const SizedBox(height: 32),
+                          _buildFilterSection(),
+                          const SizedBox(height: 24),
+                          _buildPaymentHistory(),
+                          const SizedBox(height: 100), // Bottom padding
                         ],
                       ),
                     ),
                   ),
-                ),
-              ),
-              actions: [
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.textWhite.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.refresh, color: AppColors.textWhite),
-                    tooltip: 'Refresh',
-                    onPressed: _loadData,
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.textWhite.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.logout, color: AppColors.textWhite),
-                    tooltip: 'Logout',
-                    onPressed: () async {
-                      try {
-                        await ref.read(authViewModelProvider.notifier).logout();
-                        if (!mounted) return;
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
-                          (_) => false,
-                        );
-                      } catch (e) {
-                        if (!mounted) return;
-                        ErrorScanckbar.showSnackBar(
-                          context,
-                          'Logout failed: $e',
-                        );
-                      }
-                    },
-                  ),
-                ),
-              ],
-            ),
-
-            SliverList(
-              delegate: SliverChildListDelegate([
-                isLoading
-                    ? SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      child: const Center(child: Loader()),
-                    )
-                    : agent == null
-                    ? SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.6,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.person_off,
-                              size: 80,
-                              color: AppColors.textGray,
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              "Hay'ad lama helin",
-                              style: TextStyle(
-                                fontSize: 18,
-                                color: AppColors.textGray,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                    : RefreshIndicator(
-                      onRefresh: _loadData,
-                      color: AppColors.primaryGold,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildSummaryCards(),
-                            const SizedBox(height: 32),
-                            _buildChartsSection(),
-                            const SizedBox(height: 32),
-                            _buildFilterSection(),
-                            const SizedBox(height: 24),
-                            _buildPaymentHistory(),
-                            const SizedBox(height: 100), // Bottom padding
-                          ],
-                        ),
-                      ),
-                    ),
-              ]),
-            ),
-          ],
-        ),
       ),
     );
   }
