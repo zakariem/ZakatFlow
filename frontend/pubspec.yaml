@@ -52,8 +52,9 @@ dependencies:
   carousel_slider: ^5.0.0
   http_parser: ^4.1.2
   hijri: ^3.0.0
-  fl_chart: ^0.68.0
+  fl_chart: ^1.0.0
   url_launcher: ^6.3.1
+  connectivity_plus: ^6.0.5
 
 dev_dependencies:
   flutter_test:

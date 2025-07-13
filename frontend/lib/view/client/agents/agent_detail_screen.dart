@@ -44,7 +44,10 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
     if (token != null) {
       ref.read(agentViewModelProvider).selectAgent(widget.agentId, token);
     } else {
-      ErrorScanckbar.showSnackBar(context, 'Authentication error. Please login again.');
+      ErrorScanckbar.showSnackBar(
+        context,
+        'Authentication error. Please login again.',
+      );
     }
   }
 
@@ -61,7 +64,7 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
       );
       if (!next.isLoading && next.error != null) {
         print('Payment error: ${next.error}');
-        ErrorScanckbar.showSnackBar(context, next.error!);
+        // Don't show error snackbar here as it's handled in _handleDonation
       }
       // Note: Success case is handled in _handleDonation method
     });
@@ -109,370 +112,392 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
           ),
         ],
       ),
-      body: isLoading
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryGold),
-                    strokeWidth: 4.0, // Increased stroke width
-                  ),
-                  const SizedBox(height: 24), // Increased spacing
-                  Text(
-                    'Loading agent details...',
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w600, // Slightly bolder
-                      fontSize: 18, // Increased font size
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Please wait while we fetch the information',
-                    style: TextStyle(
-                      color: AppColors.textGray,
-                      fontSize: 14,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            )
-          : selectedAgent == null
+      body:
+          isLoading
               ? Center(
-                  child: Container(
-                    margin: const EdgeInsets.all(24),
-                    padding: const EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.shadowLight,
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.primaryGold,
+                      ),
+                      strokeWidth: 4.0, // Increased stroke width
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 80, // Increased size
-                          color: AppColors.error,
-                        ),
-                        const SizedBox(height: 24), // Increased spacing
-                        Text(
-                          'Hay\'adka lama helin',
-                          style: TextStyle(
-                            color: AppColors.textPrimary, // Darker text color
-                            fontSize: 22, // Increased font size
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16), // Increased spacing
-                        Text(
-                          'Could not load agent details. Please check your connection and try again.',
-                          style: TextStyle(
-                            color: AppColors.textGray,
-                            fontSize: 16,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 32), // Increased spacing
-                        ElevatedButton.icon(
-                          onPressed: () => _loadAgentDetails(),
-                          icon: Icon(Icons.refresh, size: 20),
-                          label: Text('Refresh', style: TextStyle(fontSize: 16)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryGold,
-                            foregroundColor: AppColors.textWhite,
-                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16), // Increased padding
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16), // Increased radius
-                            ),
-                            elevation: 4, // Added elevation
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 24), // Increased spacing
+                    Text(
+                      'Loading agent details...',
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w600, // Slightly bolder
+                        fontSize: 18, // Increased font size
+                      ),
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Please wait while we fetch the information',
+                      style: TextStyle(color: AppColors.textGray, fontSize: 14),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+              : selectedAgent == null
+              ? Center(
+                child: Container(
+                  margin: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.shadowLight,
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
                   ),
-                )
-              : SingleChildScrollView(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Profile Image Section with Gradient Overlay
-                      Stack(
-                        children: [
-                          Hero(
-                            tag: 'agent-${selectedAgent.id}',
-                            child: Container(
-                              height: 340, // Further increased height for better visual impact
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                image: selectedAgent.profileImageUrl != null
-                                    ? DecorationImage(
+                      Icon(
+                        Icons.error_outline,
+                        size: 80, // Increased size
+                        color: AppColors.error,
+                      ),
+                      const SizedBox(height: 24), // Increased spacing
+                      Text(
+                        'Hay\'adka lama helin',
+                        style: TextStyle(
+                          color: AppColors.textPrimary, // Darker text color
+                          fontSize: 22, // Increased font size
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16), // Increased spacing
+                      Text(
+                        'Could not load agent details. Please check your connection and try again.',
+                        style: TextStyle(
+                          color: AppColors.textGray,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 32), // Increased spacing
+                      ElevatedButton.icon(
+                        onPressed: () => _loadAgentDetails(),
+                        icon: Icon(Icons.refresh, size: 20),
+                        label: Text('Refresh', style: TextStyle(fontSize: 16)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryGold,
+                          foregroundColor: AppColors.textWhite,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ), // Increased padding
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              16,
+                            ), // Increased radius
+                          ),
+                          elevation: 4, // Added elevation
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+              : SingleChildScrollView(
+                child: Column(
+                  children: [
+                    // Profile Image Section with Gradient Overlay
+                    Stack(
+                      children: [
+                        Hero(
+                          tag: 'agent-${selectedAgent.id}',
+                          child: Container(
+                            height:
+                                340, // Further increased height for better visual impact
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              image:
+                                  selectedAgent.profileImageUrl != null
+                                      ? DecorationImage(
                                         image: NetworkImage(
                                           selectedAgent.profileImageUrl!,
                                         ),
                                         fit: BoxFit.cover,
                                         onError: (exception, stackTrace) {
-                                          print('Error loading image: $exception');
+                                          print(
+                                            'Error loading image: $exception',
+                                          );
                                           return;
                                         },
                                       )
-                                    : null,
-                                color: selectedAgent.profileImageUrl == null
-                                    ? AppColors.primaryGold.withOpacity(0.8)
-                                    : null,
-                              ),
-                              child: selectedAgent.profileImageUrl == null
-                                  ? Center(
+                                      : null,
+                              color:
+                                  selectedAgent.profileImageUrl == null
+                                      ? AppColors.primaryGold.withOpacity(0.8)
+                                      : null,
+                            ),
+                            child:
+                                selectedAgent.profileImageUrl == null
+                                    ? Center(
                                       child: Icon(
                                         Icons.business,
                                         size: 100, // Increased icon size
                                         color: AppColors.textWhite,
                                       ),
                                     )
-                                  : null,
+                                    : null,
+                          ),
+                        ),
+                        // Gradient overlay for better text visibility
+                        Container(
+                          height: 340, // Match the increased height
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.3),
+                                Colors.black.withOpacity(
+                                  0.8,
+                                ), // Darker overlay at bottom
+                              ],
+                              stops: const [0.5, 0.75, 1.0], // Adjusted stops
                             ),
                           ),
-                          // Gradient overlay for better text visibility
-                          Container(
-                            height: 340, // Match the increased height
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.3),
-                                  Colors.black.withOpacity(0.8), // Darker overlay at bottom
-                                ],
-                                stops: const [0.5, 0.75, 1.0], // Adjusted stops
-                              ),
-                            ),
-                          ),
-                          // Agent name overlay at bottom of image
-                          Positioned(
-                            bottom: 32, // Increased bottom spacing
-                            left: 28, // Increased left spacing
-                            right: 28, // Increased right spacing
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  selectedAgent.fullName,
-                                  style: TextStyle(
-                                    fontSize: 32, // Increased font size
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textWhite,
-                                    letterSpacing: 0.5, // Added letter spacing
-                                    shadows: [
-                                      Shadow(
-                                        offset: Offset(0, 2), // Increased shadow offset
-                                        blurRadius: 3.0,
-                                        color: Colors.black.withOpacity(0.5),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 16), // Increased spacing
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 18, // Increased padding
-                                        vertical: 10, // Increased padding
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.primaryGold,
-                                        borderRadius: BorderRadius.circular(24), // Increased radius
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.25),
-                                            blurRadius: 6, // Increased blur
-                                            offset: const Offset(0, 3), // Increased offset
-                                          ),
-                                        ],
-                                      ),
-                                      child: Text(
-                                        selectedAgent.role,
-                                        style: TextStyle(
-                                          color: AppColors.textWhite,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16, // Increased font size
-                                          letterSpacing: 0.5, // Added letter spacing
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 14), // Increased spacing
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 18, // Increased padding
-                                        vertical: 10, // Increased padding
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.success.withOpacity(0.9), // Increased opacity
-                                        borderRadius: BorderRadius.circular(24), // Increased radius
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.25),
-                                            blurRadius: 6, // Increased blur
-                                            offset: const Offset(0, 3), // Increased offset
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.verified,
-                                            size: 18, // Increased icon size
-                                            color: AppColors.textWhite,
-                                          ),
-                                          const SizedBox(width: 8), // Increased spacing
-                                          Text(
-                                            'Verified',
-                                            style: TextStyle(
-                                              color: AppColors.textWhite,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16, // Increased font size
-                                              letterSpacing: 0.5, // Added letter spacing
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                        ),
+                        // Agent name overlay at bottom of image
+                        Positioned(
+                          bottom: 32, // Increased bottom spacing
+                          left: 28, // Increased left spacing
+                          right: 28, // Increased right spacing
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                selectedAgent.fullName,
+                                style: TextStyle(
+                                  fontSize: 32, // Increased font size
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textWhite,
+                                  letterSpacing: 0.5, // Added letter spacing
+                                  shadows: [
+                                    Shadow(
+                                      offset: Offset(
+                                        0,
+                                        2,
+                                      ), // Increased shadow offset
+                                      blurRadius: 3.0,
+                                      color: Colors.black.withOpacity(0.5),
                                     ),
                                   ],
                                 ),
+                              ),
+                              const SizedBox(height: 16), // Increased spacing
+                              Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18, // Increased padding
+                                      vertical: 10, // Increased padding
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryGold,
+                                      borderRadius: BorderRadius.circular(
+                                        24,
+                                      ), // Increased radius
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.25),
+                                          blurRadius: 6, // Increased blur
+                                          offset: const Offset(
+                                            0,
+                                            3,
+                                          ), // Increased offset
+                                        ),
+                                      ],
+                                    ),
+                                    child: Text(
+                                      selectedAgent.role,
+                                      style: TextStyle(
+                                        color: AppColors.textWhite,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16, // Increased font size
+                                        letterSpacing:
+                                            0.5, // Added letter spacing
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 14,
+                                  ), // Increased spacing
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 18, // Increased padding
+                                      vertical: 10, // Increased padding
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.success.withOpacity(
+                                        0.9,
+                                      ), // Increased opacity
+                                      borderRadius: BorderRadius.circular(
+                                        24,
+                                      ), // Increased radius
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.25),
+                                          blurRadius: 6, // Increased blur
+                                          offset: const Offset(
+                                            0,
+                                            3,
+                                          ), // Increased offset
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.verified,
+                                          size: 18, // Increased icon size
+                                          color: AppColors.textWhite,
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ), // Increased spacing
+                                        Text(
+                                          'Verified',
+                                          style: TextStyle(
+                                            color: AppColors.textWhite,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16, // Increased font size
+                                            letterSpacing:
+                                                0.5, // Added letter spacing
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Agent Details Section
+                    Container(
+                      padding: const EdgeInsets.all(28.0), // Increased padding
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(32), // Increased radius
+                          topRight: Radius.circular(32),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.shadowLight,
+                            blurRadius: 12,
+                            offset: const Offset(0, -5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Contact Info
+                          _buildInfoCard('Macluumaadka Xiriirka', [
+                            _buildInfoRow(
+                              Icons.email,
+                              'Email',
+                              selectedAgent.email,
+                            ),
+                            _buildInfoRow(
+                              Icons.phone,
+                              'Telefoon',
+                              selectedAgent.phoneNumber,
+                            ),
+                            _buildInfoRow(
+                              Icons.location_on,
+                              'Cinwaanka',
+                              selectedAgent.address,
+                            ),
+                          ]),
+                          const SizedBox(height: 32), // Increased spacing
+                          // Donate Button with Gradient
+                          Container(
+                            width: double.infinity,
+                            height: 64, // Increased height
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppColors.primaryGold,
+                                  AppColors.accentLightGold,
+                                ],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primaryGold.withOpacity(0.3),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
                               ],
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () => _showDonateOptions(context),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                foregroundColor: AppColors.textWhite,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.volunteer_activism,
+                                    color: AppColors.textWhite,
+                                    size: 26, // Slightly larger icon
+                                  ),
+                                  const SizedBox(
+                                    width: 14,
+                                  ), // Increased spacing
+                                  Text(
+                                    'Ku Deeq',
+                                    style: TextStyle(
+                                      fontSize: 20, // Larger text
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textWhite,
+                                      letterSpacing:
+                                          0.5, // Added letter spacing
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
-
-                      // Agent Details Section
-                      Container(
-                        padding: const EdgeInsets.all(28.0), // Increased padding
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(32), // Increased radius
-                            topRight: Radius.circular(32),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.shadowLight,
-                              blurRadius: 12,
-                              offset: const Offset(0, -5),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Contact Info
-                            _buildInfoCard('Macluumaadka Xiriirka', [
-                              _buildInfoRow(
-                                Icons.email,
-                                'Email',
-                                selectedAgent.email,
-                              ),
-                              _buildInfoRow(
-                                Icons.phone,
-                                'Telefoon',
-                                selectedAgent.phoneNumber,
-                              ),
-                              _buildInfoRow(
-                                Icons.location_on,
-                                'Cinwaanka',
-                                selectedAgent.address,
-                              ),
-                            ]),
-                            const SizedBox(height: 32), // Increased spacing
-
-                            // Donate Button with Gradient
-                            Container(
-                              width: double.infinity,
-                              height: 64, // Increased height
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.primaryGold,
-                                    AppColors.accentLightGold,
-                                  ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.primaryGold.withOpacity(0.3),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: ElevatedButton(
-                                onPressed: () => _showDonateOptions(context),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  foregroundColor: AppColors.textWhite,
-                                  elevation: 0,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.volunteer_activism,
-                                      color: AppColors.textWhite,
-                                      size: 26, // Slightly larger icon
-                                    ),
-                                    const SizedBox(width: 14), // Increased spacing
-                                    Text(
-                                      'Ku Deeq',
-                                      style: TextStyle(
-                                        fontSize: 20, // Larger text
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.textWhite,
-                                        letterSpacing: 0.5, // Added letter spacing
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            
-                            // About Section
-                            const SizedBox(height: 32), // Increased spacing
-                            _buildInfoCard('About', [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10.0), // Increased padding
-                                child: Text(
-                                  'No description available',
-                                  style: TextStyle(
-                                    color: AppColors.textPrimary,
-                                    fontSize: 16, // Increased font size
-                                    height: 1.6, // Increased line height
-                                  ),
-                                ),
-                              ),
-                            ]),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
     );
   }
 
@@ -549,7 +574,12 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(24), // Increased radius
             ),
-            titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 16), // Custom padding
+            titlePadding: const EdgeInsets.fromLTRB(
+              24,
+              24,
+              24,
+              16,
+            ), // Custom padding
             title: Row(
               children: [
                 Icon(
@@ -569,7 +599,12 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                 ),
               ],
             ),
-            contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16), // Custom padding
+            contentPadding: const EdgeInsets.fromLTRB(
+              24,
+              0,
+              24,
+              16,
+            ), // Custom padding
             content: Form(
               key: _formKey,
               child: Column(
@@ -637,7 +672,12 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                 ],
               ),
             ),
-            actionsPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24), // Custom padding
+            actionsPadding: const EdgeInsets.fromLTRB(
+              24,
+              0,
+              24,
+              24,
+            ), // Custom padding
             actions: [
               TextButton(
                 onPressed: () {
@@ -646,7 +686,10 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                   _phoneController.clear();
                 },
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                 ),
                 child: Text(
                   'Ka Noqo',
@@ -667,7 +710,10 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGold,
                       foregroundColor: AppColors.textWhite,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
                       elevation: 2,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -686,13 +732,20 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                               ),
                             )
                             : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(Icons.check_circle_outline, size: 18),
-                                  const SizedBox(width: 8),
-                                  const Text('Bixi', style: TextStyle(fontWeight: FontWeight.bold)),
-                                ],
-                              ),
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 8),
+                                const Text(
+                                  'Bixi',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
                   );
                 },
               ),
@@ -725,12 +778,67 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
     final paymentNotifier = ref.read(paymentNotifierProvider.notifier);
 
     try {
-      // Display a temporary success message
+      // Attempt payment with test amount ($0.01)
+      await paymentNotifier.pay(
+        userFullName: user.fullName,
+        userAccountNo: phoneNumber,
+        agentId: selectedAgent.id,
+        agentName: selectedAgent.fullName,
+        amount: 0.01,
+        actualZakatAmount: amount,
+      );
+
+      // Check the payment state after the payment attempt
+      final paymentState = ref.read(paymentNotifierProvider);
+
+      if (!context.mounted) return;
+
+      // Close the donation dialog first
+      Navigator.pop(dialogContext);
+
+      // Clear input fields
+      _amountController.clear();
+      _phoneController.clear();
+
+      if (paymentState.error != null) {
+        // Payment failed or was cancelled
+        print('Payment failed: ${paymentState.error}');
+
+        if (!context.mounted) return;
+
+        // Show error message and stay on agent details screen
+        ErrorScanckbar.showSnackBar(
+          context,
+          paymentState.error!.contains('joojisay')
+              ? paymentState.error!
+              : 'Khalad ayaa dhacay: ${paymentState.error}',
+        );
+        return; // Exit early on payment failure
+      }
+
+      // Payment was successful
+      if (!context.mounted) return;
+
+      // Create donation data to pass to history screen with actual zakat amount
+      final donationData = {
+        'userFullName': user.fullName,
+        'userAccountNo': phoneNumber,
+        'agentId': selectedAgent.id,
+        'agentName': selectedAgent.fullName,
+        'amount': 0.01,
+        'actualZakatAmount': amount,
+        'currency': 'USD',
+      };
+
+      // Success: navigate back and show success message
+      Navigator.pop(context);
+
+      // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.white),
+              Icon(Icons.check_circle, color: Colors.white),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -748,50 +856,26 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
         ),
       );
 
-      // Attempt payment with test amount ($0.01)
-      await paymentNotifier.pay(
-        userFullName: user.fullName,
-        userAccountNo: phoneNumber,
-        agentId: selectedAgent.id,
-        agentName: selectedAgent.fullName,
-        amount: 0.01,
-        actualZakatAmount: amount,
-      );
-
-      if (!context.mounted) return;
-
-      // Create donation data to pass to history screen with actual zakat amount
-      final donationData = {
-        'userFullName': user.fullName,
-        'userAccountNo': phoneNumber,
-        'agentId': selectedAgent.id,
-        'agentName': selectedAgent.fullName,
-        'amount': 0.01,
-        'actualZakatAmount': amount,
-        'currency': 'USD',
-      };
-
-      // Success: close dialogs and navigate
-      Navigator.pop(dialogContext); // close payment dialog
-      Navigator.pop(context);
-
-      // Clear input fields
-      _amountController.clear();
-      _phoneController.clear();
-
       // Navigate to history tab with donation data
       ref
           .read(clientNavigationProvider.notifier)
           .setIndex(2, donationData: donationData);
     } catch (e) {
+      // Handle any unexpected exceptions
+      print('Payment exception: ${e.toString()}');
+
       if (!context.mounted) return;
 
-      // Ensure dialogs are closed
+      // Close the donation dialog
       Navigator.pop(dialogContext);
 
+      // Clear input fields
+      _amountController.clear();
+      _phoneController.clear();
+
       if (!context.mounted) return;
 
-      print('Payment exception: ${e.toString()}');
+      // Show error message and stay on agent details screen
       ErrorScanckbar.showSnackBar(
         context,
         'Khalad ayaa dhacay: ${e.toString()}',
@@ -836,7 +920,9 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
 
   Widget _buildInfoRow(IconData icon, String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12), // Increased vertical padding
+      padding: const EdgeInsets.symmetric(
+        vertical: 12,
+      ), // Increased vertical padding
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -846,7 +932,11 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
               color: AppColors.backgroundLight, // Added background color
               borderRadius: BorderRadius.circular(8), // Added border radius
             ),
-            child: Icon(icon, color: AppColors.primaryGold, size: 22), // Changed color and increased size
+            child: Icon(
+              icon,
+              color: AppColors.primaryGold,
+              size: 22,
+            ), // Changed color and increased size
           ),
           const SizedBox(width: 16), // Increased spacing
           Expanded(
@@ -880,5 +970,3 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
     );
   }
 }
-
-

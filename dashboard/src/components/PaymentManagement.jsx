@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosConfig";
 import { adminApi } from "../api/adminApi";
 import { dashboardColors } from "../theme/dashboardColors";
 import { FaMoneyBillWave, FaReceipt, FaCalendarDay, FaSearch, FaFilter, FaDownload, FaCalendarAlt, FaEye, FaFileExport } from "react-icons/fa";
@@ -16,11 +16,7 @@ function PaymentManagement() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const paymentsResponse = await axios.get(adminApi.getPayments, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          }
-        });
+        const paymentsResponse = await axiosInstance.get(adminApi.getPayments);
         let data = paymentsResponse.data;
         if (Array.isArray(data)) {
           setPayments(data);

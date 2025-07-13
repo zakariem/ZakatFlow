@@ -4,6 +4,8 @@ const PAYMENT_API_URL = 'http://localhost:7000/api/payments';
 export const adminApi = {
   // --- Auth Routes ---
   loginUser: `${USER_API_URL}/login`,
+  logoutUser: `${USER_API_URL}/logout`,
+  forceLogoutUser: `${USER_API_URL}/force-logout`,
 
   // --- Agent Management Routes (Admin Only) ---
   getAgents: `${USER_API_URL}/agents`,

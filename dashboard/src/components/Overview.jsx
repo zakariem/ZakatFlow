@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axiosInstance from "../utils/axiosConfig";
 import { adminApi } from "../api/adminApi";
 import { dashboardColors } from "../theme/dashboardColors";
 import { FaCrown, FaMoneyBillWave, FaCalendarAlt, FaChartLine, FaChartPie, FaHome } from "react-icons/fa";
@@ -39,12 +39,8 @@ const Overview = () => {
     const fetchData = async () => {
       try {
         const [paymentsRes, agentsRes] = await Promise.all([
-          axios.get(adminApi.getPayments, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-          }),
-          axios.get(adminApi.getAgents, {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-          })
+          axiosInstance.get(adminApi.getPayments),
+          axiosInstance.get(adminApi.getAgents)
         ]);
         let paymentsData = paymentsRes.data;
         let agentsData = agentsRes.data;

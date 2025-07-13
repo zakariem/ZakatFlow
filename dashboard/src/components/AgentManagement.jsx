@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosConfig';
 import { adminApi } from '../api/adminApi';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
@@ -20,11 +20,7 @@ const AgentManagement = () => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await axios.get(adminApi.getAgents, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-          }
-        });
+        const response = await axiosInstance.get(adminApi.getAgents);
         const data = response.data.data || response.data || [];
         setAgents(Array.isArray(data) ? data : []);
       } catch (err) {
@@ -70,9 +66,7 @@ const AgentManagement = () => {
       const idsToDelete = bulkDeleteMode ? selectedAgents : [agentToDelete._id];
       await Promise.all(
         idsToDelete.map(id =>
-          axios.delete(adminApi.deleteAgent(id), {
-            headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
-          })
+          axiosInstance.delete(adminApi.deleteAgent(id))
         )
       );
       setAgents(agents.filter(agent => !idsToDelete.includes(agent._id)));

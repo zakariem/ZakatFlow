@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/widgets/loader.dart';
 import 'providers/auth_providers.dart';
+import 'providers/connectivity_provider.dart';
 import 'utils/widgets/auth_gate.dart';
+import 'utils/widgets/connectivity_banner.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -21,8 +23,13 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Check authentication status on app launch
+    // Initialize connectivity service and check authentication status on app launch
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Initialize connectivity monitoring
+      final connectivityService = ref.read(connectivityServiceProvider);
+      await connectivityService.initialize();
+      
+      // Check authentication status
       await ref.read(authViewModelProvider.notifier).checkAuthStatus();
       setState(() => _isAuthChecked = true);
     });
@@ -40,7 +47,9 @@ class _MyAppState extends ConsumerState<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Zakat App',
-      home: _isAuthChecked ? const AuthGate() : const LoaderPage(),
+      home: _isAuthChecked 
+          ? const ConnectivityWrapper(child: AuthGate()) 
+          : const LoaderPage(),
     );
   }
 }

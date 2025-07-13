@@ -104,7 +104,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
             // Agent name in the center
             Expanded(
               child: Text(
-                agent != null ? agent!.fullName : 'Agent Dashboard',
+                agent != null ? agent.fullName : 'Agent Dashboard',
                 style: const TextStyle(
                   color: AppColors.textWhite,
                   fontSize: 18,

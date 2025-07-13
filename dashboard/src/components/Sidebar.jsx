@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { dashboardColors } from "../theme/dashboardColors";
 import { FaBars, FaTimes, FaHome, FaMoneyCheckAlt, FaUserFriends } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
+import axiosInstance from "../utils/axiosConfig";
+import { adminApi } from "../api/adminApi";
 
 const menuItems = [
   { label: "Overview", icon: <FaHome />, path: "/dashboard" },
@@ -13,6 +15,23 @@ function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        // Call the logout API
+        await axiosInstance.post(adminApi.logoutUser, {});
+      }
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+      // Continue with local logout even if API call fails
+    } finally {
+      // Always remove token and navigate
+      localStorage.removeItem('authToken');
+      navigate('/');
+    }
+  };
 
   const handleNavigation = (path) => {
     navigate(path);
@@ -118,7 +137,7 @@ function Sidebar() {
             <p className="text-xs mt-1" style={{ color: dashboardColors.background.white, opacity: 0.6 }}>Manage your Zakat operations</p>
           </div>
           <button
-            onClick={() => { localStorage.removeItem('authToken'); navigate('/'); }}
+            onClick={handleLogout}
             className="w-full py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
             style={{ backgroundColor: dashboardColors.status.error, color: dashboardColors.background.white }}
           >
@@ -200,7 +219,7 @@ function Sidebar() {
             </div>
           </div>
           <button
-            onClick={() => { localStorage.removeItem('authToken'); navigate('/'); }}
+            onClick={handleLogout}
             className="w-full py-3 rounded-xl font-semibold transition-all duration-200 hover:scale-105"
             style={{ backgroundColor: dashboardColors.status.error, color: dashboardColors.background.white }}
           >

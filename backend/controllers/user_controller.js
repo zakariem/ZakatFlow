@@ -38,16 +38,72 @@ export const loginUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findOne({ email }).select("+password");
-  if (user && (await user.matchPassword(password))) {
-    const { password: _, ...userData } = user.toObject();
-    res.json({
-      success: true,
-      message: "Si guul leh ayaad u gashay",
-      data: { ...userData, token: generateToken(user) },
-    });
-  } else {
-    res.status(401).json({ message: "Email ama Password ayaa khaldan" });
+  if (!user || !(await user.matchPassword(password))) {
+    return res.status(401).json({ message: "Email ama Password ayaa khaldan" });
   }
+
+  // Check if user is already logged in
+  if (user.isLoggedIn && user.currentSessionToken) {
+    return res.status(409).json({ 
+      message: "Akaawnkan hore ayaa loo galay. Kaliya hal session ayaa la oggol yahay.",
+      error: "ALREADY_LOGGED_IN"
+    });
+  }
+
+  // Generate new token and set user as logged in
+  const token = generateToken(user);
+  const deviceInfo = req.headers['user-agent'] || 'Unknown Device';
+  
+  user.setLoggedIn(token, deviceInfo);
+  await user.save();
+
+  const { password: _, currentSessionToken, ...userData } = user.toObject();
+  res.json({
+    success: true,
+    message: "Si guul leh ayaad u gashay",
+    data: { ...userData, token },
+  });
+});
+
+// Logout user
+export const logoutUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json({ message: "Isticmaale lama helin" });
+  }
+
+  user.setLoggedOut();
+  await user.save();
+
+  res.json({
+    success: true,
+    message: "Si guul leh ayaad ka baxday",
+  });
+});
+
+// Force logout user (admin only)
+export const forceLogoutUser = asyncHandler(async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res.status(403).json({ message: "Kaliya admin ayaa ka saari karo isticmaalayaasha" });
+  }
+
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ message: "User ID ayaa loo baahan yahay" });
+  }
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return res.status(404).json({ message: "Isticmaale lama helin" });
+  }
+
+  user.setLoggedOut();
+  await user.save();
+
+  res.json({
+    success: true,
+    message: `${user.fullName} si guul leh ayaa looga saaray`,
+  });
 });
 
 // --------------------- USER PROFILE ---------------------

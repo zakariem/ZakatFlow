@@ -3,6 +3,8 @@ import multer from "../config/multer.js";
 import {
   registerUser,
   loginUser,
+  logoutUser,
+  forceLogoutUser,
   getUserProfile,
   updateUserProfile,
   deleteUser,
@@ -21,6 +23,8 @@ const router = express.Router();
 // User Auth
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/logout", authMiddleware, logoutUser);
+router.post("/force-logout", authMiddleware, AuthorizeRole("admin"), forceLogoutUser);
 
 
 router
