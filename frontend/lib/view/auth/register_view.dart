@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:frontend/utils/widgets/snackbar/error_scanckbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../providers/auth_providers.dart';
 import '../../utils/constant/validation_utils.dart';
 import '../../utils/theme/app_color.dart';
@@ -42,38 +41,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return null;
   }
 
-  Future<void> _showAdminAlert() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Admin Access'),
-          content: const Text(
-            'You have admin privileges. Please use our web dashboard for admin functions.',
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Go to Dashboard'),
-              onPressed: () async {
-                final url = Uri.parse('https://zakatflow.com/dashboard');
-                if (await canLaunchUrl(url)) {
-                  await launchUrl(url, mode: LaunchMode.externalApplication);
-                }
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   void _register() async {
     if (_formKey.currentState!.validate()) {
@@ -89,14 +57,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final state = ref.read(authViewModelProvider);
 
       if (state.user != null) {
-        final role = state.user?.role.toLowerCase();
-        
-        if (role == 'admin') {
-          // Show admin alert
-          await _showAdminAlert();
-          return;
-        }
-        
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -106,9 +66,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           ),
           (route) => false,
         );
-      } else {
-        ErrorScanckbar.showSnackBar(context, state.error.toString());
       }
+      // Error handling is done in the build method via WidgetsBinding.instance.addPostFrameCallback
     }
   }
 
@@ -116,6 +75,19 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
     final size = MediaQuery.of(context).size;
+
+    // Show error snackbar if error is set
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (authState.error.isNotEmpty) {
+        ErrorScanckbar.showSnackBar(context, authState.error);
+        // Clear the error after showing
+        // ignore: invalid_use_of_protected_member
+        ref.read(authViewModelProvider.notifier).state = authState.copyWith(
+          error: '',
+          isAdminError: false,
+        );
+      }
+    });
 
     return Scaffold(
       body: Container(

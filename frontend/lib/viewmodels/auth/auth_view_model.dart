@@ -11,12 +11,14 @@ class AuthState {
   final bool isLoading;
   final String error;
   final bool isAdmin;
+  final bool isAdminError;
 
   const AuthState({
     this.user,
     this.isLoading = false,
     this.error = '',
     this.isAdmin = false,
+    this.isAdminError = false,
   });
 
   AuthState copyWith({
@@ -24,12 +26,14 @@ class AuthState {
     bool? isLoading,
     String? error,
     bool? isAdmin,
+    bool? isAdminError,
   }) {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
       error: error ?? this.error,
       isAdmin: isAdmin ?? this.isAdmin,
+      isAdminError: isAdminError ?? this.isAdminError,
     );
   }
 }
@@ -149,14 +153,22 @@ class AuthViewModel extends StateNotifier<AuthState> {
 
   void _handleError(dynamic error) {
     String errorMessage;
+    bool isAdminError = false;
 
-    if (error is Exception) {
+    if (error is AdminNotAllowedException) {
+      errorMessage = error.toString();
+      isAdminError = true;
+    } else if (error is Exception) {
       errorMessage = error.toString();
     } else {
       errorMessage = 'An unexpected error occurred';
     }
 
-    state = state.copyWith(error: errorMessage, isLoading: false);
+    state = state.copyWith(
+      error: errorMessage, 
+      isLoading: false, 
+      isAdminError: isAdminError
+    );
   }
 
   Future<void> updateUser(User user) async {

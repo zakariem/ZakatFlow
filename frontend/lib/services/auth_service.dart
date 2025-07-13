@@ -3,6 +3,14 @@ import 'dart:convert';
 import '../models/user_model.dart';
 import '../utils/constant/api_constants.dart' show ApiConstants;
 
+class AdminNotAllowedException implements Exception {
+  final String message;
+  AdminNotAllowedException(this.message);
+  
+  @override
+  String toString() => message;
+}
+
 class AuthService {
   Future<User> login(String email, String password) async {
     try {
@@ -15,7 +23,14 @@ class AuthService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData.containsKey("data")) {
-          return User.fromJson(responseData["data"]);
+          final user = User.fromJson(responseData["data"]);
+          
+          // Check if user is admin and prevent login
+          if (user.role.toLowerCase() == 'admin') {
+            throw AdminNotAllowedException('Admin users must use the web dashboard at zakatflow.com/dashboard');
+          }
+          
+          return user;
         }
         throw Exception('Invalid response structure from server.');
       }
@@ -41,7 +56,14 @@ class AuthService {
       if (response.statusCode == 201) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData.containsKey("data")) {
-          return User.fromJson(responseData["data"]);
+          final user = User.fromJson(responseData["data"]);
+          
+          // Check if user is admin and prevent registration
+          if (user.role.toLowerCase() == 'admin') {
+            throw AdminNotAllowedException('Admin users must use the web dashboard at zakatflow.com/dashboard');
+          }
+          
+          return user;
         }
         throw Exception('Unexpected response structure.');
       }

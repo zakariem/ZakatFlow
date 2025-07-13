@@ -31,15 +31,9 @@ const Signup = () => {
         setError("Login failed: Invalid response from server.");
       }
     } catch (err) {
-      // Handle specific error cases
-      if (err.response?.status === 409 && err.response?.data?.error === 'ALREADY_LOGGED_IN') {
-        setError(err.response.data.message || 'Account is already logged in elsewhere.');
-        // You could show a dialog here to ask if they want to force logout
-        // For now, just show the error message
-      } else {
-        const message = err.response?.data?.message || "Login failed. Please check your credentials and try again.";
-        setError(message);
-      }
+      // Handle error cases
+      const message = err.response?.data?.message || "Login failed. Please check your credentials and try again.";
+      setError(message);
       console.error("Login failed", err);
     } finally {
       setLoading(false);
