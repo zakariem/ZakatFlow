@@ -1,5 +1,6 @@
-const USER_API_URL = 'http://localhost:7000/api/user';
-const PAYMENT_API_URL = 'http://localhost:7000/api/payments';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const USER_API_URL = `${BASE_URL}/api/user`;
+const PAYMENT_API_URL = `${BASE_URL}/api/payments`;
 
 export const adminApi = {
   // --- Auth Routes ---
