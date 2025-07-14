@@ -8,6 +8,7 @@ import AddAgent from "./components/AddAgent";
 import EditAgent from "./components/EditAgent";
 import Signup from "./components/Signup";
 import LandingPage from "./components/LandingPage";
+import NotFound from "./components/NotFound";
 import { dashboardColors } from "./theme/dashboardColors";
 
 // PrivateRoute component to protect dashboard routes
@@ -49,7 +50,11 @@ function App() {
         <Route path="agent-management" element={<AgentManagement />} />
         <Route path="add-agent" element={<AddAgent />} />
         <Route path="edit-agent/:id" element={<EditAgent />} />
+        {/* Catch-all route for dashboard 404s */}
+        <Route path="*" element={<NotFound />} />
       </Route>
+      {/* Catch-all route for general 404s */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
