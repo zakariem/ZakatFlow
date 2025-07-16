@@ -24,8 +24,17 @@ const Signup = () => {
     
     try {
       const response = await axios.post(adminApi.loginUser, form);
-      if (response.data) {
-        localStorage.setItem('authToken', response.data.data.token);
+      if (response.data && response.data.data) {
+        const userData = response.data.data;
+        
+        // Check if user role is admin
+        if (userData.role !== 'admin') {
+          setError("Access denied. Only administrators can access this dashboard.");
+          return;
+        }
+        
+        localStorage.setItem('authToken', userData.token);
+        localStorage.setItem('userRole', userData.role);
         navigate("/dashboard");
       } else {
         setError("Login failed: Invalid response from server.");

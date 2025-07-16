@@ -42,8 +42,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   bool _isObscure = true;
 
-
-
   void _login() async {
     if (_formKey.currentState!.validate()) {
       final authVM = ref.read(authViewModelProvider.notifier);
@@ -55,7 +53,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
       if (state.user != null) {
         final role = state.user?.role.toLowerCase();
-        
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -301,14 +299,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                                         // Register Link
                                         Center(
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                          child: Wrap(
+                                            alignment: WrapAlignment.center,
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.center,
+                                            spacing: 4,
                                             children: [
                                               Text(
                                                 "Ma lihid akoonto? ",
                                                 style: GoogleFonts.poppins(
-                                                  fontSize: size.width * 0.038,
+                                                  fontSize: size.width * 0.035,
                                                   color: AppColors.textGray,
                                                 ),
                                               ),
@@ -330,7 +330,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                                     'Isdiiwaangeli',
                                                     style: GoogleFonts.poppins(
                                                       fontSize:
-                                                          size.width * 0.038,
+                                                          size.width * 0.035,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color:
@@ -355,13 +355,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 SizedBox(height: size.height * 0.04),
 
                                 // Footer
-                                Text(
-                                  '© ${DateTime.now().year} ZakatFlow. Dhammaan xuquuqda way dhowran yihiin.',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: size.width * 0.03,
-                                    color: AppColors.textGray.withOpacity(0.7),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 0.04,
                                   ),
-                                  textAlign: TextAlign.center,
+                                  child: Text(
+                                    '© ${DateTime.now().year} ZakatFlow. Dhammaan xuquuqda way dhowran yihiin.',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: size.width * 0.028,
+                                      color: AppColors.textGray.withOpacity(
+                                        0.7,
+                                      ),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),

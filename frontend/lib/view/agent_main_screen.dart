@@ -88,17 +88,19 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
             // Profile picture on the left
             CircleAvatar(
               radius: 20,
-              backgroundImage: agent?.profileImageUrl != null
-                  ? NetworkImage(agent!.profileImageUrl!)
-                  : null,
+              backgroundImage:
+                  agent?.profileImageUrl != null
+                      ? NetworkImage(agent!.profileImageUrl!)
+                      : null,
               backgroundColor: AppColors.secondaryWhite,
-              child: agent?.profileImageUrl == null
-                  ? const Icon(
-                      Icons.person,
-                      color: AppColors.primaryGold,
-                      size: 24,
-                    )
-                  : null,
+              child:
+                  agent?.profileImageUrl == null
+                      ? const Icon(
+                        Icons.person,
+                        color: AppColors.primaryGold,
+                        size: 24,
+                      )
+                      : null,
             ),
             const SizedBox(width: 12),
             // Agent name in the center
@@ -142,17 +144,12 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
                   await ref.read(authViewModelProvider.notifier).logout();
                   if (!mounted) return;
                   Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
-                      builder: (_) => const LoginScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const LoginScreen()),
                     (_) => false,
                   );
                 } catch (e) {
                   if (!mounted) return;
-                  ErrorScanckbar.showSnackBar(
-                    context,
-                    'Logout failed: $e',
-                  );
+                  ErrorScanckbar.showSnackBar(context, 'Logout failed: $e');
                 }
               },
             ),
@@ -171,50 +168,51 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
             ],
           ),
         ),
-        child: isLoading
-            ? const Center(child: Loader())
-            : agent == null
+        child:
+            isLoading
+                ? const Center(child: Loader())
+                : agent == null
                 ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.person_off,
-                          size: 80,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.person_off,
+                        size: 80,
+                        color: AppColors.textGray,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        "Hay'ad lama helin",
+                        style: TextStyle(
+                          fontSize: 18,
                           color: AppColors.textGray,
+                          fontWeight: FontWeight.w500,
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Hay'ad lama helin",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: AppColors.textGray,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                      ),
+                    ],
+                  ),
+                )
+                : RefreshIndicator(
+                  onRefresh: _loadData,
+                  color: AppColors.primaryGold,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildSummaryCards(),
+                        const SizedBox(height: 32),
+                        _buildChartsSection(),
+                        const SizedBox(height: 32),
+                        _buildFilterSection(),
+                        const SizedBox(height: 24),
+                        _buildPaymentHistory(),
+                        const SizedBox(height: 100), // Bottom padding
                       ],
                     ),
-                  )
-                : RefreshIndicator(
-                    onRefresh: _loadData,
-                    color: AppColors.primaryGold,
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildSummaryCards(),
-                          const SizedBox(height: 32),
-                          _buildChartsSection(),
-                          const SizedBox(height: 32),
-                          _buildFilterSection(),
-                          const SizedBox(height: 24),
-                          _buildPaymentHistory(),
-                          const SizedBox(height: 100), // Bottom padding
-                        ],
-                      ),
-                    ),
                   ),
+                ),
       ),
     );
   }
@@ -294,7 +292,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
           physics: const NeverScrollableScrollPhysics(),
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 1.4,
+          childAspectRatio: 1.6,
           children: [
             _buildSummaryCard(
               'Total Payments',
@@ -368,7 +366,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
@@ -382,47 +380,55 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: gradientColors),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
                         color: gradientColors[0].withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
-                  child: Icon(icon, color: AppColors.textWhite, size: 24),
+                  child: Icon(icon, color: AppColors.textWhite, size: 20),
                 ),
-                Text(emoji, style: const TextStyle(fontSize: 24)),
+                Text(emoji, style: const TextStyle(fontSize: 20)),
               ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-                letterSpacing: -0.5,
+            const SizedBox(height: 12),
+            Flexible(
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.5,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 13,
-                color: AppColors.textGray,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.2,
+            const SizedBox(height: 2),
+            Flexible(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textGray,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

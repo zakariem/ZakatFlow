@@ -27,8 +27,9 @@ function Sidebar() {
       console.error('Logout API call failed:', error);
       // Continue with local logout even if API call fails
     } finally {
-      // Always remove token and navigate
+      // Always remove token, role and navigate
       localStorage.removeItem('authToken');
+      localStorage.removeItem('userRole');
       navigate('/');
     }
   };

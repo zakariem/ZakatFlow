@@ -41,8 +41,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return null;
   }
 
-
-
   void _register() async {
     if (_formKey.currentState!.validate()) {
       final authVM = ref.read(authViewModelProvider.notifier);
@@ -59,11 +57,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (state.user != null) {
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(
-            builder:
-                (context) =>
-                    const ClientMainScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => const ClientMainScreen()),
           (route) => false,
         );
       }
@@ -382,7 +376,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                         Center(
                                           child: Wrap(
                                             alignment: WrapAlignment.center,
-                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.center,
                                             spacing: 4,
                                             children: [
                                               Text(
@@ -393,21 +388,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                                 ),
                                               ),
                                               InkWell(
-                                                onTap: () => Navigator.pop(context),
-                                                borderRadius: BorderRadius.circular(8),
+                                                onTap:
+                                                    () =>
+                                                        Navigator.pop(context),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                                 child: Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 4,
-                                                    vertical: 2,
-                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 4,
+                                                        vertical: 2,
+                                                      ),
                                                   child: Text(
                                                     'Soo gal',
                                                     style: GoogleFonts.poppins(
-                                                      fontSize: size.width * 0.035,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: AppColors.primaryGold,
-                                                      decoration: TextDecoration.underline,
-                                                      decorationColor: AppColors.primaryGold,
+                                                      fontSize:
+                                                          size.width * 0.035,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color:
+                                                          AppColors.primaryGold,
+                                                      decoration:
+                                                          TextDecoration
+                                                              .underline,
+                                                      decorationColor:
+                                                          AppColors.primaryGold,
                                                     ),
                                                   ),
                                                 ),
@@ -423,13 +428,22 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                                 SizedBox(height: size.height * 0.04),
 
                                 // Footer
-                                Text(
-                                  '© ${DateTime.now().year} ZakatFlow. Dhammaan xuquuqda way dhowran yihiin.',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: size.width * 0.03,
-                                    color: AppColors.textGray.withOpacity(0.7),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 0.04,
                                   ),
-                                  textAlign: TextAlign.center,
+                                  child: Text(
+                                    '© ${DateTime.now().year} ZakatFlow. Dhammaan xuquuqda way dhowran yihiin.',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: size.width * 0.028,
+                                      color: AppColors.textGray.withOpacity(
+                                        0.7,
+                                      ),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ],
                             ),

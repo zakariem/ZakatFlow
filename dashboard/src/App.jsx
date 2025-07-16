@@ -14,7 +14,21 @@ import { dashboardColors } from "./theme/dashboardColors";
 // PrivateRoute component to protect dashboard routes
 function PrivateRoute({ children }) {
   const token = localStorage.getItem("authToken");
-  return token ? children : <Navigate to="/login" replace />;
+  const userRole = localStorage.getItem("userRole");
+  
+  // Check if user has valid token and admin role
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (userRole !== "admin") {
+    // Clear invalid session and redirect to login
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
+    return <Navigate to="/login" replace />;
+  }
+  
+  return children;
 }
 
 // Dashboard Layout component
