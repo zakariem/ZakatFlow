@@ -35,6 +35,7 @@ class _AllAgentsScreenState extends ConsumerState<AllAgentsScreen> {
     final agentViewModel = ref.watch(agentViewModelProvider);
     final agents = agentViewModel.agents;
     final isLoading = agentViewModel.isLoading;
+    final error = agentViewModel.error;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
@@ -59,6 +60,8 @@ class _AllAgentsScreenState extends ConsumerState<AllAgentsScreen> {
       body:
           isLoading
               ? const Center(child: Loader())
+              : error != null
+              ? _buildErrorState(error)
               : agents.isEmpty
               ? _buildEmptyState()
               : RefreshIndicator(
@@ -79,6 +82,44 @@ class _AllAgentsScreenState extends ConsumerState<AllAgentsScreen> {
                   ),
                 ),
               ),
+    );
+  }
+
+  Widget _buildErrorState(String error) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 80, color: AppColors.error),
+          const SizedBox(height: 16),
+          Text(
+            'Khalad ayaa dhacay',
+            style: TextStyle(
+              color: AppColors.error,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              error,
+              style: TextStyle(color: AppColors.textGray, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _loadAgents,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryGold,
+              foregroundColor: AppColors.textWhite,
+            ),
+            child: const Text('Isku day mar kale'),
+          ),
+        ],
+      ),
     );
   }
 

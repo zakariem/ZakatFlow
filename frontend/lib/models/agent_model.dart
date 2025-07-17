@@ -31,7 +31,7 @@ class Agent {
       role: json['role'] ?? '',
       profileImageUrl: json['profileImageUrl'],
       cloudinaryPublicId: json['cloudinaryPublicId'],
-      totalDonation: json['totalDonation'],
+      totalDonation: json['totalDonation']?.toDouble(),
     );
   }
 

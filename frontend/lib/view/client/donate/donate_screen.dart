@@ -204,11 +204,12 @@ class _DonationScreenState extends ConsumerState<DonationScreen> {
                           children: const [
                             Icon(Icons.payment, color: Colors.white),
                             SizedBox(width: 8),
-                            Text('Bixid'),
+                            Text('Bixi'),
                           ],
                         ),
               ),
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

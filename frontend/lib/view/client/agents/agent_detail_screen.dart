@@ -212,195 +212,181 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
               : SingleChildScrollView(
                 child: Column(
                   children: [
-                    // Profile Image Section with Gradient Overlay
-                    Stack(
-                      children: [
-                        Hero(
-                          tag: 'agent-${selectedAgent.id}',
-                          child: Container(
-                            height:
-                                340, // Further increased height for better visual impact
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              image:
-                                  selectedAgent.profileImageUrl != null
-                                      ? DecorationImage(
-                                        image: NetworkImage(
-                                          selectedAgent.profileImageUrl!,
+                    // Profile Image Section with Hero Animation
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      child: Stack(
+                        children: [
+                          Hero(
+                            tag: 'agent-${selectedAgent.id}',
+                            child: Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              decoration: BoxDecoration(
+                                image:
+                                    selectedAgent.profileImageUrl != null
+                                        ? DecorationImage(
+                                          image: NetworkImage(
+                                            selectedAgent.profileImageUrl!,
+                                          ),
+                                          fit: BoxFit.cover,
+                                          onError: (exception, stackTrace) {
+                                            print(
+                                              'Error loading image: $exception',
+                                            );
+                                            return;
+                                          },
+                                        )
+                                        : null,
+                                color:
+                                    selectedAgent.profileImageUrl == null
+                                        ? AppColors.primaryGold.withOpacity(0.8)
+                                        : null,
+                              ),
+                              child:
+                                  selectedAgent.profileImageUrl == null
+                                      ? Center(
+                                        child: Icon(
+                                          Icons.business,
+                                          size: 80,
+                                          color: AppColors.textWhite,
                                         ),
-                                        fit: BoxFit.cover,
-                                        onError: (exception, stackTrace) {
-                                          print(
-                                            'Error loading image: $exception',
-                                          );
-                                          return;
-                                        },
                                       )
                                       : null,
-                              color:
-                                  selectedAgent.profileImageUrl == null
-                                      ? AppColors.primaryGold.withOpacity(0.8)
-                                      : null,
                             ),
-                            child:
-                                selectedAgent.profileImageUrl == null
-                                    ? Center(
-                                      child: Icon(
-                                        Icons.business,
-                                        size: 100, // Increased icon size
-                                        color: AppColors.textWhite,
+                          ),
+                          // Gradient overlay for better text visibility
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.3),
+                                  Colors.black.withOpacity(0.8),
+                                ],
+                                stops: const [0.5, 0.75, 1.0],
+                              ),
+                            ),
+                          ),
+                          // Agent name overlay at bottom of image
+                          Positioned(
+                            bottom: 20,
+                            left: 20,
+                            right: 20,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  selectedAgent.fullName,
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textWhite,
+                                    letterSpacing: 0.5,
+                                    shadows: [
+                                      Shadow(
+                                        offset: Offset(0, 2),
+                                        blurRadius: 3.0,
+                                        color: Colors.black.withOpacity(0.5),
                                       ),
-                                    )
-                                    : null,
-                          ),
-                        ),
-                        // Gradient overlay for better text visibility
-                        Container(
-                          height: 340, // Match the increased height
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withOpacity(0.3),
-                                Colors.black.withOpacity(
-                                  0.8,
-                                ), // Darker overlay at bottom
-                              ],
-                              stops: const [0.5, 0.75, 1.0], // Adjusted stops
-                            ),
-                          ),
-                        ),
-                        // Agent name overlay at bottom of image
-                        Positioned(
-                          bottom: 32, // Increased bottom spacing
-                          left: 28, // Increased left spacing
-                          right: 28, // Increased right spacing
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                selectedAgent.fullName,
-                                style: TextStyle(
-                                  fontSize: 32, // Increased font size
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textWhite,
-                                  letterSpacing: 0.5, // Added letter spacing
-                                  shadows: [
-                                    Shadow(
-                                      offset: Offset(
-                                        0,
-                                        2,
-                                      ), // Increased shadow offset
-                                      blurRadius: 3.0,
-                                      color: Colors.black.withOpacity(0.5),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 12,
+                                  runSpacing: 8,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryGold,
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.25,
+                                            ),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        selectedAgent.role,
+                                        style: TextStyle(
+                                          color: AppColors.textWhite,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          letterSpacing: 0.3,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.green.withOpacity(0.9),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.25,
+                                            ),
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.verified,
+                                            size: 16,
+                                            color: AppColors.textWhite,
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            'La Xaqiijiyay',
+                                            style: TextStyle(
+                                              color: AppColors.textWhite,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                              letterSpacing: 0.3,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              const SizedBox(height: 16), // Increased spacing
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 18, // Increased padding
-                                      vertical: 10, // Increased padding
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryGold,
-                                      borderRadius: BorderRadius.circular(
-                                        24,
-                                      ), // Increased radius
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.25),
-                                          blurRadius: 6, // Increased blur
-                                          offset: const Offset(
-                                            0,
-                                            3,
-                                          ), // Increased offset
-                                        ),
-                                      ],
-                                    ),
-                                    child: Text(
-                                      selectedAgent.role,
-                                      style: TextStyle(
-                                        color: AppColors.textWhite,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16, // Increased font size
-                                        letterSpacing:
-                                            0.5, // Added letter spacing
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 14,
-                                  ), // Increased spacing
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 18, // Increased padding
-                                      vertical: 10, // Increased padding
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.success.withOpacity(
-                                        0.9,
-                                      ), // Increased opacity
-                                      borderRadius: BorderRadius.circular(
-                                        24,
-                                      ), // Increased radius
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.25),
-                                          blurRadius: 6, // Increased blur
-                                          offset: const Offset(
-                                            0,
-                                            3,
-                                          ), // Increased offset
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.verified,
-                                          size: 18, // Increased icon size
-                                          color: AppColors.textWhite,
-                                        ),
-                                        const SizedBox(
-                                          width: 8,
-                                        ), // Increased spacing
-                                        Text(
-                                          'Verified',
-                                          style: TextStyle(
-                                            color: AppColors.textWhite,
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 16, // Increased font size
-                                            letterSpacing:
-                                                0.5, // Added letter spacing
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     // Agent Details Section
                     Container(
-                      padding: const EdgeInsets.all(28.0), // Increased padding
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.05,
+                        vertical: 24,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32), // Increased radius
-                          topRight: Radius.circular(32),
+                          topLeft: Radius.circular(24),
+                          topRight: Radius.circular(24),
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -431,11 +417,12 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                               selectedAgent.address,
                             ),
                           ]),
-                          const SizedBox(height: 32), // Increased spacing
+                          const SizedBox(height: 14),
                           // Donate Button with Gradient
                           Container(
                             width: double.infinity,
-                            height: 64, // Increased height
+                            height: 56,
+                            margin: const EdgeInsets.only(bottom: 40),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
@@ -473,19 +460,16 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                                   Icon(
                                     Icons.volunteer_activism,
                                     color: AppColors.textWhite,
-                                    size: 26, // Slightly larger icon
+                                    size: 22,
                                   ),
-                                  const SizedBox(
-                                    width: 14,
-                                  ), // Increased spacing
+                                  const SizedBox(width: 12),
                                   Text(
                                     'Ku Deeq',
                                     style: TextStyle(
-                                      fontSize: 20, // Larger text
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.textWhite,
-                                      letterSpacing:
-                                          0.5, // Added letter spacing
+                                      letterSpacing: 0.5,
                                     ),
                                   ),
                                 ],
@@ -506,60 +490,88 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
     showDialog(
       context: context,
       builder:
-          (ctx) => AlertDialog(
+          (ctx) => Dialog(
             backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(20),
             ),
-            title: const Text(
-              'Dooro Ficil',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    Navigator.pop(ctx);
-                    clientNavigator.setIndex(1);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentLightGold,
-                    foregroundColor: AppColors.textPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+            child: Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.85,
+              ),
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Dooro Ficil',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  child: const Text('Xisaabi Zakadaada'),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: const [
-                    Expanded(child: Divider()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('ama'),
-                    ),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(ctx);
-                    _showDonationDialog(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade100,
-                    foregroundColor: AppColors.textPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        Navigator.pop(ctx);
+                        clientNavigator.setIndex(1);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentLightGold,
+                        foregroundColor: AppColors.textPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Xisaabi Zakadaada',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
-                  child: const Text('Wax Lee Kusada Qeeso'),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  Row(
+                    children: const [
+                      Expanded(child: Divider()),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(
+                          'ama',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                      Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        _showDonationDialog(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade100,
+                        foregroundColor: AppColors.textPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Wax Lee Kusada Qeeso',
+                        style: TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
     );
@@ -569,187 +581,208 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
     showDialog(
       context: context,
       builder:
-          (ctx) => AlertDialog(
+          (ctx) => Dialog(
             backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24), // Increased radius
+              borderRadius: BorderRadius.circular(24),
             ),
-            titlePadding: const EdgeInsets.fromLTRB(
-              24,
-              24,
-              24,
-              16,
-            ), // Custom padding
-            title: Row(
-              children: [
-                Icon(
-                  Icons.volunteer_activism,
-                  color: AppColors.primaryGold,
-                  size: 28,
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  'Deeq u Dir',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22, // Increased font size
-                    color: AppColors.textPrimary,
-                    letterSpacing: 0.5, // Added letter spacing
-                  ),
-                ),
-              ],
-            ),
-            contentPadding: const EdgeInsets.fromLTRB(
-              24,
-              0,
-              24,
-              16,
-            ), // Custom padding
-            content: Form(
-              key: _formKey,
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.8,
+                maxWidth: MediaQuery.of(context).size.width * 0.9,
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Description text
+                  // Title Section
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      'Fadlan geli qadarka aad doonayso iyo lambarka telefoonka aad lacagta ka bixinayso.',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 14,
-                        height: 1.4,
-                      ),
+                    padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.volunteer_activism,
+                          color: AppColors.primaryGold,
+                          size: 28,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Deeq u Dir',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                              color: AppColors.textPrimary,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  CustomField(
-                    controller: _amountController,
-                    hintText: 'Lacagta aad doonayso in aad bixiso geli',
-                    labelText: 'Qadarka Lacagta',
-                    keyboardType: TextInputType.number,
-                    validator: ValidationUtils.validateNumberField,
-                  ),
-                  const SizedBox(height: 16),
-                  CustomField(
-                    controller: _phoneController,
-                    hintText: 'Number kaa lacag ta katureysid geli',
-                    labelText: 'Lambarka Telefoonka',
-                    keyboardType: TextInputType.phone,
-                    validator: ValidationUtils.validatePhoneNumber,
-                  ),
-                  // Note about test payment
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.backgroundLight,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppColors.borderPrimary),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            size: 18,
-                            color: AppColors.textSecondary,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              "Waxaa la qaadi doonaa \$0.01 oo ah lacag tijaabo ah, kadibna qadarka dhabta ah ee aad gelisay.",
+                  // Scrollable Content
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Description text
+                            Text(
+                              'Fadlan geli qadarka aad doonayso iyo lambarka telefoonka aad lacagta ka bixinayso.',
                               style: TextStyle(
-                                fontSize: 12,
                                 color: AppColors.textSecondary,
+                                fontSize: 14,
                                 height: 1.4,
                               ),
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+                            CustomField(
+                              controller: _amountController,
+                              hintText:
+                                  'Lacagta aad doonayso in aad bixiso geli',
+                              labelText: 'Qadarka Lacagta',
+                              keyboardType: TextInputType.number,
+                              validator: ValidationUtils.validateNumberField,
+                            ),
+                            const SizedBox(height: 16),
+                            CustomField(
+                              controller: _phoneController,
+                              hintText: 'Number kaa lacag ta katureysid geli',
+                              labelText: 'Lambarka Telefoonka',
+                              keyboardType: TextInputType.phone,
+                              validator: ValidationUtils.validatePhoneNumber,
+                            ),
+                            const SizedBox(height: 16),
+                            // Note about test payment
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: AppColors.backgroundLight,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: AppColors.borderPrimary,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.info_outline,
+                                    size: 18,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      "Waxaa la qaadi doonaa \$0.01 oo ah lacag tijaabo ah, kadibna qadarka dhabta ah ee aad gelisay.",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.textSecondary,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                    ),
+                  ),
+                  // Actions Section
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.pop(ctx);
+                              _amountController.clear();
+                              _phoneController.clear();
+                            },
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: Text(
+                              'Ka Noqo',
+                              style: TextStyle(
+                                color: AppColors.textGray,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              final paymentState = ref.watch(
+                                paymentNotifierProvider,
+                              );
+                              return ElevatedButton(
+                                onPressed:
+                                    paymentState.isLoading
+                                        ? null
+                                        : () => _handleDonation(ctx),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryGold,
+                                  foregroundColor: AppColors.textWhite,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
+                                  elevation: 2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child:
+                                    paymentState.isLoading
+                                        ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                          ),
+                                        )
+                                        : Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.check_circle_outline,
+                                              size: 18,
+                                              color: Colors.white,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            const Text(
+                                              'Bixi',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-            actionsPadding: const EdgeInsets.fromLTRB(
-              24,
-              0,
-              24,
-              24,
-            ), // Custom padding
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  _amountController.clear();
-                  _phoneController.clear();
-                },
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                ),
-                child: Text(
-                  'Ka Noqo',
-                  style: TextStyle(
-                    color: AppColors.textGray,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              Consumer(
-                builder: (context, ref, child) {
-                  final paymentState = ref.watch(paymentNotifierProvider);
-                  return ElevatedButton(
-                    onPressed:
-                        paymentState.isLoading
-                            ? null
-                            : () => _handleDonation(ctx),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryGold,
-                      foregroundColor: AppColors.textWhite,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child:
-                        paymentState.isLoading
-                            ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                            : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.check_circle_outline,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Bixi',
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                  );
-                },
-              ),
-            ],
           ),
     );
   }

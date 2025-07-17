@@ -34,13 +34,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     agentViewModel.loadAgents(authState.user!.token);
   }
 
-  final List<String> agents = [
-    'Al-Ihsaan Foundation',
-    'Horumar Relief',
-    'Rahma Foundation',
-    'Tawfiiq Organization',
-    'Samafal Society',
-  ];
 
   final List<Map<String, String>> xadiithList = [
     {
@@ -264,19 +257,42 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildEnhancedXadiithCarousel() {
-    return CarouselSlider(
-      options: CarouselOptions(
-        height: 200,
-        autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 6),
-        enlargeCenterPage: true,
-        viewportFraction: 0.85,
-        aspectRatio: 16 / 9,
-      ),
-      items:
-          xadiithList.map((xadiith) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isTablet = screenWidth > 600;
+        final isLargeScreen = screenWidth > 900;
+        
+        // Responsive height calculation
+        double carouselHeight = isLargeScreen ? 250 : (isTablet ? 220 : 200);
+        
+        // Responsive viewport fraction
+        double viewportFraction = isLargeScreen ? 0.7 : (isTablet ? 0.8 : 0.85);
+        
+        // Responsive font sizes
+        double arabicFontSize = isLargeScreen ? 26 : (isTablet ? 24 : 22);
+        double translationFontSize = isLargeScreen ? 16 : (isTablet ? 15 : 14);
+        
+        // Responsive padding
+        EdgeInsets contentPadding = EdgeInsets.all(isLargeScreen ? 24 : (isTablet ? 22 : 20));
+        
+        return CarouselSlider(
+          options: CarouselOptions(
+            height: carouselHeight,
+            autoPlay: true,
+            autoPlayInterval: const Duration(seconds: 6),
+            enlargeCenterPage: true,
+            viewportFraction: viewportFraction,
+            aspectRatio: 16 / 9,
+            enableInfiniteScroll: true,
+            autoPlayCurve: Curves.fastOutSlowIn,
+            autoPlayAnimationDuration: const Duration(milliseconds: 800),
+          ),
+          items: xadiithList.map((xadiith) {
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 5.0),
+              margin: EdgeInsets.symmetric(
+                horizontal: isTablet ? 8.0 : 5.0,
+              ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -304,37 +320,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     child: Icon(
                       Icons.format_quote,
                       color: AppColors.primaryGold.withOpacity(0.2),
-                      size: 40,
+                      size: isLargeScreen ? 45 : (isTablet ? 42 : 40),
                     ),
                   ),
-                  // Content
+                  // Content with responsive layout
                   Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: SingleChildScrollView(
+                    padding: contentPadding,
+                    child: Center(
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            xadiith['text']!,
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primaryBlack,
-                              height: 1.4,
+                          // Arabic text with responsive sizing
+                          Flexible(
+                            flex: 3,
+                            child: Center(
+                              child: Text(
+                                xadiith['text']!,
+                                style: TextStyle(
+                                  fontSize: arabicFontSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryBlack,
+                                  height: 1.4,
+                                  letterSpacing: 0.5,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: isLargeScreen ? 4 : (isTablet ? 3 : 3),
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                            textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 12),
-                          Text(
-                            xadiith['translation']!,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.textGray,
-                              height: 1.4,
+                          
+                          // Responsive spacing
+                          SizedBox(height: isLargeScreen ? 16 : (isTablet ? 14 : 12)),
+                          
+                          // Translation text with responsive sizing
+                          Flexible(
+                            flex: 2,
+                            child: Text(
+                              xadiith['translation']!,
+                              style: TextStyle(
+                                fontSize: translationFontSize,
+                                color: AppColors.textGray,
+                                height: 1.4,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: isLargeScreen ? 3 : (isTablet ? 2 : 2),
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            textAlign: TextAlign.center,
                           ),
                         ],
                       ),
@@ -344,6 +378,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             );
           }).toList(),
+        );
+      },
     );
   }
 

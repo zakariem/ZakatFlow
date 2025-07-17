@@ -39,8 +39,10 @@ class AgentProvider extends ChangeNotifier {
     
     try {
       _agents = await _agentsService.getAgents(token);
+      print('AgentProvider: Successfully loaded ${_agents.length} agents');
       _successMessage = "Agents loaded successfully";
     } catch (e) {
+      print('AgentProvider: Error loading agents: $e');
       _error = e.toString().replaceAll('Exception: ', '');
     } finally {
       _isLoading = false;
@@ -55,9 +57,12 @@ class AgentProvider extends ChangeNotifier {
     await _safeNotifyListeners();
     try {
       final agent = await _agentsService.getAgentById(id, token);
-      _agents.clear(); // Clear old agents
-      _agents.add(agent); // Add only the fetched agent
       _selectedAgent = agent;
+      // Update the agent in the list if it exists
+      final index = _agents.indexWhere((a) => a.id == id);
+      if (index != -1) {
+        _agents[index] = agent;
+      }
       _successMessage = "Agent loaded successfully";
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
