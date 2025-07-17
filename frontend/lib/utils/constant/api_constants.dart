@@ -1,5 +1,6 @@
 class ApiConstants {
-  static const String baseUrl = 'https://zakat-flow-backend.onrender.com';
+  static const String baseUrl = 'http://localhost:7000';
+  // static const String baseUrl = 'https://zakat-flow-backend.onrender.com';
 
   // Authentication endpoints
   static const String login = '$baseUrl/api/user/login';
