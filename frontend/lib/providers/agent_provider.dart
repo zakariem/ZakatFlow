@@ -36,7 +36,7 @@ class AgentProvider extends ChangeNotifier {
     _error = null;
     _successMessage = null;
     await _safeNotifyListeners();
-    
+
     try {
       _agents = await _agentsService.getAgents(token);
       print('AgentProvider: Successfully loaded ${_agents.length} agents');
@@ -152,6 +152,8 @@ class AgentProvider extends ChangeNotifier {
 }
 
 // Riverpod provider for AgentProvider
-final agentProviderNotifierProvider = ChangeNotifierProvider<AgentProvider>((ref) {
+final agentProviderNotifierProvider = ChangeNotifierProvider<AgentProvider>((
+  ref,
+) {
   return AgentProvider(AgentsService());
 });

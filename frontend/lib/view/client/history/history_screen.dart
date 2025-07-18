@@ -34,20 +34,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.2),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
+    );
   }
 
   @override
@@ -101,172 +96,170 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        backgroundColor: Colors.transparent,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white,
-                Colors.white.withOpacity(0.95),
-              ],
+      builder:
+          (context) => Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
             ),
-            borderRadius: BorderRadius.circular(24),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primaryGold.withOpacity(0.2),
-                blurRadius: 20,
-                spreadRadius: 5,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.green.shade400,
-                      Colors.green.shade600,
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.green.withOpacity(0.3),
-                      blurRadius: 15,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+            backgroundColor: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.white, Colors.white.withOpacity(0.95)],
                 ),
-                child: const Icon(
-                  Icons.check_rounded,
-                  color: Colors.white,
-                  size: 40,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Donation Successful!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryGold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.backgroundLight,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
                     color: AppColors.primaryGold.withOpacity(0.2),
+                    blurRadius: 20,
+                    spreadRadius: 5,
+                    offset: const Offset(0, 10),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    _buildInfoRow(
-                      'Test Payment',
-                      '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}'
-                    ),
-                    _buildInfoRow(
-                      'Actual Zakat',
-                      '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}'
-                    ),
-                    _buildInfoRow('Recipient', widget.donationData!['agentName']),
-                    _buildInfoRow('Account', widget.donationData!['userAccountNo']),
-                    _buildInfoRow(
-                      'Date',
-                      DateTime.now().toString().substring(0, 16),
-                    ),
-                  ],
-                ),
+                ],
               ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.green.shade50,
-                      Colors.green.shade100,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.favorite_rounded,
-                      color: Colors.green.shade600,
-                      size: 20,
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.green.shade400, Colors.green.shade600],
+                      ),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.green.withOpacity(0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Thank you for your generous donation!',
-                        style: TextStyle(
-                          color: Colors.green.shade700,
-                          fontWeight: FontWeight.w500,
+                    child: const Icon(
+                      Icons.check_rounded,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Donation Successful!',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryGold,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.backgroundLight,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: AppColors.primaryGold.withOpacity(0.2),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        _buildInfoRow(
+                          'Test Payment',
+                          '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
+                        ),
+                        _buildInfoRow(
+                          'Actual Zakat',
+                          '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
+                        ),
+                        _buildInfoRow(
+                          'Recipient',
+                          widget.donationData!['agentName'],
+                        ),
+                        _buildInfoRow(
+                          'Account',
+                          widget.donationData!['userAccountNo'],
+                        ),
+                        _buildInfoRow(
+                          'Date',
+                          DateTime.now().toString().substring(0, 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.green.shade50, Colors.green.shade100],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.favorite_rounded,
+                          color: Colors.green.shade600,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Thank you for your generous donation!',
+                            style: TextStyle(
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Container(
+                    width: double.infinity,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppColors.primaryGold,
+                          AppColors.accentLightGold,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryGold.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => Navigator.of(context).pop(),
+                        child: const Center(
+                          child: Text(
+                            'Close',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                width: double.infinity,
-                height: 48,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primaryGold,
-                      AppColors.accentLightGold,
-                    ],
                   ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryGold.withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(12),
-                    onTap: () => Navigator.of(context).pop(),
-                    child: const Center(
-                      child: Text(
-                        'Close',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -331,9 +324,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                       opacity: _fadeAnimation,
                       child: SlideTransition(
                         position: _slideAnimation,
-                        child: historyVm.isLoading
-                            ? const Center(child: Loader())
-                            : historyVm.history.isEmpty
+                        child:
+                            historyVm.isLoading
+                                ? const Center(child: Loader())
+                                : historyVm.history.isEmpty
                                 ? _buildEmptyState()
                                 : _buildHistoryList(historyVm.history),
                       ),
@@ -357,10 +351,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.white,
-              Colors.white.withOpacity(0.9),
-            ],
+            colors: [Colors.white, Colors.white.withOpacity(0.9)],
           ),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
@@ -461,10 +452,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.white,
-                Colors.white.withOpacity(0.95),
-              ],
+              colors: [Colors.white, Colors.white.withOpacity(0.95)],
             ),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
@@ -538,7 +526,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.secondaryGray.withOpacity(0.1),
+                                  color: AppColors.secondaryGray.withOpacity(
+                                    0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -581,7 +571,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              payment.paidAt.toLocal().toString().substring(0, 10),
+                              payment.paidAt.toLocal().toString().substring(
+                                0,
+                                10,
+                              ),
                               style: TextStyle(
                                 color: AppColors.textSecondary,
                                 fontSize: 12,
@@ -676,49 +669,110 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white,
-              AppColors.backgroundLight,
-            ],
-          ),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, -5),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 50,
-              height: 5,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primaryGold.withOpacity(0.3),
-                    AppColors.primaryGold,
-                    AppColors.primaryGold.withOpacity(0.3),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(10),
+      builder:
+          (context) => Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.white, AppColors.backgroundLight],
               ),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, -5),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            Row(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
                   width: 50,
-                  height: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryGold.withOpacity(0.3),
+                        AppColors.primaryGold,
+                        AppColors.primaryGold.withOpacity(0.3),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primaryGold,
+                            AppColors.accentLightGold,
+                          ],
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.receipt_long_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    const Text(
+                      'Payment Details',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryGold.withOpacity(0.05),
+                        AppColors.accentLightGold.withOpacity(0.05),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: AppColors.primaryGold.withOpacity(0.2),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildDetailRow(
+                        'Date',
+                        payment.paidAt.toLocal().toString().substring(0, 16),
+                      ),
+                      _buildDetailRow(
+                        'Amount',
+                        '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
+                      ),
+                      _buildDetailRow('Recipient', payment.agentName),
+                      _buildDetailRow('Account', payment.userAccountNo),
+                      _buildDetailRow('Payment Method', payment.paymentMethod),
+                      _buildDetailRow('Transaction ID', payment.id),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  height: 52,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -726,98 +780,37 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                         AppColors.accentLightGold,
                       ],
                     ),
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryGold.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
-                  child: const Icon(
-                    Icons.receipt_long_rounded,
-                    color: Colors.white,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                const Text(
-                  'Payment Details',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 24),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primaryGold.withOpacity(0.05),
-                    AppColors.accentLightGold.withOpacity(0.05),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: AppColors.primaryGold.withOpacity(0.2),
-                ),
-              ),
-              child: Column(
-                children: [
-                  _buildDetailRow(
-                    'Date',
-                    payment.paidAt.toLocal().toString().substring(0, 16),
-                  ),
-                  _buildDetailRow(
-                    'Amount',
-                    '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
-                  ),
-                  _buildDetailRow('Recipient', payment.agentName),
-                  _buildDetailRow('Account', payment.userAccountNo),
-                  _buildDetailRow('Payment Method', payment.paymentMethod),
-                  _buildDetailRow('Transaction ID', payment.id),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Container(
-              width: double.infinity,
-              height: 52,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppColors.primaryGold,
-                    AppColors.accentLightGold,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryGold.withOpacity(0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () => Navigator.pop(context),
-                  child: const Center(
-                    child: Text(
-                      'Close',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () => Navigator.pop(context),
+                      child: const Center(
+                        child: Text(
+                          'Close',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 24),
+              ],
             ),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
@@ -841,10 +834,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
           ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(8),
@@ -877,10 +867,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
               children: [
                 const Text(
                   'Payment History',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 Text(
                   'Track your donations',
@@ -914,9 +901,10 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                   padding: const EdgeInsets.all(8),
                   child: Icon(
                     Icons.refresh_rounded,
-                    color: historyVm.isLoading
-                        ? AppColors.textSecondary
-                        : AppColors.primaryGold,
+                    color:
+                        historyVm.isLoading
+                            ? AppColors.textSecondary
+                            : AppColors.primaryGold,
                     size: 20,
                   ),
                 ),

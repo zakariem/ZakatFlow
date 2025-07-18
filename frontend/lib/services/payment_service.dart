@@ -4,7 +4,10 @@ import '../models/payment_model.dart';
 import '../utils/constant/api_constants.dart';
 
 class PaymentService {
-  Future<http.Response> createPayment(PaymentModel payment, String token) async {
+  Future<http.Response> createPayment(
+    PaymentModel payment,
+    String token,
+  ) async {
     // First, process the payment with the actual amount
     final response = await http.post(
       Uri.parse(ApiConstants.payments),

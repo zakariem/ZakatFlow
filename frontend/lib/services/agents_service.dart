@@ -14,7 +14,7 @@ class AgentsService {
     try {
       debugPrint('AgentsService: Fetching agents from ${ApiConstants.agents}');
       debugPrint('AgentsService: Platform - ${kIsWeb ? "Web" : "Mobile"}');
-      
+
       final response = await BaseHttpService.get(
         Uri.parse(ApiConstants.agents),
         headers: {
@@ -29,11 +29,16 @@ class AgentsService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final agents = (data['data'] as List).map((e) => Agent.fromJson(e)).toList();
-        debugPrint('AgentsService: Successfully fetched ${agents.length} agents');
+        final agents =
+            (data['data'] as List).map((e) => Agent.fromJson(e)).toList();
+        debugPrint(
+          'AgentsService: Successfully fetched ${agents.length} agents',
+        );
         return agents;
       } else {
-        debugPrint('AgentsService: Error response: ${response.statusCode} - ${response.body}');
+        debugPrint(
+          'AgentsService: Error response: ${response.statusCode} - ${response.body}',
+        );
         throw _handleError(response);
       }
     } catch (e) {
@@ -46,7 +51,7 @@ class AgentsService {
     try {
       debugPrint('AgentsService: Fetching agent by ID: $id');
       debugPrint('AgentsService: Platform - ${kIsWeb ? "Web" : "Mobile"}');
-      
+
       final response = await BaseHttpService.get(
         Uri.parse('${ApiConstants.agents}/$id'),
         headers: {
@@ -57,13 +62,17 @@ class AgentsService {
       );
 
       debugPrint('AgentsService: Response status: ${response.statusCode}');
-      
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        debugPrint('AgentsService: Successfully fetched agent: ${data['data']['fullName']}');
+        debugPrint(
+          'AgentsService: Successfully fetched agent: ${data['data']['fullName']}',
+        );
         return Agent.fromJson(data['data']);
       } else {
-        debugPrint('AgentsService: Error response: ${response.statusCode} - ${response.body}');
+        debugPrint(
+          'AgentsService: Error response: ${response.statusCode} - ${response.body}',
+        );
         throw _handleError(response);
       }
     } catch (e) {
@@ -77,7 +86,10 @@ class AgentsService {
     XFile? imageFile,
     String token,
   ) async {
-    final request = http.MultipartRequest('POST', Uri.parse(ApiConstants.agents));
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse(ApiConstants.agents),
+    );
     request.headers['Authorization'] = 'Bearer $token';
 
     // Add all form fields
@@ -168,24 +180,36 @@ class AgentsService {
     final body = response.body;
     final platform = kIsWeb ? "Web" : "Mobile";
 
-    debugPrint('AgentsService: Error handling - Platform: $platform, Status: $statusCode');
+    debugPrint(
+      'AgentsService: Error handling - Platform: $platform, Status: $statusCode',
+    );
     debugPrint('AgentsService: Error body: $body');
 
     if (statusCode == 403) {
-      return Exception('You are not authorized to perform this action. Platform: $platform');
+      return Exception(
+        'You are not authorized to perform this action. Platform: $platform',
+      );
     } else if (statusCode == 400) {
       try {
         final error = jsonDecode(body)['message'];
         return Exception('${error ?? "Invalid request"} (Platform: $platform)');
       } catch (e) {
-        return Exception('Invalid request - Unable to parse error response (Platform: $platform)');
+        return Exception(
+          'Invalid request - Unable to parse error response (Platform: $platform)',
+        );
       }
     } else if (statusCode == 401) {
-      return Exception('Authentication failed. Please login again. (Platform: $platform)');
+      return Exception(
+        'Authentication failed. Please login again. (Platform: $platform)',
+      );
     } else if (statusCode >= 500) {
-      return Exception('Server error occurred. Please try again later. (Platform: $platform)');
+      return Exception(
+        'Server error occurred. Please try again later. (Platform: $platform)',
+      );
     } else {
-      return Exception('Request failed with status: $statusCode (Platform: $platform)');
+      return Exception(
+        'Request failed with status: $statusCode (Platform: $platform)',
+      );
     }
   }
 }

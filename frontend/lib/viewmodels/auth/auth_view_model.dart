@@ -50,10 +50,10 @@ class AuthViewModel extends StateNotifier<AuthState> {
     try {
       // Clear any existing user data first to ensure we're starting fresh
       await _clearUserData();
-      
+
       // Now attempt to login with the provided credentials
       final user = await _authService.login(email, password);
-      
+
       // If we get here, login was successful, so store the user data
       await _storeUserData(user);
       state = state.copyWith(user: user, isLoading: false);
@@ -132,7 +132,7 @@ class AuthViewModel extends StateNotifier<AuthState> {
     try {
       // Clear any existing user data first
       await _clearUserData();
-      
+
       final user = await authMethod();
       await _storeUserData(user);
       state = state.copyWith(user: user);
@@ -165,9 +165,9 @@ class AuthViewModel extends StateNotifier<AuthState> {
     }
 
     state = state.copyWith(
-      error: errorMessage, 
-      isLoading: false, 
-      isAdminError: isAdminError
+      error: errorMessage,
+      isLoading: false,
+      isAdminError: isAdminError,
     );
   }
 

@@ -34,7 +34,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     agentViewModel.loadAgents(authState.user!.token);
   }
 
-
   final List<Map<String, String>> xadiithList = [
     {
       'text': 'خذ من أموالهم صدقة تطهرهم وتزكيهم بها',
@@ -262,20 +261,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         final screenWidth = MediaQuery.of(context).size.width;
         final isTablet = screenWidth > 600;
         final isLargeScreen = screenWidth > 900;
-        
+
         // Responsive height calculation
         double carouselHeight = isLargeScreen ? 250 : (isTablet ? 220 : 200);
-        
+
         // Responsive viewport fraction
         double viewportFraction = isLargeScreen ? 0.7 : (isTablet ? 0.8 : 0.85);
-        
+
         // Responsive font sizes
         double arabicFontSize = isLargeScreen ? 26 : (isTablet ? 24 : 22);
         double translationFontSize = isLargeScreen ? 16 : (isTablet ? 15 : 14);
-        
+
         // Responsive padding
-        EdgeInsets contentPadding = EdgeInsets.all(isLargeScreen ? 24 : (isTablet ? 22 : 20));
-        
+        EdgeInsets contentPadding = EdgeInsets.all(
+          isLargeScreen ? 24 : (isTablet ? 22 : 20),
+        );
+
         return CarouselSlider(
           options: CarouselOptions(
             height: carouselHeight,
@@ -288,96 +289,102 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             autoPlayCurve: Curves.fastOutSlowIn,
             autoPlayAnimationDuration: const Duration(milliseconds: 800),
           ),
-          items: xadiithList.map((xadiith) {
-            return Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: isTablet ? 8.0 : 5.0,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.secondaryBeige,
-                    AppColors.secondaryBeige.withOpacity(0.8),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.shadowLight.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+          items:
+              xadiithList.map((xadiith) {
+                return Container(
+                  margin: EdgeInsets.symmetric(
+                    horizontal: isTablet ? 8.0 : 5.0,
                   ),
-                ],
-              ),
-              child: Stack(
-                children: [
-                  // Decorative elements
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Icon(
-                      Icons.format_quote,
-                      color: AppColors.primaryGold.withOpacity(0.2),
-                      size: isLargeScreen ? 45 : (isTablet ? 42 : 40),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppColors.secondaryBeige,
+                        AppColors.secondaryBeige.withOpacity(0.8),
+                      ],
                     ),
-                  ),
-                  // Content with responsive layout
-                  Padding(
-                    padding: contentPadding,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // Arabic text with responsive sizing
-                          Flexible(
-                            flex: 3,
-                            child: Center(
-                              child: Text(
-                                xadiith['text']!,
-                                style: TextStyle(
-                                  fontSize: arabicFontSize,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryBlack,
-                                  height: 1.4,
-                                  letterSpacing: 0.5,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: isLargeScreen ? 4 : (isTablet ? 3 : 3),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                          
-                          // Responsive spacing
-                          SizedBox(height: isLargeScreen ? 16 : (isTablet ? 14 : 12)),
-                          
-                          // Translation text with responsive sizing
-                          Flexible(
-                            flex: 2,
-                            child: Text(
-                              xadiith['translation']!,
-                              style: TextStyle(
-                                fontSize: translationFontSize,
-                                color: AppColors.textGray,
-                                height: 1.4,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: isLargeScreen ? 3 : (isTablet ? 2 : 2),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.shadowLight.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          }).toList(),
+                  child: Stack(
+                    children: [
+                      // Decorative elements
+                      Positioned(
+                        top: 10,
+                        right: 10,
+                        child: Icon(
+                          Icons.format_quote,
+                          color: AppColors.primaryGold.withOpacity(0.2),
+                          size: isLargeScreen ? 45 : (isTablet ? 42 : 40),
+                        ),
+                      ),
+                      // Content with responsive layout
+                      Padding(
+                        padding: contentPadding,
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Arabic text with responsive sizing
+                              Flexible(
+                                flex: 3,
+                                child: Center(
+                                  child: Text(
+                                    xadiith['text']!,
+                                    style: TextStyle(
+                                      fontSize: arabicFontSize,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primaryBlack,
+                                      height: 1.4,
+                                      letterSpacing: 0.5,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines:
+                                        isLargeScreen ? 4 : (isTablet ? 3 : 3),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ),
+
+                              // Responsive spacing
+                              SizedBox(
+                                height:
+                                    isLargeScreen ? 16 : (isTablet ? 14 : 12),
+                              ),
+
+                              // Translation text with responsive sizing
+                              Flexible(
+                                flex: 2,
+                                child: Text(
+                                  xadiith['translation']!,
+                                  style: TextStyle(
+                                    fontSize: translationFontSize,
+                                    color: AppColors.textGray,
+                                    height: 1.4,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines:
+                                      isLargeScreen ? 3 : (isTablet ? 2 : 2),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
         );
       },
     );

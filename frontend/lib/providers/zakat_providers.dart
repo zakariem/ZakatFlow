@@ -21,6 +21,9 @@ final wagesProvider = StateProvider<String>((ref) => '0');
 final taxesProvider = StateProvider<String>((ref) => '0');
 final showMoreSummaryProvider = StateProvider<bool>((ref) => false);
 
+// Zakat al-Fitr providers
+final numberOfPeopleProvider = StateProvider<String>((ref) => '1');
+
 void resetZakatProviders(WidgetRef ref) {
   ref.invalidate(basisProvider);
   ref.invalidate(goldValueProvider);
@@ -37,6 +40,7 @@ void resetZakatProviders(WidgetRef ref) {
   ref.invalidate(wagesProvider);
   ref.invalidate(taxesProvider);
   ref.invalidate(showMoreSummaryProvider);
+  ref.invalidate(numberOfPeopleProvider);
   ref.invalidate(metalPricesProvider);
 }
 
