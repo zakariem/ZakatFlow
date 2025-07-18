@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -292,7 +291,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
           physics: const NeverScrollableScrollPhysics(),
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
-          childAspectRatio: 1.6,
+          childAspectRatio: 1.3,
           children: [
             _buildSummaryCard(
               'Total Payments',
@@ -366,7 +365,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
         ),
       ),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           gradient: LinearGradient(
@@ -386,10 +385,10 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: gradientColors),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
                         color: gradientColors[0].withOpacity(0.3),
@@ -398,17 +397,17 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
                       ),
                     ],
                   ),
-                  child: Icon(icon, color: AppColors.textWhite, size: 20),
+                  child: Icon(icon, color: AppColors.textWhite, size: 18),
                 ),
-                Text(emoji, style: const TextStyle(fontSize: 20)),
+                Text(emoji, style: const TextStyle(fontSize: 18)),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Flexible(
               child: Text(
                 value,
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                   letterSpacing: -0.5,
@@ -417,12 +416,12 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Flexible(
               child: Text(
                 title,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 11,
                   color: AppColors.textGray,
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.2,
@@ -522,7 +521,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
             color: color,
             value: entry.value.toDouble(),
             title: '${entry.value}',
-            radius: 50,
+            radius: 40,
             titleStyle: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,

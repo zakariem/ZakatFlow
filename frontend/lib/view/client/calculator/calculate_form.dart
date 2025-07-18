@@ -98,9 +98,10 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
         }).toList();
 
     return SingleChildScrollView(
+      physics: const ClampingScrollPhysics(),
       padding: EdgeInsets.symmetric(
-        horizontal: width * 0.05,
-        vertical: height * 0.02,
+        horizontal: width * 0.06,
+        vertical: height * 0.03,
       ),
       child: Form(
         key: formKey,
@@ -162,31 +163,41 @@ class _CalculateFormState extends ConsumerState<CalculateForm> {
 
             const SizedBox(height: 30),
 
-            widget.isCalculating
-                ? const Center(child: Loader())
-                : CustomButton(
-                  onTap: () async {
-                    if (!formKey.currentState!.validate()) return;
+            // Calculate Button Section
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: widget.isCalculating
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Loader(),
+                      ),
+                    )
+                  : CustomButton(
+                      onTap: () async {
+                        if (!formKey.currentState!.validate()) return;
 
-                    widget.onCalculationStart();
-                    await Future.delayed(const Duration(seconds: 1));
+                        widget.onCalculationStart();
+                        await Future.delayed(const Duration(seconds: 1));
 
-                    final zakatMap = viewModel.calculateZakat(
-                      widget.metalPrices,
-                    );
-                    final totalAssets = zakatMap['netAssets'] as double;
-                    final computedZakat = zakatMap['financialZakat'] as double;
+                        final zakatMap = viewModel.calculateZakat(
+                          widget.metalPrices,
+                        );
+                        final totalAssets = zakatMap['netAssets'] as double;
+                        final computedZakat = zakatMap['financialZakat'] as double;
 
-                    setState(() {
-                      _totalAssets = totalAssets;
-                      _computedZakat = computedZakat;
-                      _showResult = true;
-                    });
+                        setState(() {
+                          _totalAssets = totalAssets;
+                          _computedZakat = computedZakat;
+                          _showResult = true;
+                        });
 
-                    widget.onCalculationEnd();
-                  },
-                  text: 'Xisaabi Zakaatul Maal',
-                ),
+                        widget.onCalculationEnd();
+                      },
+                      text: 'Xisaabi Zakaatul Maal',
+                    ),
+            ),
 
             const SizedBox(height: 20),
 

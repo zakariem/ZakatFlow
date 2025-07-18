@@ -43,10 +43,11 @@ class _ZakaatulFitrState extends ConsumerState<ZakaatulFitr> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: width * 0.06,
-          vertical: height * 0.03,
-        ),
+         physics: const ClampingScrollPhysics(),
+         padding: EdgeInsets.symmetric(
+           horizontal: width * 0.06,
+           vertical: height * 0.03,
+         ),
         child: Form(
           key: formKey,
           child: Column(

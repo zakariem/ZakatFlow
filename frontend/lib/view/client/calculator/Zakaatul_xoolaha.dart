@@ -56,6 +56,7 @@ class _ZakaatulXoolahaState extends ConsumerState<ZakaatulXoolaha> {
     return Scaffold(
       backgroundColor: AppColors.backgroundLight,
       body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
         padding: EdgeInsets.symmetric(
           horizontal: width * 0.06,
           vertical: height * 0.03,

@@ -90,13 +90,7 @@ class _TabScreenState extends ConsumerState<TabScreen>
           )).toList(),
         ),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height - kToolbarHeight - kTextTabBarHeight - MediaQuery.of(context).padding.top,
-          child: TabBarView(controller: _tabController, children: screens),
-        ),
-      ),
+      body: TabBarView(controller: _tabController, children: screens),
     );
   }
 }
