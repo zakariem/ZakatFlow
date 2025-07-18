@@ -66,10 +66,37 @@ class _TabScreenState extends ConsumerState<TabScreen>
           labelColor: AppColors.primaryGold,
           unselectedLabelColor: AppColors.textSecondary,
           indicatorColor: AppColors.primaryGold,
-          tabs: tabs.map((tab) => Tab(text: tab)).toList(),
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
+          labelPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+          labelStyle: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+          unselectedLabelStyle: GoogleFonts.poppins(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+          tabs: tabs.map((tab) => Tab(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+              child: Text(
+                tab,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.visible,
+                softWrap: false,
+              ),
+            ),
+          )).toList(),
         ),
       ),
-      body: TabBarView(controller: _tabController, children: screens),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height - kToolbarHeight - kTextTabBarHeight - MediaQuery.of(context).padding.top,
+          child: TabBarView(controller: _tabController, children: screens),
+        ),
+      ),
     );
   }
 }
