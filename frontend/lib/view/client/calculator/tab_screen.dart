@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/view/client/calculator/Zakaatul_xoolaha.dart';
 import 'package:frontend/view/client/calculator/zakaatul_maal.dart';
 import 'package:frontend/view/client/calculator/zakaatul_fitr.dart';
+import 'package:frontend/view/client/calculator/zakaatul_beeraha.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../providers/calculator_tab_provider.dart';
@@ -19,7 +20,7 @@ class _TabScreenState extends ConsumerState<TabScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<Widget> screens = const [ZakaatulmaalScreen(), ZakaatulXoolaha(), ZakaatulFitr()];
+  final List<Widget> screens = const [ZakaatulmaalScreen(), ZakaatulXoolaha(), ZakaatulFitr(), ZakaatulBeeraha()];
 
   @override
   void initState() {

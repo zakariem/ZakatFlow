@@ -21,8 +21,13 @@ final wagesProvider = StateProvider<String>((ref) => '0');
 final taxesProvider = StateProvider<String>((ref) => '0');
 final showMoreSummaryProvider = StateProvider<bool>((ref) => false);
 
-// Zakat al-Fitr providers
+// Zakat al-Fitr provider
 final numberOfPeopleProvider = StateProvider<String>((ref) => '1');
+
+// Agricultural Zakat providers
+final cropWeightProvider = StateProvider<String>((ref) => '');
+final irrigationTypeProvider = StateProvider<String>((ref) => 'Roob'); // Rain-fed by default
+final cropTypeProvider = StateProvider<String>((ref) => 'Sarreen'); // Wheat by default
 
 void resetZakatProviders(WidgetRef ref) {
   ref.invalidate(basisProvider);
@@ -41,6 +46,9 @@ void resetZakatProviders(WidgetRef ref) {
   ref.invalidate(taxesProvider);
   ref.invalidate(showMoreSummaryProvider);
   ref.invalidate(numberOfPeopleProvider);
+  ref.invalidate(cropWeightProvider);
+  ref.invalidate(irrigationTypeProvider);
+  ref.invalidate(cropTypeProvider);
   ref.invalidate(metalPricesProvider);
 }
 
