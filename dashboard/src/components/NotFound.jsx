@@ -28,7 +28,7 @@ const NotFound = () => {
 
       <div className="relative z-10 max-w-2xl w-full text-center">
         {/* Error Icon */}
-        <div className="mb-8">
+        <div className="mb-8 mt-10">
           <div 
             className="w-32 h-32 mx-auto rounded-full flex items-center justify-center shadow-2xl animate-bounce"
             style={{ 
