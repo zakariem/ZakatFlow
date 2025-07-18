@@ -1,14 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dashboardColors } from '../theme/dashboardColors';
-import { FaHome, FaExclamationTriangle, FaArrowLeft } from 'react-icons/fa';
+import { FaExclamationTriangle, FaArrowLeft } from 'react-icons/fa';
 
 const NotFound = () => {
   const navigate = useNavigate();
 
-  const handleGoHome = () => {
-    navigate('/dashboard');
-  };
 
   const handleGoBack = () => {
     navigate(-1);
@@ -75,22 +72,8 @@ const NotFound = () => {
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button
-            onClick={handleGoHome}
-            className="group flex items-center space-x-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 shadow-lg"
-            style={{
-              background: dashboardColors.gradient.primary,
-              color: dashboardColors.background.white,
-              boxShadow: dashboardColors.shadow.md,
-              focusRingColor: dashboardColors.primary.lightGold
-            }}
-          >
-            <FaHome className="text-xl group-hover:rotate-12 transition-transform duration-200" />
-            <span>Go to Dashboard</span>
-          </button>
-
+        {/* Action Button */}
+        <div className="flex justify-center">
           <button
             onClick={handleGoBack}
             className="group flex items-center space-x-3 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 border-2"
