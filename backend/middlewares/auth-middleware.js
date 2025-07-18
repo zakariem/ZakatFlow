@@ -17,12 +17,12 @@ export default async function authMiddleware(req, res, next) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       
-      // Check if user exists and is still logged in with this token
+      // Check if user exists
       const user = await User.findById(decoded._id);
-      if (!user || !user.isLoggedIn || user.currentSessionToken !== token) {
+      if (!user) {
         return res.status(401).json({
-          message: "Session expired or invalid. Please login again.",
-          error: "INVALID_SESSION"
+          message: "User not found. Please login again.",
+          error: "USER_NOT_FOUND"
         });
       }
       

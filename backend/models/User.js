@@ -74,23 +74,7 @@ const UserSchema = new mongoose.Schema(
       default: null,
     },
     
-    // Session tracking fields
-    isLoggedIn: {
-      type: Boolean,
-      default: false,
-    },
-    currentSessionToken: {
-      type: String,
-      default: null,
-    },
-    lastLoginAt: {
-      type: Date,
-      default: null,
-    },
-    loginDeviceInfo: {
-      type: String,
-      default: null,
-    },
+
   },
   { timestamps: true }
 );
@@ -111,19 +95,7 @@ UserSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-// Session management methods
-UserSchema.methods.setLoggedIn = function (token, deviceInfo = null) {
-  this.isLoggedIn = true;
-  this.currentSessionToken = token;
-  this.lastLoginAt = new Date();
-  this.loginDeviceInfo = deviceInfo;
-};
 
-UserSchema.methods.setLoggedOut = function () {
-  this.isLoggedIn = false;
-  this.currentSessionToken = null;
-  this.loginDeviceInfo = null;
-};
 
 const User = mongoose.model("User", UserSchema);
 export default User;

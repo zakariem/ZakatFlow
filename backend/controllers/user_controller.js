@@ -42,23 +42,8 @@ export const loginUser = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: "Email ama Password ayaa khaldan" });
   }
 
-  // If user is already logged in on another device, force logout from previous session
-  if (user.isLoggedIn && user.currentSessionToken) {
-    console.log(`User ${user.email} was logged in on another device. Forcing logout from previous session.`);
-    // Force logout from previous session
-    user.setLoggedOut();
-  }
-
-  // Generate new token and set user as logged in on current device
   const token = generateToken(user);
-  const deviceInfo = req.headers['user-agent'] || 'Unknown Device';
-  
-  user.setLoggedIn(token, deviceInfo);
-  await user.save();
-  
-  console.log(`User ${user.email} successfully logged in from device: ${deviceInfo}`);
-
-  const { password: _, currentSessionToken, ...userData } = user.toObject();
+  const { password: _, ...userData } = user.toObject();
   res.json({
     success: true,
     message: "Si guul leh ayaad u gashay",
@@ -72,9 +57,6 @@ export const logoutUser = asyncHandler(async (req, res) => {
   if (!user) {
     return res.status(404).json({ message: "Isticmaale lama helin" });
   }
-
-  user.setLoggedOut();
-  await user.save();
 
   res.json({
     success: true,
@@ -97,9 +79,6 @@ export const forceLogoutUser = asyncHandler(async (req, res) => {
   if (!user) {
     return res.status(404).json({ message: "Isticmaale lama helin" });
   }
-
-  user.setLoggedOut();
-  await user.save();
 
   res.json({
     success: true,
