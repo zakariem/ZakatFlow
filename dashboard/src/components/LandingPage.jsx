@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { dashboardColors } from "../theme/dashboardColors";
-import { FaDownload, FaApple, FaGooglePlay, FaChevronDown, FaShieldAlt, FaMobile, FaUsers, FaChartLine } from "react-icons/fa";
+import { FaDownload, FaApple, FaChevronDown, FaShieldAlt, FaMobile, FaUsers, FaChartLine, FaExternalLinkAlt } from "react-icons/fa";
 
 const LandingPage = () => {
   const [showDownloadDropdown, setShowDownloadDropdown] = useState(false);
@@ -97,7 +97,7 @@ const LandingPage = () => {
           </p>
 
           {/* Download Section */}
-          <div className="relative inline-block mb-16">
+          <div className="relative inline-block mb-32">
             <button
               onClick={() => setShowDownloadDropdown(!showDownloadDropdown)}
               className="group flex items-center space-x-3 px-10 py-5 rounded-2xl font-bold text-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 shadow-lg border-2 relative overflow-hidden"
@@ -128,8 +128,10 @@ const LandingPage = () => {
                 }}
               >
                 {/* Android Option */}
-                <button 
-                  className="w-full flex items-center space-x-4 px-6 py-4 transition-all duration-200 hover:scale-105"
+                <a 
+                  href="https://download1334.mediafire.com/d5m3063rysogzMDB8CpKTraFwApBaaK6rUJrgDRYfwlejWSLos9sjpCda2nroM_Sne57foXA7fgedlKu8SzaFDQ8NuYsJpa7Cm5GGxvTBfGxGMf6k969B5JhJwyhBjh-bMq-9aFv2NrYe1Olc18nY5mu5xUDZpGsYI0GimpsiQCv6A/93ctlodt63vp63j/zakatflow.apk"
+                  download="zakatflow.apk"
+                  className="w-full flex items-center space-x-4 px-6 py-4 transition-all duration-200 hover:scale-105 no-underline"
                   style={{ 
                     backgroundColor: dashboardColors.background.white,
                     color: dashboardColors.text.primary,
@@ -138,12 +140,18 @@ const LandingPage = () => {
                   onMouseEnter={(e) => e.target.style.backgroundColor = dashboardColors.background.light}
                   onMouseLeave={(e) => e.target.style.backgroundColor = dashboardColors.background.white}
                 >
-                  <FaGooglePlay className="text-2xl" style={{ color: '#34A853' }} />
+                  {/* MediaFire Icon */}
+                  <svg className="text-2xl w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#1E74FD" stroke="#1E74FD" strokeWidth="2" strokeLinejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="#1E74FD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="#1E74FD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                   <div className="text-left">
                     <p className="font-semibold">Download for Android</p>
-                    <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>Available on Google Play</p>
+                    <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>Direct Download</p>
                   </div>
-                </button>
+                  <FaDownload className="text-sm ml-auto" style={{ color: dashboardColors.text.secondary }} />
+                </a>
 
                 {/* iOS Option (Disabled) */}
                 <div 
