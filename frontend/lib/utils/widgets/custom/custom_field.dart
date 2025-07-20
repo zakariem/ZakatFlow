@@ -63,15 +63,15 @@ class CustomField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: const BorderSide(color: AppColors.borderError),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Colors.red),
+          borderSide: const BorderSide(color: AppColors.borderError),
         ),
         hintText: hintText,
         hintStyle: TextStyle(fontSize: 16, color: AppColors.textGray),
-        errorStyle: const TextStyle(fontSize: 14, color: Colors.red),
+        errorStyle: const TextStyle(fontSize: 14, color: AppColors.textError),
       ),
     );
   }

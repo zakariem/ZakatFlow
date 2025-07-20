@@ -67,7 +67,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(widget.successMessage!),
-                backgroundColor: Colors.green,
+                backgroundColor: AppColors.success,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),

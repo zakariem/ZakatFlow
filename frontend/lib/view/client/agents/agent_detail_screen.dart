@@ -542,7 +542,7 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
                         padding: EdgeInsets.symmetric(horizontal: 12),
                         child: Text(
                           'ama',
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: AppColors.textGray),
                         ),
                       ),
                       Expanded(child: Divider()),
@@ -881,7 +881,7 @@ class _AgentDetailScreenState extends ConsumerState<AgentDetailScreen> {
               ),
             ],
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
           duration: const Duration(seconds: 5),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

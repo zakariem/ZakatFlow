@@ -5,6 +5,7 @@ import 'providers/auth_providers.dart';
 import 'providers/connectivity_provider.dart';
 import 'utils/widgets/auth_gate.dart';
 import 'utils/widgets/connectivity_banner.dart';
+import 'utils/theme/app_color.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -38,15 +39,57 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     if (!_isAuthChecked) {
-      return const MaterialApp(
+      return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: LoaderPage(),
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: AppColors.primaryGold,
+            brightness: Brightness.light,
+            primary: AppColors.primaryGold,
+            secondary: AppColors.accentLightGold,
+            surface: AppColors.backgroundLight,
+            background: AppColors.backgroundLight,
+            error: AppColors.error,
+          ),
+          scaffoldBackgroundColor: AppColors.backgroundLight,
+        ),
+        home: const LoaderPage(),
       );
     }
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Zakat App',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primaryGold,
+          brightness: Brightness.light,
+          primary: AppColors.primaryGold,
+          secondary: AppColors.accentLightGold,
+          surface: AppColors.backgroundLight,
+          background: AppColors.backgroundLight,
+          error: AppColors.error,
+        ),
+        scaffoldBackgroundColor: AppColors.backgroundLight,
+        appBarTheme: AppBarTheme(
+          backgroundColor: AppColors.backgroundLight,
+          foregroundColor: AppColors.textPrimary,
+          elevation: 0,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.buttonPrimary,
+            foregroundColor: AppColors.textWhite,
+          ),
+        ),
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(color: AppColors.textPrimary),
+          bodyMedium: TextStyle(color: AppColors.textPrimary),
+          titleLarge: TextStyle(color: AppColors.textPrimary),
+        ),
+      ),
       home: _isAuthChecked 
           ? const ConnectivityWrapper(child: AuthGate()) 
           : const LoaderPage(),

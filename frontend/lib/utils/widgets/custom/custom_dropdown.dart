@@ -40,11 +40,11 @@ class CustomDropdown extends ConsumerWidget {
               fillColor: Colors.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.grey),
+                borderSide: const BorderSide(color: AppColors.borderPrimary),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(color: Colors.grey),
+                borderSide: const BorderSide(color: AppColors.borderPrimary),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),

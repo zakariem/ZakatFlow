@@ -28,7 +28,7 @@ class AuthService {
           // Check if user is admin and prevent login
           if (user.role.toLowerCase() == 'admin') {
             throw AdminNotAllowedException(
-              'Admin users must use the web dashboard at zakatflow.com/dashboard',
+              'Admin users must use the web dashboard at https://zakat-flow-pi.vercel.app/dashboard',
             );
           }
 

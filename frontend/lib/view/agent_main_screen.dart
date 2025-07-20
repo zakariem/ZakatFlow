@@ -508,11 +508,11 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
     final sections =
         paymentsByMethod.entries.map((entry) {
           final colors = [
-            Colors.blue,
-            Colors.green,
-            Colors.orange,
-            Colors.purple,
-            Colors.red,
+            AppColors.info,
+            AppColors.success,
+            AppColors.warning,
+            AppColors.primaryGold,
+            AppColors.error,
           ];
           final index = paymentsByMethod.keys.toList().indexOf(entry.key);
           final color = colors[index % colors.length];
@@ -997,14 +997,14 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
                 child: Icon(
                   Icons.error_outline_rounded,
                   size: 48,
-                  color: Colors.red[400],
+                  color: AppColors.error,
                 ),
               ),
               const SizedBox(height: 20),
               Text(
                 'Error: ${historyVm.error}',
                 style: TextStyle(
-                  color: Colors.red[600],
+                  color: AppColors.error,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),
@@ -1317,7 +1317,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
                   ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.green[400]!, Colors.green[600]!],
+                      colors: [AppColors.success, AppColors.success],
                     ),
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [

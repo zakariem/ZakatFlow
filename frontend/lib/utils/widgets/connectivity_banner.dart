@@ -22,7 +22,7 @@ class ConnectivityBanner extends ConsumerWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 decoration: const BoxDecoration(
-                  color: Colors.red,
+                  color: AppColors.error,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
