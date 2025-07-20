@@ -571,7 +571,7 @@ class _AgentMainScreenState extends ConsumerState<AgentMainScreen> {
         child: Column(
           children: [
             Text(
-              'Payment Methods',
+              'All Payments',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
