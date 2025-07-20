@@ -24,7 +24,7 @@ class ZakatSummaryCard extends ConsumerWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         child: const Text(
-          'Sida Zakaatul Maalka loo xisaabiyo iyadoo la raacayo habka dhaqanka Soomaaliyeed...',
+          'Sida Zakaatul Maalka loo xisaabiyo iyadoo la raacayo Shareecada Islaamka...',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       );
@@ -40,24 +40,58 @@ class ZakatSummaryCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '💡 Habka Xisaabinta Zakaatul Maal (Dhaqanka Soomaaliyeed)',
+            '📿 Qaddarka Zakat al-Maal ee Dahabka iyo Qalinka (Shareecada Islaamka)',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           const Text(
-            'Zakaatul Maal ee dhaqanka Soomaaliyeed waxaa lagu xisaabiyaa 10% marka hantidaadu gaarto qiimaha 200g ee qalinka (silver). Tani waa hab sahlan oo dad badan ay fahmaan.',
+            'Zakat al-Maal waxaa laga bixiyaa marka hantida qofka Muslimka ah gaarto nisab (ugu yaraan xadka waajibka ah) oo uu haysto sanad hijri ah oo buuxa.',
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Waxaa ku salaysan Xadiisyada Rasuulka ﷺ, gaar ahaan xadiisyada laga weriyey Abuu Hurayrah, Caa\'isha, iyo Cali bin Abii Daalib.',
           ),
           const SizedBox(height: 12),
           const Text(
-            '✅ Waxa La Xisaabinayo:',
+            '✅ 1. Dahab (Gold) – Nisab: 85 gram',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            '• Lacagta caddaanka ah, dahabka, ganacsiga iyo wixii la mid ah\n'
-            '• Waa in hantidu gaarto ama dhaafto qiimaha 200 garaam ee qalinka\n'
-            '• Muddada haynta: ugu yaraan 1 sannad dayaxeed',
+            'Xadiis: "Lama jiro zakat dahab ilaa uu gaaro 20 mithqal..." (Sunan Abu Dawud, no. 1567, saxiix)\n'
+            '20 mithqal ≈ 85 gram oo dahab ah.\n'
+            'Marka dahabkaaga gaaro ama dhaafo 85g oo aad haysatay muddo 1 sanad hijri ah:\n'
+            '2.5% (1/40) in aad ka bixiso zakat.',
           ),
           const SizedBox(height: 8),
+          const Text(
+            '🧮 Tusaale Dahab:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Haddii aad haysato 100g dahab:\n'
+            'Zakat: 100 × 2.5% = 2.5g dahab',
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            '✅ 2. Qalin (Silver) – Nisab: 595 gram',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Xadiis: "Zakada qalinka waa marka ay gaarto 200 dirham..." (Sunan Ibn Majah, no. 1791, saxiix)\n'
+            '200 dirham ≈ 595 gram oo qalinka ah.\n'
+            'Haddii aad haysato 595g ama ka badan oo qalinka ah muddo sanad ah:\n'
+            'Waxaa waajib ah in aad bixiso 2.5% zakat.',
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '🧮 Tusaale Qalin:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const Text(
+            'Haddii aad haysato 600g silver:\n'
+            'Zakat: 600 × 2.5% = 15g silver',
+          ),
+          const SizedBox(height: 12),
           const Text(
             '➖ Waxa La Ka Jarayo:',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -73,26 +107,39 @@ class ZakatSummaryCard extends ConsumerWidget {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            'Hanti Saafi ah = Wadarta Hantida – Deymaha la jarayo\nZakaatul Maal = 10% ee hantida saafi ah (keliya haddii ay ka badan tahay 200g qalinka)',
+            'Hanti Saafi ah = Wadarta Hantida – Deymaha la jarayo\n'
+            'Zakaatul Maal = 2.5% ee hantida saafi ah (keliya haddii ay ka badan tahay nisabka)',
           ),
           const SizedBox(height: 8),
           const Text(
-            '📉 Xadka Dhaqameed ee Nisabka:',
+            '📉 Xadka Nisabka (Maanta):',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           SelectableText(
-            '• Marka la adeegsado Qalin (200 garaam) ≈  \$${nisab['silver']?.toStringAsFixed(2) ?? "N/A"}\n\n'
-            'Zakaat bixi haddii hantidaada saafi ah ay ka badan tahay qiimahan.',
+            '• Dahab (85 garaam) ≈ \$${nisab['gold']?.toStringAsFixed(2) ?? "N/A"}\n'
+            '• Qalin (595 garaam) ≈ \$${nisab['silver']?.toStringAsFixed(2) ?? "N/A"}\n\n'
+            'Zakaat bixi haddii hantidaada saafi ah ay ka badan tahay mid ka mid ah qiimahan.',
           ),
           const SizedBox(height: 8),
           const Text(
-            '📌 Fiiro Gaar ah:',
+            '💡 Fiiro Gaar ah:',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const Text(
-            '• Habkan dhaqameed wuxuu fududeeyaa xisaabinta Zakaatul Maalka.\n'
-            '• Waxaa lagu talinayaa in laga bilaabo marka hantidaadu gaarto qiimaha 200g ee qalinka.\n'
-            '• Tusaale ahaan: haddii aad haysato \$400 → Zakaatul Maalkaagu waa \$40 (10%).',
+            'Dadka badankood maanta waxay xisaabiyaan nisabka iyadoo lagu saleynayo qiimaha dahabka ama qalinka suuqa (waxaa kala duwan):\n'
+            '• Dahabku wuu qaalisan yahay, qalinkuna waa jaban yahay.\n'
+            '• Qofka raba in uu naftiisa ku adkeeyo wuxuu xisaabiyaa zakada ku saleysan silver (si ay u waajibto horay).\n'
+            '• Qofka raba raxmad wuxuu isticmaalaa dahabka (waayo waa nisab sare, way adagtahay in la gaaro).',
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            '✅ Gunaanad:',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SelectableText(
+            'Hanti | Nisab (miisaan) | Zakat % | Qaddarka laga bixinayo\n'
+            'Dahab (Gold) | 85g | 2.5% | 2.125g zakat (marka la gaaro)\n'
+            'Qalin (Silver) | 595g | 2.5% | 14.875g zakat (marka la gaaro)',
           ),
         ],
       ),

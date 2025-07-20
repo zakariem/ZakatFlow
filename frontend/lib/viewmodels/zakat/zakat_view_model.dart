@@ -38,16 +38,16 @@ class ZakatViewModel {
     double netAssets = assets - liabilities;
     double financialZakat = 0;
 
-    // Zakat calculation: Dahab (2.5%) vs. Qalin (10%)
+    // Zakat calculation: Dahab (2.5%) vs. Qalin (2.5%) - Islamic Shariah
     if (basis == 'Dahab') {
-      final goldNisab = 20 * goldPricePerGram;
+      final goldNisab = 85 * goldPricePerGram; // 85 grams = 20 mithqal
       if (netAssets >= goldNisab) {
-        financialZakat = netAssets * 0.10;
+        financialZakat = netAssets * 0.025; // 2.5%
       }
     } else {
-      final silverNisab = 200 * silverPricePerGram; // Practical Somali nisab
+      final silverNisab = 595 * silverPricePerGram; // 595 grams = 200 dirham
       if (netAssets >= silverNisab) {
-        financialZakat = netAssets * 0.10;
+        financialZakat = netAssets * 0.025; // 2.5%
       }
     }
 
@@ -77,8 +77,8 @@ class ZakatViewModel {
     final silverPrice = metalPrices['silverGram999'] ?? 0;
 
     return {
-      'gold': 20 * goldPrice,
-      'silver': 200 * silverPrice, // Somali practical nisab
+      'gold': 85 * goldPrice, // 85 grams = 20 mithqal (Islamic nisab)
+      'silver': 595 * silverPrice, // 595 grams = 200 dirham (Islamic nisab)
     };
   }
 
