@@ -129,7 +129,7 @@ const LandingPage = () => {
               >
                 {/* Android Option */}
                 <a 
-                  href="https://download1334.mediafire.com/d5m3063rysogzMDB8CpKTraFwApBaaK6rUJrgDRYfwlejWSLos9sjpCda2nroM_Sne57foXA7fgedlKu8SzaFDQ8NuYsJpa7Cm5GGxvTBfGxGMf6k969B5JhJwyhBjh-bMq-9aFv2NrYe1Olc18nY5mu5xUDZpGsYI0GimpsiQCv6A/93ctlodt63vp63j/zakatflow.apk"
+                  href="https://download1648.mediafire.com/yd0oxdi2tcvg7Dupsb_vlEIgl7mQQYs8pJyVgM3rLJZRgCj_XfQNenWgQduRx2Uxs7uc9KFEvoRK036rbu_Ef7kLO6VHqbVSe3AQGmZvuI2qb22U5KxD4yJ8ZwA2rSLQ0si-P6e5xOcuB_lI00XkUNyRB9pA4lO8iLacGIhe_eQ8OQ/qwg5efppjzf51v7/zakat-flow-v1.apk"
                   download="zakatflow.apk"
                   className="w-full flex items-center space-x-4 px-6 py-4 transition-all duration-200 hover:scale-105 no-underline"
                   style={{ 
