@@ -1,4 +1,4 @@
-const BASE_URL = 'https://zakat-flow-backend.onrender.com';
+const BASE_URL = 'http://localhost:8000';
 const USER_API_URL = `${BASE_URL}/api/user`;
 const PAYMENT_API_URL = `${BASE_URL}/api/payments`;
 

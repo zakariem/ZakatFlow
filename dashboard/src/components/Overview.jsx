@@ -232,32 +232,32 @@ const Overview = () => {
   }
 
   return (
-    <div className="space-y-8 animate-fadeIn">
+    <div className="space-y-fluid-6 animate-fadeIn">
       {/* Enhanced Header with Welcome Card */}
-      <div className="relative overflow-hidden rounded-3xl p-8 mb-8" style={{ 
+      <div className="relative overflow-hidden rounded-2xl xs:rounded-3xl p-fluid-4 xs:p-fluid-6 lg:p-fluid-8 mb-fluid-6" style={{ 
         background: `linear-gradient(135deg, ${dashboardColors.primary.gold}15 0%, ${dashboardColors.primary.lightGold}10 50%, ${dashboardColors.background.white} 100%)`,
         border: `1px solid ${dashboardColors.border.light}`,
         boxShadow: dashboardColors.shadow.lg
       }}>
         <div className="relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-fluid-4 lg:gap-fluid-6">
             <div className="text-center lg:text-left">
-              <div className="flex items-center justify-center lg:justify-start gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: dashboardColors.gradient.primary }}>
-                  <FaHome className="text-white text-xl" />
+              <div className="flex items-center justify-center lg:justify-start gap-3 xs:gap-4 mb-fluid-2 xs:mb-fluid-4">
+                <div className="w-10 h-10 xs:w-12 xs:h-12 lg:w-14 lg:h-14 rounded-xl flex items-center justify-center transition-all duration-300" style={{ background: dashboardColors.gradient.primary }}>
+                  <FaHome className="text-white text-lg xs:text-xl lg:text-2xl" />
                 </div>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+                <h1 className="text-fluid-2xl xs:text-fluid-3xl lg:text-fluid-4xl xl:text-fluid-5xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent leading-tight">
                   Dashboard Overview
                 </h1>
               </div>
-              <p className="text-lg leading-relaxed" style={{ color: dashboardColors.text.secondary }}>
+              <p className="text-fluid-base xs:text-fluid-lg leading-relaxed max-w-2xl" style={{ color: dashboardColors.text.secondary }}>
                 Welcome back! Here's what's happening with your Zakat operations today.
               </p>
             </div>
-            <div className="flex flex-col items-center lg:items-end gap-3">
+            <div className="flex flex-col items-center lg:items-end gap-fluid-2 xs:gap-3">
               <div className="text-center lg:text-right">
-                <p className="text-sm font-medium" style={{ color: dashboardColors.text.muted }}>Last Updated</p>
-                <p className="text-lg font-semibold" style={{ color: dashboardColors.text.primary }}>
+                <p className="text-fluid-xs xs:text-fluid-sm font-medium" style={{ color: dashboardColors.text.muted }}>Last Updated</p>
+                <p className="text-fluid-sm xs:text-fluid-base lg:text-fluid-lg font-semibold" style={{ color: dashboardColors.text.primary }}>
                   {new Date().toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
@@ -275,7 +275,7 @@ const Overview = () => {
       </div>
 
       {/* Enhanced Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-fluid-4 xs:gap-fluid-6 lg:gap-fluid-8">
         {[
           {
             title: "Payment Amounts Trend",
@@ -348,7 +348,7 @@ const Overview = () => {
         ].map((chart, index) => (
           <div 
             key={index}
-            className="group relative overflow-hidden rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl animate-slideUp"
+            className="group relative overflow-hidden rounded-2xl xs:rounded-3xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl animate-slideUp"
             style={{ 
               backgroundColor: dashboardColors.background.white, 
               boxShadow: dashboardColors.shadow.lg,
@@ -357,23 +357,23 @@ const Overview = () => {
             }}
           >
             {/* Chart Header */}
-            <div className="p-6 border-b" style={{ borderColor: dashboardColors.border.light }}>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="p-2 rounded-lg group-hover:scale-110 transition-transform duration-200" style={{ backgroundColor: dashboardColors.primary.lightGold + '20' }}>
+            <div className="p-fluid-2 xs:p-fluid-4 lg:p-fluid-6 border-b" style={{ borderColor: dashboardColors.border.light }}>
+              <div className="flex items-center gap-fluid-1 xs:gap-3 mb-fluid-1 xs:mb-2">
+                <div className="p-1.5 xs:p-2 rounded-lg group-hover:scale-110 transition-transform duration-200" style={{ backgroundColor: dashboardColors.primary.lightGold + '20' }}>
                   <span style={{ color: dashboardColors.primary.gold }}>{chart.icon}</span>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold group-hover:text-opacity-80 transition-colors duration-200" style={{ color: dashboardColors.text.primary }}>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-fluid-base xs:text-fluid-lg lg:text-fluid-xl font-bold group-hover:text-opacity-80 transition-colors duration-200 truncate" style={{ color: dashboardColors.text.primary }}>
                     {chart.title}
                   </h3>
-                  <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>{chart.subtitle}</p>
+                  <p className="text-fluid-xs xs:text-fluid-sm" style={{ color: dashboardColors.text.secondary }}>{chart.subtitle}</p>
                 </div>
               </div>
             </div>
             
             {/* Chart Content */}
-            <div className="p-6">
-              <div className="h-80 flex items-center justify-center">
+            <div className="p-fluid-2 xs:p-fluid-4 lg:p-fluid-6">
+              <div className="h-64 xs:h-72 lg:h-80 flex items-center justify-center">
                 {chart.component}
               </div>
             </div>
@@ -385,7 +385,7 @@ const Overview = () => {
       </div>
 
       {/* Enhanced Summary Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 gap-fluid-2 xs:gap-fluid-4 lg:gap-fluid-6">
         {[
           {
             title: "Total Payments",
@@ -418,7 +418,7 @@ const Overview = () => {
         ].map((stat, index) => (
           <div 
             key={index}
-            className="group relative overflow-hidden p-6 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slideUp cursor-pointer"
+            className="group relative overflow-hidden p-fluid-2 xs:p-fluid-4 lg:p-fluid-6 rounded-xl xs:rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-2xl animate-slideUp cursor-pointer"
             style={{ 
               background: stat.gradient,
               boxShadow: dashboardColors.shadow.lg,
@@ -426,18 +426,18 @@ const Overview = () => {
             }}
           >
             <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm group-hover:scale-110 transition-transform duration-200">
-                  <span className="text-white">{stat.icon}</span>
+              <div className="flex items-center justify-between mb-fluid-2 xs:mb-4">
+                <div className="p-2 xs:p-3 rounded-lg xs:rounded-xl bg-white/20 backdrop-blur-sm group-hover:scale-110 transition-transform duration-200">
+                  <span className="text-white text-lg xs:text-xl lg:text-2xl">{stat.icon}</span>
                 </div>
                 <div className="text-right">
-                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-white animate-pulse"></div>
+                  <div className="w-6 h-6 xs:w-8 xs:h-8 rounded-full bg-white/10 flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 xs:w-2 xs:h-2 rounded-full bg-white animate-pulse"></div>
                   </div>
                 </div>
               </div>
-              <h3 className="text-white/90 text-sm font-medium mb-2 group-hover:text-white transition-colors duration-200">{stat.title}</h3>
-              <p className="text-white text-3xl font-bold group-hover:scale-105 transition-transform duration-200">{stat.value}</p>
+              <h3 className="text-white/90 text-fluid-xs xs:text-fluid-sm font-medium mb-1 xs:mb-2 group-hover:text-white transition-colors duration-200">{stat.title}</h3>
+              <p className="text-white text-fluid-xl xs:text-fluid-2xl lg:text-fluid-3xl font-bold group-hover:scale-105 transition-transform duration-200 leading-tight">{stat.value}</p>
             </div>
             {/* Decorative Background Elements */}
             <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-white/5 transform translate-x-8 -translate-y-8 group-hover:scale-150 transition-transform duration-500"></div>

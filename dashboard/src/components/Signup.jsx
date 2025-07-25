@@ -9,16 +9,72 @@ const Signup = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
 
+  // Validation function for individual fields
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'email':
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!value.trim()) return 'Email is required';
+        if (!emailRegex.test(value)) return 'Please enter a valid email address';
+        return '';
+      case 'password':
+        if (!value) return 'Password is required';
+        if (value.length < 6) return 'Password must be at least 6 characters long';
+        return '';
+      default:
+        return '';
+    }
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+    
+    // Validate field on change
+    const error = validateField(name, value);
+    if (error) {
+      setValidationErrors(prev => ({ ...prev, [name]: error }));
+    }
   };
 
   const handleShowPassword = () => setShowPassword((prev) => !prev);
 
+  // Validate entire form
+  const validateForm = () => {
+    const errors = {};
+    
+    // Validate email
+    const emailError = validateField('email', form.email);
+    if (emailError) errors.email = emailError;
+    
+    // Validate password
+    const passwordError = validateField('password', form.password);
+    if (passwordError) errors.password = passwordError;
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
     setError("");
     
@@ -154,7 +210,7 @@ const Signup = () => {
                     onChange={handleChange}
                     className="block w-full pl-16 pr-4 py-4 border rounded-xl text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 bg-white hover:shadow-md"
                     style={{
-                      borderColor: dashboardColors.border.light,
+                      borderColor: validationErrors.email ? dashboardColors.status.error : dashboardColors.border.light,
                       color: dashboardColors.text.primary,
                       boxShadow: dashboardColors.shadow.sm,
                       '--tw-ring-color': dashboardColors.primary.gold + '50'
@@ -162,6 +218,14 @@ const Signup = () => {
                     placeholder="Enter your email address"
                   />
                 </div>
+                {validationErrors.email && (
+                  <div className="flex items-center gap-2 text-sm mt-2" style={{ color: dashboardColors.status.error }}>
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span>{validationErrors.email}</span>
+                  </div>
+                )}
               </div>
 
               {/* Enhanced Password Field */}
@@ -192,7 +256,7 @@ const Signup = () => {
                     onChange={handleChange}
                     className="block w-full pl-16 pr-12 py-4 border rounded-xl text-base placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 bg-white hover:shadow-md"
                     style={{
-                      borderColor: dashboardColors.border.light,
+                      borderColor: validationErrors.password ? dashboardColors.status.error : dashboardColors.border.light,
                       color: dashboardColors.text.primary,
                       boxShadow: dashboardColors.shadow.sm,
                       '--tw-ring-color': dashboardColors.primary.gold + '50'
@@ -219,6 +283,14 @@ const Signup = () => {
                     </div>
                   </button>
                 </div>
+                {validationErrors.password && (
+                  <div className="flex items-center gap-2 text-sm mt-2" style={{ color: dashboardColors.status.error }}>
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span>{validationErrors.password}</span>
+                  </div>
+                )}
               </div>
 </div>
             {/* Enhanced Submit Button */}

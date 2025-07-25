@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { FiUser, FiMail, FiPhone, FiMapPin, FiLock, FiEye, FiEyeOff, FiCamera, FiArrowLeft, FiUserPlus, FiCheck, FiX } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiMapPin, FiLock, FiEye, FiEyeOff, FiCamera, FiArrowLeft, FiUserPlus, FiCheck, FiX, FiAlertTriangle } from 'react-icons/fi';
 import { adminApi } from "../api/adminApi";
 import dashboardColors from "../theme/dashboardColors";
 
@@ -19,6 +19,7 @@ function AddAgent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
@@ -29,15 +30,118 @@ function AddAgent() {
     }
   };
 
+  const validateField = (name, value) => {
+    const errors = {};
+    
+    switch (name) {
+      case 'fullName':
+        if (!value.trim()) {
+          errors.fullName = 'Full name is required';
+        } else if (value.trim().length < 2) {
+          errors.fullName = 'Full name must be at least 2 characters';
+        } else if (!/^[a-zA-Z\s']+$/.test(value.trim())) {
+          errors.fullName = 'Full name can only contain letters, spaces, and apostrophes';
+        }
+        break;
+        
+      case 'email':
+        if (!value.trim()) {
+          errors.email = 'Email is required';
+        } else if (!/^[a-zA-Z]([a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/.test(value.trim())) {
+          errors.email = 'Email must start with a letter (e.g., user@example.com, not 123@example.com)';
+        } else if (value.trim().length > 254) {
+          errors.email = 'Email address is too long (maximum 254 characters)';
+        }
+        break;
+        
+      case 'phoneNumber':
+        if (!value.trim()) {
+          errors.phoneNumber = 'Phone number is required';
+        } else if (!/^61[0-9]{7}$/.test(value.replace(/\s+/g, ''))) {
+          errors.phoneNumber = 'Phone number must start with 61 and be exactly 9 digits total (e.g., 614123456)';
+        }
+        break;
+        
+      case 'address':
+        if (!value.trim()) {
+          errors.address = 'Address is required';
+        } else if (value.trim().length < 4) {
+          errors.address = 'Address must be at least 4 characters';
+        } else if (value.trim().length > 200) {
+          errors.address = 'Address is too long (maximum 200 characters)';
+        } else if (!/^[a-zA-Z0-9\s,.-]+$/.test(value.trim())) {
+          errors.address = 'Address can only contain letters, numbers, spaces, commas, periods, and hyphens';
+        }
+        break;
+        
+      case 'password':
+        if (!value) {
+          errors.password = 'Password is required';
+        } else if (value.length < 8) {
+          errors.password = 'Password must be at least 8 characters';
+        } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value)) {
+          errors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
+        }
+        break;
+        
+      default:
+        break;
+    }
+    
+    return errors;
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    
+    // Clear validation error for this field when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+    
+    // Real-time validation for phone number and email formatting
+    if (name === 'phoneNumber' || name === 'email') {
+      const fieldErrors = validateField(name, value);
+      if (Object.keys(fieldErrors).length > 0) {
+        setValidationErrors(prev => ({ ...prev, ...fieldErrors }));
+      }
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    
+    Object.keys(form).forEach(key => {
+      const fieldErrors = validateField(key, form[key]);
+      Object.assign(errors, fieldErrors);
+    });
+    
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
     setSuccess("");
+    
+    // Validate all fields
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      setError("Please fix the validation errors before submitting.");
+      return;
+    }
+    
+    // Clear any existing errors
+    setValidationErrors({});
+    setError("");
+    
+    setLoading(true);
     
     try {
       const formData = new FormData();
@@ -172,7 +276,7 @@ function AddAgent() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
                     style={{ 
-                      borderColor: dashboardColors.border.light,
+                      borderColor: validationErrors.fullName ? dashboardColors.status.error : dashboardColors.border.light,
                       backgroundColor: dashboardColors.background.white,
                       boxShadow: dashboardColors.shadow.sm
                     }}
@@ -180,6 +284,12 @@ function AddAgent() {
                   />
                   <FiUser className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
                 </div>
+                {validationErrors.fullName && (
+                  <div className="flex items-center gap-2 text-sm" style={{ color: dashboardColors.status.error }}>
+                    <FiAlertTriangle className="w-4 h-4" />
+                    <span>{validationErrors.fullName}</span>
+                  </div>
+                )}
               </div>
               
               <div className="space-y-2">
@@ -196,7 +306,7 @@ function AddAgent() {
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
                     style={{ 
-                      borderColor: dashboardColors.border.light,
+                      borderColor: validationErrors.email ? dashboardColors.status.error : dashboardColors.border.light,
                       backgroundColor: dashboardColors.background.white,
                       boxShadow: dashboardColors.shadow.sm
                     }}
@@ -204,6 +314,12 @@ function AddAgent() {
                   />
                   <FiMail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
                 </div>
+                {validationErrors.email && (
+                  <div className="flex items-center gap-2 text-sm" style={{ color: dashboardColors.status.error }}>
+                    <FiAlertTriangle className="w-4 h-4" />
+                    <span>{validationErrors.email}</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -211,18 +327,18 @@ function AddAgent() {
               <div className="space-y-2">
                 <label className="text-sm font-semibold flex items-center gap-2" style={{ color: dashboardColors.text.primary }}>
                   <FiPhone className="w-4 h-4" />
-                  Phone Number *
+                  Phone Number * (Must start with 61, 9 digits total)
                 </label>
                 <div className="relative">
                   <input 
                     name="phoneNumber" 
                     type="tel" 
-                    placeholder="Enter phone number" 
+                    placeholder="614123456" 
                     value={form.phoneNumber} 
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
                     style={{ 
-                      borderColor: dashboardColors.border.light,
+                      borderColor: validationErrors.phoneNumber ? dashboardColors.status.error : dashboardColors.border.light,
                       backgroundColor: dashboardColors.background.white,
                       boxShadow: dashboardColors.shadow.sm
                     }}
@@ -230,6 +346,12 @@ function AddAgent() {
                   />
                   <FiPhone className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
                 </div>
+                {validationErrors.phoneNumber && (
+                  <div className="flex items-center gap-2 text-sm" style={{ color: dashboardColors.status.error }}>
+                    <FiAlertTriangle className="w-4 h-4" />
+                    <span>{validationErrors.phoneNumber}</span>
+                  </div>
+                )}
               </div>
               
               <div className="space-y-2">
@@ -241,12 +363,12 @@ function AddAgent() {
                   <input 
                     name="address" 
                     type="text" 
-                    placeholder="Enter address" 
+                    placeholder="Enter full address" 
                     value={form.address} 
                     onChange={handleChange} 
                     className="w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
                     style={{ 
-                      borderColor: dashboardColors.border.light,
+                      borderColor: validationErrors.address ? dashboardColors.status.error : dashboardColors.border.light,
                       backgroundColor: dashboardColors.background.white,
                       boxShadow: dashboardColors.shadow.sm
                     }}
@@ -254,24 +376,30 @@ function AddAgent() {
                   />
                   <FiMapPin className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5" style={{ color: dashboardColors.text.muted }} />
                 </div>
+                {validationErrors.address && (
+                  <div className="flex items-center gap-2 text-sm" style={{ color: dashboardColors.status.error }}>
+                    <FiAlertTriangle className="w-4 h-4" />
+                    <span>{validationErrors.address}</span>
+                  </div>
+                )}
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-sm font-semibold flex items-center gap-2" style={{ color: dashboardColors.text.primary }}>
                 <FiLock className="w-4 h-4" />
-                Password *
+                Password * (Min 8 chars, 1 uppercase, 1 lowercase, 1 number)
               </label>
               <div className="relative">
                 <input 
                   name="password" 
                   type={showPassword ? "text" : "password"} 
-                  placeholder="Enter password" 
+                  placeholder="Enter secure password" 
                   value={form.password} 
                   onChange={handleChange} 
                   className="w-full pl-12 pr-12 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:border-transparent" 
                   style={{ 
-                    borderColor: dashboardColors.border.light,
+                    borderColor: validationErrors.password ? dashboardColors.status.error : dashboardColors.border.light,
                     backgroundColor: dashboardColors.background.white,
                     boxShadow: dashboardColors.shadow.sm
                   }}
@@ -291,6 +419,12 @@ function AddAgent() {
                   )}
                 </button>
               </div>
+              {validationErrors.password && (
+                <div className="flex items-center gap-2 text-sm" style={{ color: dashboardColors.status.error }}>
+                  <FiAlertTriangle className="w-4 h-4" />
+                  <span>{validationErrors.password}</span>
+                </div>
+              )}
             </div>
             
             {/* Submit Button */}
@@ -311,10 +445,10 @@ function AddAgent() {
               </button>
               <button 
                 type="submit" 
-                disabled={loading}
+                disabled={loading || Object.keys(validationErrors).length > 0}
                 className="flex-1 py-4 px-6 rounded-xl text-white font-semibold transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
                 style={{ 
-                  background: loading ? dashboardColors.text.muted : dashboardColors.gradient.primary,
+                  background: (loading || Object.keys(validationErrors).length > 0) ? dashboardColors.text.muted : dashboardColors.gradient.primary,
                   boxShadow: dashboardColors.shadow.lg 
                 }}
               >
