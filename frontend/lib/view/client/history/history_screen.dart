@@ -93,173 +93,179 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   }
 
   void _showDonationSuccessDialog() {
+    // Assign to a local variable for cleaner and safer access.
+    final donationData = widget.donationData;
+    if (donationData == null) return;
+
+    final actualZakatAmount = (donationData['actualZakatAmount'] as num?) ?? 0.0;
+    final currency = donationData['currency'] as String? ?? 'USD';
+
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder:
-          (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.white, Colors.white.withOpacity(0.95)],
             ),
-            backgroundColor: Colors.transparent,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Colors.white, Colors.white.withOpacity(0.95)],
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primaryGold.withOpacity(0.2),
-                    blurRadius: 20,
-                    spreadRadius: 5,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryGold.withOpacity(0.2),
+                blurRadius: 20,
+                spreadRadius: 5,
+                offset: const Offset(0, 10),
               ),
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.green.shade400, Colors.green.shade600],
-                      ),
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.green.withOpacity(0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.check_rounded,
-                      color: Colors.white,
-                      size: 40,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Donation Successful!',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryGold,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundLight,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.primaryGold.withOpacity(0.2),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        _buildInfoRow(
-                          'Test Payment',
-                          '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
-                        ),
-                        _buildInfoRow(
-                          'Actual Zakat',
-                          '${((widget.donationData!['actualZakatAmount'] is num ? widget.donationData!['actualZakatAmount'] : 0.0) as num).toStringAsFixed(2)} ${widget.donationData!['currency'] ?? 'USD'}',
-                        ),
-                        _buildInfoRow(
-                          'Recipient',
-                          widget.donationData!['agentName'],
-                        ),
-                        _buildInfoRow(
-                          'Account',
-                          widget.donationData!['userAccountNo'],
-                        ),
-                        _buildInfoRow(
-                          'Date',
-                          DateTime.now().toString().substring(0, 16),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.green.shade50, Colors.green.shade100],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.favorite_rounded,
-                          color: Colors.green.shade600,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Thank you for your generous donation!',
-                            style: TextStyle(
-                              color: Colors.green.shade700,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Container(
-                    width: double.infinity,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          AppColors.primaryGold,
-                          AppColors.accentLightGold,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primaryGold.withOpacity(0.3),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(12),
-                        onTap: () => Navigator.of(context).pop(),
-                        child: const Center(
-                          child: Text(
-                            'Close',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.green.shade400, Colors.green.shade600],
+                  ),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green.withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: Colors.white,
+                  size: 40,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Donation Successful!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primaryGold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.backgroundLight,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.primaryGold.withOpacity(0.2),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    _buildInfoRow(
+                      'Test Payment',
+                      '${actualZakatAmount.toStringAsFixed(2)} $currency',
+                    ),
+                    _buildInfoRow(
+                      'Actual Zakat',
+                      '${actualZakatAmount.toStringAsFixed(2)} $currency',
+                    ),
+                    _buildInfoRow(
+                      'Recipient',
+                      donationData['agentName'] ?? 'N/A',
+                    ),
+                    _buildInfoRow(
+                      'Account',
+                      donationData['userAccountNo'] ?? 'N/A',
+                    ),
+                    _buildInfoRow(
+                      'Date',
+                      DateTime.now().toString().substring(0, 16),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.green.shade50, Colors.green.shade100],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.favorite_rounded,
+                      color: Colors.green.shade600,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Thank you for your generous donation!',
+                        style: TextStyle(
+                          color: Colors.green.shade700,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                height: 48,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppColors.primaryGold,
+                      AppColors.accentLightGold,
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryGold.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => Navigator.of(context).pop(),
+                    child: const Center(
+                      child: Text(
+                        'Close',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -273,7 +279,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             width: 80,
             child: Text(
               '$label:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(child: Text(value)),
@@ -298,6 +304,9 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
   @override
   Widget build(BuildContext context) {
     final historyVm = ref.watch(historyViewModelProvider);
+    final screenSize = MediaQuery.of(context).size;
+    final isTablet = screenSize.width > 600;
+    final isDesktop = screenSize.width > 1200;
 
     return Scaffold(
       body: Container(
@@ -315,7 +324,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
         child: SafeArea(
           child: Column(
             children: [
-              _buildModernAppBar(historyVm),
+              _buildModernAppBar(historyVm, screenSize, isTablet, isDesktop),
               Expanded(
                 child: AnimatedBuilder(
                   animation: _animationController,
@@ -324,12 +333,13 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                       opacity: _fadeAnimation,
                       child: SlideTransition(
                         position: _slideAnimation,
-                        child:
-                            historyVm.isLoading
-                                ? const Center(child: Loader())
-                                : historyVm.history.isEmpty
-                                ? _buildEmptyState()
-                                : _buildHistoryList(historyVm.history),
+                        child: historyVm.isLoading
+                            ? const Center(child: Loader())
+                            : historyVm.history.isEmpty
+                                ? _buildEmptyState(
+                                    screenSize, isTablet, isDesktop)
+                                : _buildHistoryList(historyVm.history,
+                                    screenSize, isTablet, isDesktop),
                       ),
                     );
                   },
@@ -342,22 +352,32 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(Size screenSize, bool isTablet, bool isDesktop) {
+    final containerWidth =
+        isDesktop ? 600.0 : (isTablet ? 500.0 : screenSize.width * 0.85);
+    final iconSize = isDesktop ? 120.0 : (isTablet ? 100.0 : 80.0);
+    final titleSize = isDesktop ? 28.0 : (isTablet ? 24.0 : 20.0);
+    final subtitleSize = isDesktop ? 18.0 : (isTablet ? 16.0 : 14.0);
+    final padding = isDesktop ? 48.0 : (isTablet ? 40.0 : 24.0);
+    final margin = isDesktop ? 64.0 : (isTablet ? 48.0 : 24.0);
+
     return Center(
       child: Container(
-        margin: const EdgeInsets.all(32),
-        padding: const EdgeInsets.all(32),
+        width: containerWidth,
+        margin: EdgeInsets.all(margin),
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [Colors.white, Colors.white.withOpacity(0.9)],
           ),
-          borderRadius: BorderRadius.circular(24),
+          borderRadius:
+              BorderRadius.circular(isDesktop ? 32 : (isTablet ? 28 : 24)),
           boxShadow: [
             BoxShadow(
               color: AppColors.primaryGold.withOpacity(0.1),
-              blurRadius: 20,
+              blurRadius: isDesktop ? 30 : (isTablet ? 25 : 20),
               spreadRadius: 0,
               offset: const Offset(0, 10),
             ),
@@ -367,8 +387,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 100,
-              height: 100,
+              width: iconSize,
+              height: iconSize,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -380,32 +400,35 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
               ),
               child: Icon(
                 Icons.history_rounded,
-                size: 50,
+                size: iconSize * 0.5,
                 color: AppColors.primaryGold,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: isDesktop ? 32 : (isTablet ? 28 : 24)),
             Text(
               'No Payment History',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: titleSize,
                 fontWeight: FontWeight.bold,
                 color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: isDesktop ? 16 : (isTablet ? 14 : 12)),
             Text(
               'Your donation history will appear here\nonce you make your first contribution',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: subtitleSize,
                 color: AppColors.textSecondary,
                 height: 1.5,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: isDesktop ? 32 : (isTablet ? 28 : 24)),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                horizontal: isDesktop ? 28 : (isTablet ? 24 : 20),
+                vertical: isDesktop ? 16 : (isTablet ? 14 : 12),
+              ),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -413,22 +436,24 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                     AppColors.accentLightGold.withOpacity(0.1),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius:
+                    BorderRadius.circular(isDesktop ? 24 : (isTablet ? 22 : 20)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
                     Icons.info_outline_rounded,
-                    size: 16,
+                    size: isDesktop ? 20 : (isTablet ? 18 : 16),
                     color: AppColors.primaryGold,
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: isDesktop ? 12 : (isTablet ? 10 : 8)),
                   Text(
                     'Start your giving journey today',
                     style: TextStyle(
                       color: AppColors.primaryGold,
                       fontWeight: FontWeight.w500,
+                      fontSize: isDesktop ? 16 : (isTablet ? 15 : 14),
                     ),
                   ),
                 ],
@@ -440,339 +465,354 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     );
   }
 
-  Widget _buildHistoryList(List<HistoryModel> history) {
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      itemCount: history.length,
-      itemBuilder: (context, index) {
-        final payment = history[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.white, Colors.white.withOpacity(0.95)],
+  Widget _buildHistoryList(
+      List<HistoryModel> history, Size screenSize, bool isTablet, bool isDesktop) {
+    final horizontalPadding = isDesktop ? 40.0 : (isTablet ? 30.0 : 20.0);
+    final verticalPadding = isDesktop ? 24.0 : (isTablet ? 20.0 : 16.0);
+    final itemMargin = isDesktop ? 20.0 : (isTablet ? 18.0 : 16.0);
+    final itemPadding = isDesktop ? 28.0 : (isTablet ? 24.0 : 20.0);
+    final iconSize = isDesktop ? 60.0 : (isTablet ? 55.0 : 50.0);
+    final titleSize = isDesktop ? 20.0 : (isTablet ? 19.0 : 18.0);
+    final subtitleSize = isDesktop ? 14.0 : (isTablet ? 13.5 : 13.0);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // For desktop, use a grid layout with multiple columns
+        if (isDesktop && constraints.maxWidth > 1200) {
+          return GridView.builder(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
             ),
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primaryGold.withOpacity(0.08),
-                blurRadius: 15,
-                spreadRadius: 0,
-                offset: const Offset(0, 8),
-              ),
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                spreadRadius: 0,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20),
-              onTap: () => _showPaymentDetails(payment),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppColors.accentLightGold,
-                                AppColors.primaryGold,
-                              ],
-                            ),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.primaryGold.withOpacity(0.3),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.account_balance_rounded,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                payment.agentName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.secondaryGray.withOpacity(
-                                    0.1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  'Account: ${payment.userAccountNo}',
-                                  style: TextStyle(
-                                    color: AppColors.textSecondary,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.primaryGold.withOpacity(0.1),
-                                    AppColors.accentLightGold.withOpacity(0.1),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: AppColors.primaryGold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              payment.paidAt.toLocal().toString().substring(
-                                0,
-                                10,
-                              ),
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      height: 1,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.transparent,
-                            AppColors.primaryGold.withOpacity(0.2),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryBeige.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: AppColors.primaryGold.withOpacity(0.3),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.payment_rounded,
-                                size: 14,
-                                color: AppColors.primaryGold,
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                payment.paymentMethod,
-                                style: TextStyle(
-                                  color: AppColors.primaryGold,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.touch_app_rounded,
-                              size: 14,
-                              color: AppColors.textSecondary,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Tap for details',
-                              style: TextStyle(
-                                color: AppColors.textSecondary,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: constraints.maxWidth > 1600 ? 3 : 2,
+              crossAxisSpacing: 20,
+              mainAxisSpacing: 20,
+              childAspectRatio: 2.5,
             ),
+            itemCount: history.length,
+            itemBuilder: (context, index) {
+              final payment = history[index];
+              return _buildHistoryCard(payment, itemPadding, iconSize,
+                  titleSize, subtitleSize, isDesktop, isTablet);
+            },
+          );
+        }
+
+        // For tablet and mobile, use a list layout
+        return ListView.builder(
+          padding: EdgeInsets.symmetric(
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
           ),
+          itemCount: history.length,
+          itemBuilder: (context, index) {
+            final payment = history[index];
+            return Container(
+              margin: EdgeInsets.only(bottom: itemMargin),
+              child: _buildHistoryCard(payment, itemPadding, iconSize,
+                  titleSize, subtitleSize, isDesktop, isTablet),
+            );
+          },
         );
       },
     );
   }
 
-  void _showPaymentDetails(HistoryModel payment) {
+  Widget _buildHistoryCard(
+      HistoryModel payment,
+      double itemPadding,
+      double iconSize,
+      double titleSize,
+      double subtitleSize,
+      bool isDesktop,
+      bool isTablet) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.white.withOpacity(0.95)],
+        ),
+        borderRadius:
+            BorderRadius.circular(isDesktop ? 24 : (isTablet ? 22 : 20)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primaryGold.withOpacity(0.08),
+            blurRadius: isDesktop ? 20 : (isTablet ? 18 : 15),
+            spreadRadius: 0,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: isDesktop ? 12 : (isTablet ? 10 : 8),
+            spreadRadius: 0,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius:
+              BorderRadius.circular(isDesktop ? 24 : (isTablet ? 22 : 20)),
+          onTap: () => _showPaymentDetails(payment, context),
+          child: Padding(
+            padding: EdgeInsets.all(itemPadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              // This Column now correctly holds both Rows and the divider
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: iconSize,
+                      height: iconSize,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.accentLightGold,
+                            AppColors.primaryGold,
+                          ],
+                        ),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primaryGold.withOpacity(0.3),
+                            blurRadius: isDesktop ? 12 : (isTablet ? 10 : 8),
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.account_balance_rounded,
+                        color: Colors.white,
+                        size: iconSize * 0.48,
+                      ),
+                    ),
+                    SizedBox(width: isDesktop ? 20 : (isTablet ? 18 : 16)),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            payment.agentName,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: titleSize,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: isDesktop ? 6 : (isTablet ? 5 : 4)),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  isDesktop ? 12 : (isTablet ? 10 : 8),
+                              vertical: isDesktop ? 6 : (isTablet ? 5 : 4),
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryGray.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(
+                                  isDesktop ? 10 : (isTablet ? 9 : 8)),
+                            ),
+                            child: Text(
+                              'Account: ${payment.userAccountNo}',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: subtitleSize,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal:
+                                isDesktop ? 16 : (isTablet ? 14 : 12),
+                            vertical: isDesktop ? 8 : (isTablet ? 7 : 6),
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                AppColors.primaryGold.withOpacity(0.1),
+                                AppColors.accentLightGold.withOpacity(0.1),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(
+                                isDesktop ? 14 : (isTablet ? 13 : 12)),
+                          ),
+                          child: Text(
+                            '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize:
+                                  isDesktop ? 18.0 : (isTablet ? 17.0 : 16.0),
+                              color: AppColors.primaryGold,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: isDesktop ? 8 : (isTablet ? 7 : 6)),
+                        Text(
+                          payment.paidAt.toLocal().toString().substring(
+                                0,
+                                10,
+                              ),
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize:
+                                isDesktop ? 13.0 : (isTablet ? 12.5 : 12.0),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(height: isDesktop ? 20 : (isTablet ? 18 : 16)),
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        AppColors.primaryGold.withOpacity(0.2),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: isDesktop ? 20 : (isTablet ? 18 : 16)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 16 : (isTablet ? 14 : 12),
+                        vertical: isDesktop ? 8 : (isTablet ? 7 : 6),
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryBeige.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(
+                            isDesktop ? 24 : (isTablet ? 22 : 20)),
+                        border: Border.all(
+                          color: AppColors.primaryGold.withOpacity(0.3),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.payment_rounded,
+                            size: isDesktop ? 16 : (isTablet ? 15 : 14),
+                            color: AppColors.primaryGold,
+                          ),
+                          SizedBox(width: isDesktop ? 8 : (isTablet ? 7 : 6)),
+                          Text(
+                            payment.paymentMethod,
+                            style: TextStyle(
+                              color: AppColors.primaryGold,
+                              fontWeight: FontWeight.w500,
+                              fontSize: isDesktop
+                                  ? 13.0
+                                  : (isTablet ? 12.5 : 12.0),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.touch_app_rounded,
+                          size: isDesktop ? 16 : (isTablet ? 15 : 14),
+                          color: AppColors.textSecondary,
+                        ),
+                        SizedBox(width: isDesktop ? 6 : (isTablet ? 5 : 4)),
+                        Text(
+                          'Tap for details',
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize:
+                                isDesktop ? 13.0 : (isTablet ? 12.5 : 12.0),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+  // **FIX**: Removed the extra closing brace '}' that was here.
+  // This was causing the class to end prematurely.
+
+  void _showPaymentDetails(HistoryModel payment, BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isTablet = screenSize.width > 600;
+    final isDesktop = screenSize.width > 1200;
+    final modalPadding = isDesktop ? 32.0 : (isTablet ? 28.0 : 24.0);
+    final iconSize = isDesktop ? 60.0 : (isTablet ? 55.0 : 50.0);
+    final titleSize = isDesktop ? 28.0 : (isTablet ? 26.0 : 24.0);
+    final borderRadius = isDesktop ? 36.0 : (isTablet ? 32.0 : 28.0);
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.white, AppColors.backgroundLight],
-              ),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(28),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: const Offset(0, -5),
-                ),
-              ],
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, AppColors.backgroundLight],
+          ),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(borderRadius),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: isDesktop ? 30 : (isTablet ? 25 : 20),
+              offset: const Offset(0, -5),
             ),
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 50,
-                  height: 5,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primaryGold.withOpacity(0.3),
-                        AppColors.primaryGold,
-                        AppColors.primaryGold.withOpacity(0.3),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppColors.primaryGold,
-                            AppColors.accentLightGold,
-                          ],
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.receipt_long_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      'Payment Details',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+          ],
+        ),
+        padding: EdgeInsets.all(modalPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: isDesktop ? 60 : (isTablet ? 55 : 50),
+              height: isDesktop ? 6 : (isTablet ? 5.5 : 5),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primaryGold.withOpacity(0.3),
+                    AppColors.primaryGold,
+                    AppColors.primaryGold.withOpacity(0.3),
                   ],
                 ),
-                const SizedBox(height: 24),
+                borderRadius:
+                    BorderRadius.circular(isDesktop ? 12 : (isTablet ? 11 : 10)),
+              ),
+            ),
+            SizedBox(height: isDesktop ? 32 : (isTablet ? 28 : 24)),
+            Row(
+              children: [
                 Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        AppColors.primaryGold.withOpacity(0.05),
-                        AppColors.accentLightGold.withOpacity(0.05),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: AppColors.primaryGold.withOpacity(0.2),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildDetailRow(
-                        'Date',
-                        payment.paidAt.toLocal().toString().substring(0, 16),
-                      ),
-                      _buildDetailRow(
-                        'Amount',
-                        '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
-                      ),
-                      _buildDetailRow('Recipient', payment.agentName),
-                      _buildDetailRow('Account', payment.userAccountNo),
-                      _buildDetailRow('Payment Method', payment.paymentMethod),
-                      _buildDetailRow('Transaction ID', payment.id),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  width: double.infinity,
-                  height: 52,
+                  width: iconSize,
+                  height: iconSize,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -780,73 +820,159 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
                         AppColors.accentLightGold,
                       ],
                     ),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primaryGold.withOpacity(0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
-                      ),
-                    ],
+                    shape: BoxShape.circle,
                   ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () => Navigator.pop(context),
-                      child: const Center(
-                        child: Text(
-                          'Close',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
+                  child: Icon(
+                    Icons.receipt_long_rounded,
+                    color: Colors.white,
+                    size: iconSize * 0.48,
+                  ),
+                ),
+                SizedBox(width: isDesktop ? 20 : (isTablet ? 18 : 16)),
+                Text(
+                  'Payment Details',
+                  style: TextStyle(
+                    fontSize: titleSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: isDesktop ? 32 : (isTablet ? 28 : 24)),
+            Container(
+              padding:
+                  EdgeInsets.all(isDesktop ? 28.0 : (isTablet ? 24.0 : 20.0)),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primaryGold.withOpacity(0.05),
+                    AppColors.accentLightGold.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius:
+                    BorderRadius.circular(isDesktop ? 20 : (isTablet ? 18 : 16)),
+                border: Border.all(
+                  color: AppColors.primaryGold.withOpacity(0.2),
+                ),
+              ),
+              child: Column(
+                children: [
+                  _buildDetailRow(
+                    'Date',
+                    payment.paidAt.toLocal().toString().substring(0, 16),
+                    isDesktop,
+                    isTablet,
+                  ),
+                  _buildDetailRow(
+                    'Amount',
+                    '${payment.actualZakatAmount.toStringAsFixed(2)} ${payment.currency}',
+                    isDesktop,
+                    isTablet,
+                  ),
+                  _buildDetailRow(
+                      'Recipient', payment.agentName, isDesktop, isTablet),
+                  _buildDetailRow(
+                      'Account', payment.userAccountNo, isDesktop, isTablet),
+                  _buildDetailRow('Payment Method', payment.paymentMethod,
+                      isDesktop, isTablet),
+                  _buildDetailRow(
+                      'Transaction ID', payment.id, isDesktop, isTablet),
+                ],
+              ),
+            ),
+            SizedBox(height: isDesktop ? 32 : (isTablet ? 28 : 24)),
+            Container(
+              width: double.infinity,
+              height: isDesktop ? 60 : (isTablet ? 56 : 52),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    AppColors.primaryGold,
+                    AppColors.accentLightGold,
+                  ],
+                ),
+                borderRadius:
+                    BorderRadius.circular(isDesktop ? 20 : (isTablet ? 18 : 16)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primaryGold.withOpacity(0.3),
+                    blurRadius: isDesktop ? 16 : (isTablet ? 14 : 12),
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius:
+                      BorderRadius.circular(isDesktop ? 20 : (isTablet ? 18 : 16)),
+                  onTap: () => Navigator.pop(context),
+                  child: Center(
+                    child: Text(
+                      'Close',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isDesktop ? 18 : (isTablet ? 17 : 16),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-              ],
+              ),
             ),
-          ),
+            SizedBox(height: isDesktop ? 32 : (isTablet ? 28 : 24)),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(
+      String label, String value, bool isDesktop, bool isTablet) {
+    final verticalPadding = isDesktop ? 14.0 : (isTablet ? 12.0 : 10.0);
+    final labelWidth = isDesktop ? 140.0 : (isTablet ? 130.0 : 120.0);
+    final labelSize = isDesktop ? 16.0 : (isTablet ? 15.0 : 14.0);
+    final valueSize = isDesktop ? 16.0 : (isTablet ? 15.0 : 14.0);
+    final horizontalPadding = isDesktop ? 16.0 : (isTablet ? 14.0 : 12.0);
+    final valuePadding = isDesktop ? 8.0 : (isTablet ? 7.0 : 6.0);
+    final borderRadius = isDesktop ? 12.0 : (isTablet ? 10.0 : 8.0);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.symmetric(vertical: verticalPadding),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 120,
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            width: labelWidth,
+            padding:
+                EdgeInsets.symmetric(vertical: isDesktop ? 4 : (isTablet ? 3 : 2)),
             child: Text(
               '$label:',
               style: TextStyle(
                 color: AppColors.textSecondary,
-                fontSize: 14,
+                fontSize: labelSize,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
           Expanded(
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: valuePadding,
+              ),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(borderRadius),
                 border: Border.all(
                   color: AppColors.primaryGold.withOpacity(0.1),
                 ),
               ),
               child: Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
+                  fontSize: valueSize,
                 ),
               ),
             ),
@@ -856,23 +982,37 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
     );
   }
 
-  Widget _buildModernAppBar(dynamic historyVm) {
+  Widget _buildModernAppBar(
+      dynamic historyVm, Size screenSize, bool isTablet, bool isDesktop) {
+    final horizontalPadding = isDesktop ? 40.0 : (isTablet ? 30.0 : 20.0);
+    final verticalPadding = isDesktop ? 24.0 : (isTablet ? 20.0 : 16.0);
+    final titleSize = isDesktop ? 32.0 : (isTablet ? 28.0 : 24.0);
+    final subtitleSize = isDesktop ? 16.0 : (isTablet ? 15.0 : 14.0);
+    final iconSize = isDesktop ? 24.0 : (isTablet ? 22.0 : 20.0);
+    final containerSize = isDesktop ? 48.0 : (isTablet ? 44.0 : 40.0);
+    final borderRadius = isDesktop ? 16.0 : (isTablet ? 14.0 : 12.0);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding:
+          EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
       child: Row(
         children: [
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Payment History',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: titleSize,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
+                SizedBox(height: isDesktop ? 6 : (isTablet ? 5 : 4)),
                 Text(
                   'Track your donations',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: subtitleSize,
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w500,
                   ),
@@ -881,13 +1021,15 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             ),
           ),
           Container(
+            width: containerSize,
+            height: containerSize,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(borderRadius),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
+                  blurRadius: isDesktop ? 12 : (isTablet ? 10 : 8),
                   offset: const Offset(0, 2),
                 ),
               ],
@@ -895,17 +1037,17 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen>
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: historyVm.isLoading ? null : _fetchHistory,
+                borderRadius: BorderRadius.circular(borderRadius),
+                onTap: historyVm.isLoading ? null : () => _fetchHistory(),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
+                  padding:
+                      EdgeInsets.all(isDesktop ? 12 : (isTablet ? 10 : 8)),
                   child: Icon(
                     Icons.refresh_rounded,
-                    color:
-                        historyVm.isLoading
-                            ? AppColors.textSecondary
-                            : AppColors.primaryGold,
-                    size: 20,
+                    color: historyVm.isLoading
+                        ? AppColors.textSecondary
+                        : AppColors.primaryGold,
+                    size: iconSize,
                   ),
                 ),
               ),
