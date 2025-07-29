@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="dashboard/public/logo.png" alt="ZakatFlow Logo" width="120" height="120">
+  <img src="dashboard/public/logo.png" alt="ZakatFlow Logo" width="120" height="126">
   
   # 🌟 ZakatFlow
   
