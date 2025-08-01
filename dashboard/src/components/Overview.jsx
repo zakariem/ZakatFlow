@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosConfig";
 import { adminApi } from "../api/adminApi";
 import { dashboardColors } from "../theme/dashboardColors";
-import { FaCrown, FaMoneyBillWave, FaCalendarAlt, FaChartLine, FaChartPie, FaHome } from "react-icons/fa";
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import { FaCrown, FaMoneyBillWave, FaCalendarAlt, FaChartLine, FaHome } from "react-icons/fa";
+import { Line, Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -11,7 +11,6 @@ import {
   PointElement,
   LineElement,
   BarElement,
-  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -23,7 +22,6 @@ ChartJS.register(
   PointElement,
   LineElement,
   BarElement,
-  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -96,26 +94,7 @@ const Overview = () => {
     };
   });
 
-  // Payment status breakdown (doughnut)
-  const statusCounts = validPayments.reduce((acc, p) => {
-    const status = (p.waafiResponse && p.waafiResponse.state) || p.status || 'Unknown';
-    acc[status] = (acc[status] || 0) + 1;
-    return acc;
-  }, {});
-  const statusLabels = Object.keys(statusCounts);
-  const statusData = Object.values(statusCounts);
-  const statusColors = [
-    '#4CAF50', // Approved/Success
-    '#FFC107', // Pending
-    '#F44336', // Failed
-    '#2196F3', // Other
-    '#9C27B0',
-    '#FF9800',
-    '#607D8B',
-    '#795548',
-    '#00BCD4',
-    '#E91E63',
-  ];
+
 
   // Top 5 agents by total collection
   const topAgents = [...(Array.isArray(agents) ? agents : [])]
@@ -184,17 +163,7 @@ const Overview = () => {
     ],
   };
 
-  const doughnutChartData = {
-    labels: statusLabels,
-    datasets: [
-      {
-        label: 'Payments by Status',
-        data: statusData,
-        backgroundColor: statusLabels.map((_, i) => statusColors[i % statusColors.length]),
-        borderWidth: 2,
-      },
-    ],
-  };
+
 
   const agentBarChartData = {
     labels: topAgentLabels,
@@ -246,7 +215,7 @@ const Overview = () => {
                 <div className="w-10 h-10 xs:w-12 xs:h-12 lg:w-14 lg:h-14 rounded-xl flex items-center justify-center transition-all duration-300" style={{ background: dashboardColors.gradient.primary }}>
                   <FaHome className="text-white text-lg xs:text-xl lg:text-2xl" />
                 </div>
-                <h1 className="text-fluid-2xl xs:text-fluid-3xl lg:text-fluid-4xl xl:text-fluid-5xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent leading-tight">
+                <h1 className="text-fluid-2xl xs:text-fluid-2xl lg:text-fluid-3xl xl:text-fluid-4xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent leading-tight">
                   Dashboard Overview
                 </h1>
               </div>
@@ -311,23 +280,7 @@ const Overview = () => {
             ),
             delay: "100ms"
           },
-          {
-            title: "Payment Status Distribution",
-            subtitle: "Current Overview",
-            icon: <FaChartPie className="text-xl" />,
-            component: statusLabels.length === 0 || statusData.every(v => v === 0) ? (
-              <div className="flex flex-col items-center justify-center h-full">
-                <div className="w-16 h-16 rounded-full mb-4 flex items-center justify-center" style={{ backgroundColor: dashboardColors.background.light }}>
-                  <FaChartPie className="text-2xl" style={{ color: dashboardColors.text.muted }} />
-                </div>
-                <span className="text-lg font-medium" style={{ color: dashboardColors.text.muted }}>No status data available</span>
-                <span className="text-sm" style={{ color: dashboardColors.text.light }}>Check back later</span>
-              </div>
-            ) : (
-              <Doughnut data={doughnutChartData} options={{ ...chartOptions, cutout: '70%' }} />
-            ),
-            delay: "200ms"
-          },
+
           {
             title: "Top Performing Agents",
             subtitle: "By Collection Amount",
@@ -343,7 +296,7 @@ const Overview = () => {
             ) : (
               <Bar data={agentBarChartData} options={{ ...chartOptions, plugins: { ...chartOptions.plugins, legend: { display: false } } }} />
             ),
-            delay: "300ms"
+            delay: "200ms"
           }
         ].map((chart, index) => (
           <div 

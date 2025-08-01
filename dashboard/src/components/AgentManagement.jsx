@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axiosInstance from '../utils/axiosConfig';
 import { adminApi } from '../api/adminApi';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import dashboardColors from '../theme/dashboardColors';
-import { FaUsers, FaUserPlus, FaSearch, FaEdit, FaTrash, FaDownload, FaUserCheck } from 'react-icons/fa';
+import { FaUsers, FaUserPlus, FaSearch, FaEdit, FaTrash, FaUserCheck } from 'react-icons/fa';
 
 const AgentManagement = () => {
   const [agents, setAgents] = useState([]);
@@ -139,7 +139,7 @@ const AgentManagement = () => {
                     <div className="w-8 h-8 xs:w-10 xs:h-10 lg:w-12 lg:h-12 rounded-lg xs:rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${dashboardColors.primary.gold} 0%, ${dashboardColors.primary.darkGold} 100%)` }}>
                       <FaUsers className="text-white text-fluid-sm xs:text-fluid-lg lg:text-xl" />
                     </div>
-                    <h1 className="text-fluid-xl xs:text-fluid-2xl sm:text-fluid-3xl lg:text-fluid-4xl xl:text-fluid-5xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
+                    <h1 className="text-fluid-xl xs:text-fluid-1xl sm:text-fluid-2xl lg:text-fluid-3xl xl:text-fluid-4xl font-bold bg-gradient-to-r from-yellow-600 to-yellow-800 bg-clip-text text-transparent">
                       Agent Management
                     </h1>
                   </div>

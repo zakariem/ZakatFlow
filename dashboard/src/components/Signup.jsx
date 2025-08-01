@@ -18,6 +18,7 @@ const Signup = () => {
       case 'email':
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!value.trim()) return 'Email is required';
+        if (/^\d/.test(value)) return 'Email cannot start with a number';
         if (!emailRegex.test(value)) return 'Please enter a valid email address';
         return '';
       case 'password':

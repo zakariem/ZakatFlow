@@ -333,7 +333,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         // Arabic text section
                         Expanded(
                           flex: 5,
-                          child: Container(
+                          child: SizedBox(
                             width: double.infinity,
                             child: SingleChildScrollView(
                               child: Text(
@@ -371,7 +371,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         // Translation text section
                         Expanded(
                           flex: 3,
-                          child: Container(
+                          child: SizedBox(
                             width: double.infinity,
                             child: SingleChildScrollView(
                               child: Text(

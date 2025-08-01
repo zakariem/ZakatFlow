@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosConfig";
 import { adminApi } from "../api/adminApi";
 import { dashboardColors } from "../theme/dashboardColors";
-import { FaMoneyBillWave, FaReceipt, FaCalendarDay, FaSearch, FaFilter, FaDownload, FaCalendarAlt, FaEye, FaFileExport } from "react-icons/fa";
+import { FaMoneyBillWave, FaCalendarAlt,} from "react-icons/fa";
 import { FiTrendingUp } from 'react-icons/fi';
 
-const filters = ["All", "Today", "This Week", "This Month"];
 
 function PaymentManagement() {
   const [selectedFilter, setSelectedFilter] = useState("All");
@@ -249,8 +248,6 @@ function PaymentManagement() {
                 <th className="text-left py-2 xs:py-3 lg:py-4 px-2 xs:px-4 lg:px-6 font-semibold text-fluid-xs xs:text-fluid-sm" style={{ color: dashboardColors.text.primary }}>Amount</th>
                 <th className="text-left py-2 xs:py-3 lg:py-4 px-2 xs:px-4 lg:px-6 font-semibold text-fluid-xs xs:text-fluid-sm" style={{ color: dashboardColors.text.primary }}>Agent</th>
                 <th className="text-left py-2 xs:py-3 lg:py-4 px-2 xs:px-4 lg:px-6 font-semibold text-fluid-xs xs:text-fluid-sm" style={{ color: dashboardColors.text.primary }}>Date</th>
-                <th className="text-left py-2 xs:py-3 lg:py-4 px-2 xs:px-4 lg:px-6 font-semibold text-fluid-xs xs:text-fluid-sm" style={{ color: dashboardColors.text.primary }}>Status</th>
-
               </tr>
             </thead>
             <tbody>
@@ -288,19 +285,12 @@ function PaymentManagement() {
                         day: 'numeric'
                       }) : 'N/A'}
                     </td>
-                    <td className="py-2 xs:py-3 lg:py-4 px-2 xs:px-4 lg:px-6">
-                      <span className={`px-2 xs:px-3 py-0.5 xs:py-1 rounded-full text-fluid-xs xs:text-fluid-sm font-medium ${payment.waafiResponse && payment.waafiResponse.state === 'APPROVED'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-orange-100 text-orange-700'
-                        }`}>
-                        {payment.waafiResponse && payment.waafiResponse.state || 'Completed'}
-                      </span>
-                    </td>
+
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="py-8 xs:py-10 lg:py-12 text-center">
+                  <td colSpan="5" className="py-8 xs:py-10 lg:py-12 text-center">
                     <div className="flex flex-col items-center">
                       <FaMoneyBillWave className="text-fluid-3xl xs:text-fluid-4xl lg:text-6xl mb-2 xs:mb-3 lg:mb-4" style={{ color: dashboardColors.text.muted }} />
                       <h3 className="text-fluid-base xs:text-fluid-lg lg:text-fluid-xl font-semibold mb-1 xs:mb-2" style={{ color: dashboardColors.text.secondary }}>No Payments Found</h3>
