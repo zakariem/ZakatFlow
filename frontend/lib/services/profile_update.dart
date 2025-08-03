@@ -2,8 +2,8 @@ import 'package:flutter/foundation.dart';
 
 import '../models/user_model.dart';
 import '../utils/constant/api_constants.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'base_http_service.dart';
 
 class ProfileUpdateService {
   final String uploadUrl = ApiConstants.profile;
@@ -15,7 +15,7 @@ class ProfileUpdateService {
     String email,
   ) async {
     try {
-      final response = await http.put(
+      final response = await BaseHttpService.put(
         Uri.parse(uploadUrl),
         headers: {
           'Authorization': 'Bearer $token',

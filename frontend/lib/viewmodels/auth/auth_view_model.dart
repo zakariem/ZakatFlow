@@ -5,6 +5,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../models/user_model.dart';
 import '../../services/auth_service.dart';
+import '../../services/base_http_service.dart';
 
 class AuthState {
   final User? user;
@@ -158,6 +159,10 @@ class AuthViewModel extends StateNotifier<AuthState> {
     if (error is AdminNotAllowedException) {
       errorMessage = error.toString();
       isAdminError = true;
+    } else if (error is UnauthorizedException) {
+      // For 401 errors, the user has already been logged out automatically
+      // Just clear the error state and don't show error message
+      errorMessage = '';
     } else if (error is Exception) {
       errorMessage = error.toString();
     } else {

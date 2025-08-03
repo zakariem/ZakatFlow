@@ -6,9 +6,18 @@ import 'providers/connectivity_provider.dart';
 import 'utils/widgets/auth_gate.dart';
 import 'utils/widgets/connectivity_banner.dart';
 import 'utils/theme/app_color.dart';
+import 'services/base_http_service.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  final container = ProviderContainer();
+  
+  // Initialize BaseHttpService with the container for global 401 handling
+  BaseHttpService.initialize(container);
+  
+  runApp(ProviderScope(
+    parent: container,
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends ConsumerStatefulWidget {

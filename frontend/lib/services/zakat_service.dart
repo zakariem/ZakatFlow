@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 import '../api_key.dart';
+import 'base_http_service.dart';
 
 class ZakatService {
   static final String _apiKey = goldApiKey;
@@ -10,7 +10,7 @@ class ZakatService {
   Future<Map<String, double>> fetchMetalPrices() async {
     try {
       // Fetch 24K gold in grams
-      final goldResponse = await http.get(
+      final goldResponse = await BaseHttpService.get(
         Uri.parse('$_baseUrl/XAU/USD'),
         headers: {
           'x-access-token': _apiKey,
@@ -29,7 +29,7 @@ class ZakatService {
       }
 
       // Fetch 999 silver in grams
-      final silverResponse = await http.get(
+      final silverResponse = await BaseHttpService.get(
         Uri.parse('$_baseUrl/XAG/USD'),
         headers: {
           'x-access-token': _apiKey,

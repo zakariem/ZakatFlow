@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/user_model.dart';
 import '../utils/constant/api_constants.dart' show ApiConstants;
+import 'base_http_service.dart';
 
 class AdminNotAllowedException implements Exception {
   final String message;
@@ -14,7 +15,7 @@ class AdminNotAllowedException implements Exception {
 class AuthService {
   Future<User> login(String email, String password) async {
     try {
-      final response = await http.post(
+      final response = await BaseHttpService.post(
         Uri.parse(ApiConstants.login),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
@@ -45,7 +46,7 @@ class AuthService {
 
   Future<User> register(String email, String password, String fullName) async {
     try {
-      final response = await http.post(
+      final response = await BaseHttpService.post(
         Uri.parse(ApiConstants.register),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
@@ -85,7 +86,7 @@ class AuthService {
     }
 
     try {
-      final response = await http.delete(
+      final response = await BaseHttpService.delete(
         Uri.parse(ApiConstants.profile),
         headers: {
           'Authorization': 'Bearer $token',

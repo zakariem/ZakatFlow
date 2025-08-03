@@ -6,6 +6,7 @@ import 'package:path/path.dart' as path;
 // Conditional imports
 import '../models/user_model.dart';
 import '../utils/constant/api_constants.dart';
+import 'base_http_service.dart';
 
 // Import dart:io only for non-web platforms
 import 'dart:io'
@@ -56,7 +57,7 @@ class UploadService {
     }
 
     try {
-      final response = await request.send();
+      final response = await BaseHttpService.sendMultipartRequest(request);
       final responseData = await response.stream.bytesToString();
 
       print('Upload response: $responseData'); // Debug the response

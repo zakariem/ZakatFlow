@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/payment_model.dart';
 import '../utils/constant/api_constants.dart';
+import 'base_http_service.dart';
 
 class PaymentService {
   Future<http.Response> createPayment(
@@ -9,7 +10,7 @@ class PaymentService {
     String token,
   ) async {
     // First, process the payment with the actual amount
-    final response = await http.post(
+    final response = await BaseHttpService.post(
       Uri.parse(ApiConstants.payments),
       headers: {
         'Content-Type': 'application/json',
@@ -22,7 +23,7 @@ class PaymentService {
   }
 
   Future<http.Response> getAllPayments(String token) {
-    return http.get(
+    return BaseHttpService.get(
       Uri.parse(ApiConstants.payments),
       headers: {
         'Content-Type': 'application/json',
@@ -32,7 +33,7 @@ class PaymentService {
   }
 
   Future<http.Response> getUserPayments(String token) {
-    return http.get(
+    return BaseHttpService.get(
       Uri.parse('${ApiConstants.payments}/user'),
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ class PaymentService {
   }
 
   Future<http.Response> getAgentPayments(String token) {
-    return http.get(
+    return BaseHttpService.get(
       Uri.parse('${ApiConstants.payments}/agent'),
       headers: {
         'Content-Type': 'application/json',

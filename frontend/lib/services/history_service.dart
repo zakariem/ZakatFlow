@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import '../models/history_model.dart';
+import 'base_http_service.dart';
 
 class HistoryService {
   final String baseUrl;
   HistoryService({required this.baseUrl});
 
   Future<List<HistoryModel>> fetchUserHistory(String token) async {
-    final response = await http.get(
+    final response = await BaseHttpService.get(
       Uri.parse('$baseUrl/api/payments/user'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -22,7 +22,7 @@ class HistoryService {
   }
 
   Future<List<HistoryModel>> fetchAgentHistory(String token) async {
-    final response = await http.get(
+    final response = await BaseHttpService.get(
       Uri.parse('$baseUrl/api/payments/agent'),
       headers: {'Authorization': 'Bearer $token'},
     );
@@ -36,7 +36,7 @@ class HistoryService {
   }
 
   Future<List<HistoryModel>> fetchAdminHistory(String token) async {
-    final response = await http.get(
+    final response = await BaseHttpService.get(
       Uri.parse('$baseUrl/api/payments'),
       headers: {'Authorization': 'Bearer $token'},
     );

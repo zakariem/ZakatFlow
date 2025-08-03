@@ -131,7 +131,7 @@ class AgentsService {
   }
 
   Future<void> deleteAgent(String id, String token) async {
-    final response = await http.delete(
+    final response = await BaseHttpService.delete(
       Uri.parse('${ApiConstants.agents}/$id'),
       headers: {'Authorization': 'Bearer $token'},
     );
