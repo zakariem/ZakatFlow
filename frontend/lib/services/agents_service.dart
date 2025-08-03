@@ -12,7 +12,7 @@ import 'base_http_service.dart';
 class AgentsService {
   Future<List<Agent>> getAgents(String token) async {
     try {
-      debugPrint('AgentsService: Fetching agents from ${ApiConstants.agents}');
+      debugPrint('AgentsService: Fetching agent from ${ApiConstants.agents}');
       debugPrint('AgentsService: Platform - ${kIsWeb ? "Web" : "Mobile"}');
 
       final response = await BaseHttpService.get(
