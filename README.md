@@ -1,7 +1,7 @@
 <div align="center">
   <img src="dashboard/public/logo.png" alt="ZakatFlow Logo" width="120" height="126">
   
-  # 🌟 ZakatFlow
+# 🌟 ZakatFlow
   
   **A Modern, Comprehensive Zakat Management System**
   
@@ -10,7 +10,7 @@
   [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
   [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com)
   
-  [🚀 Live Demo](https://zakatflow-dashboard.vercel.app) • [📱 Download APK](https://download1648.mediafire.com/yd0oxdi2tcvg7Dupsb_vlEIgl7mQQYs8pJyVgM3rLJZRgCj_XfQNenWgQduRx2Uxs7uc9KFEvoRK036rbu_Ef7kLO6VHqbVSe3AQGmZvuI2qb22U5KxD4yJ8ZwA2rSLQ0si-P6e5xOcuB_lI00XkUNyRB9pA4lO8iLacGIhe_eQ8OQ/qwg5efppjzf51v7/zakat-flow-v1.apk) • [📖 Documentation](#documentation)
+  [🚀 Live Demo](https://zakat-flow-beta.vercel.app) • [📱 Download APK](https://download1979.mediafire.com/75l3492290wg6Jl8996qeXbToSM0AOQ5ki-VSw-wFBvpgwebuzgYCXhk1DgSDSyEadO4jz5qUOEZLqv7pXiMwyFc8LRKiqzngrw4G4RcbYV6DeDp1Tq07Ffanc2VMyCtFi15UDW2JbgHo26S7b2KFluONTx6SscaKxRC18PnKsSVhA/kwmj2uh0l0hb44z/app-release.apk) • [📖 Documentation](#documentation)
   
 </div>
 
@@ -54,11 +54,13 @@ ZakatFlow is a cutting-edge, full-stack Zakat management platform designed to st
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Mobile**: Flutter 3.7+ with Riverpod state management
 - **Web Dashboard**: React 18+ with Vite and Tailwind CSS
 - **UI/UX**: Material Design 3, Custom golden theme
 
 ### Backend
+
 - **Runtime**: Node.js 16+ with Express.js
 - **Database**: MongoDB with Mongoose ODM
 - **Authentication**: JWT with role-based access control
@@ -66,6 +68,7 @@ ZakatFlow is a cutting-edge, full-stack Zakat management platform designed to st
 - **Security**: bcrypt, helmet, cors
 
 ### DevOps & Tools
+
 - **Version Control**: Git with conventional commits
 - **Package Management**: npm/yarn, pub
 - **Code Quality**: ESLint, Prettier, Flutter Lints
@@ -76,6 +79,7 @@ ZakatFlow is a cutting-edge, full-stack Zakat management platform designed to st
 ### Prerequisites
 
 Ensure you have the following installed:
+
 - [Node.js](https://nodejs.org/) (v16 or higher)
 - [Flutter SDK](https://flutter.dev/docs/get-started/install) (v3.7 or higher)
 - [MongoDB](https://www.mongodb.com/try/download/community) (local or Atlas)
@@ -84,12 +88,14 @@ Ensure you have the following installed:
 ### 🔧 Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/ZakatFlow.git
    cd ZakatFlow
    ```
 
 2. **Backend Setup**
+
    ```bash
    cd backend
    npm install
@@ -99,6 +105,7 @@ Ensure you have the following installed:
    ```
 
 3. **Dashboard Setup**
+
    ```bash
    cd dashboard
    npm install
@@ -108,6 +115,7 @@ Ensure you have the following installed:
    ```
 
 4. **Mobile App Setup**
+
    ```bash
    cd frontend
    flutter pub get
@@ -116,13 +124,14 @@ Ensure you have the following installed:
 
 ### 🌐 Access Points
 
-- **Backend API**: http://localhost:5000
-- **Admin Dashboard**: http://localhost:3000
+- **Backend API**: <http://localhost:5000>
+- **Admin Dashboard**: <http://localhost:3000>
 - **Mobile App**: Available on connected device/emulator
 
 ## ⚙️ Environment Variables
 
 ### Backend (.env)
+
 ```env
 # Database
 MONGO_URI=mongodb://localhost:27017/zakatflow
@@ -142,6 +151,7 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
 
 ### Dashboard (.env)
+
 ```env
 VITE_API_URL=http://localhost:5000
 ```
@@ -168,16 +178,19 @@ VITE_API_URL=http://localhost:5000
 ## 🔌 API Endpoints
 
 ### Authentication
+
 - `POST /api/user/register` - User registration
 - `POST /api/user/login` - User login
 - `POST /api/user/refresh` - Token refresh
 
 ### User Management
+
 - `GET /api/user/profile` - Get user profile
 - `PUT /api/user/profile` - Update user profile
 - `GET /api/user/agents` - Get all agents
 
 ### Payments
+
 - `POST /api/payments/create` - Create payment
 - `GET /api/payments/history` - Payment history
 - `PUT /api/payments/:id/status` - Update payment status
@@ -185,6 +198,7 @@ VITE_API_URL=http://localhost:5000
 ## 🗄️ Database Schema
 
 ### User Model
+
 ```javascript
 {
   name: String,
@@ -198,6 +212,7 @@ VITE_API_URL=http://localhost:5000
 ```
 
 ### Payment Model
+
 ```javascript
 {
   userId: ObjectId,
@@ -229,16 +244,19 @@ npm test
 ## 🚀 Deployment
 
 ### Backend (Node.js)
+
 - Deploy to Heroku, Railway, or DigitalOcean
 - Configure production environment variables
 - Set up MongoDB Atlas for production database
 
 ### Dashboard (React)
+
 - Deploy to Vercel, Netlify, or AWS S3
 - Configure build environment variables
 - Set up custom domain (optional)
 
 ### Mobile App (Flutter)
+
 - **Android**: Build APK/AAB for Google Play Store
 - **iOS**: Build IPA for Apple App Store
 - Configure app signing and certificates
@@ -250,11 +268,13 @@ We welcome contributions from the community! Here's how you can help:
 ### 🔄 How to Contribute
 
 1. **Fork the repository**
+
    ```bash
    git clone https://github.com/yourusername/ZakatFlow.git
    ```
 
 2. **Create a feature branch**
+
    ```bash
    git checkout -b feature/amazing-feature
    ```
@@ -265,11 +285,13 @@ We welcome contributions from the community! Here's how you can help:
    - Update documentation as needed
 
 4. **Commit your changes**
+
    ```bash
    git commit -m 'feat: add amazing feature'
    ```
 
 5. **Push to your branch**
+
    ```bash
    git push origin feature/amazing-feature
    ```
@@ -302,16 +324,19 @@ We welcome contributions from the community! Here's how you can help:
 ### Common Issues
 
 **Backend Issues**
+
 - ❌ Port already in use → Change PORT in `.env`
 - ❌ Database connection failed → Check MongoDB connection string
 - ❌ JWT errors → Verify JWT_SECRET configuration
 
 **Frontend Issues**
+
 - ❌ Flutter build issues → Run `flutter clean && flutter pub get`
 - ❌ iOS build problems → Update Xcode and CocoaPods
 - ❌ Android build errors → Check Android SDK configuration
 
 **Dashboard Issues**
+
 - ❌ CORS errors → Verify CLIENT_URL in backend `.env`
 - ❌ API connection issues → Check VITE_API_URL configuration
 - ❌ Build failures → Clear node_modules and reinstall
@@ -321,7 +346,7 @@ We welcome contributions from the community! Here's how you can help:
 - 📖 Check our [Documentation](#documentation)
 - 🐛 [Report Issues](https://github.com/yourusername/ZakatFlow/issues)
 - 💬 [Join Discussions](https://github.com/yourusername/ZakatFlow/discussions)
-- 📧 Email: support@zakatflow.com
+- 📧 Email: <support@zakatflow.com>
 
 ## 📄 License
 
