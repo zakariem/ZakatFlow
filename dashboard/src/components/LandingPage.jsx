@@ -128,30 +128,32 @@ const LandingPage = () => {
                 }}
               >
                 {/* Android Option */}
-                <a 
-                  href="https://download1648.mediafire.com/yd0oxdi2tcvg7Dupsb_vlEIgl7mQQYs8pJyVgM3rLJZRgCj_XfQNenWgQduRx2Uxs7uc9KFEvoRK036rbu_Ef7kLO6VHqbVSe3AQGmZvuI2qb22U5KxD4yJ8ZwA2rSLQ0si-P6e5xOcuB_lI00XkUNyRB9pA4lO8iLacGIhe_eQ8OQ/qwg5efppjzf51v7/zakat-flow-v1.apk"
-                  download="zakatflow.apk"
-                  className="w-full flex items-center space-x-4 px-6 py-4 transition-all duration-200 hover:scale-105 no-underline"
-                  style={{ 
-                    backgroundColor: dashboardColors.background.white,
-                    color: dashboardColors.text.primary,
-                    borderBottom: `1px solid ${dashboardColors.border.light}`
-                  }}
-                  onMouseEnter={(e) => e.target.style.backgroundColor = dashboardColors.background.light}
-                  onMouseLeave={(e) => e.target.style.backgroundColor = dashboardColors.background.white}
-                >
-                  {/* MediaFire Icon */}
-                  <svg className="text-2xl w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#1E74FD" stroke="#1E74FD" strokeWidth="2" strokeLinejoin="round"/>
-                    <path d="M2 17L12 22L22 17" stroke="#1E74FD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="#1E74FD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  <div className="text-left">
-                    <p className="font-semibold">Download for Android</p>
-                    <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>Direct Download</p>
-                  </div>
-                  <FaDownload className="text-sm ml-auto" style={{ color: dashboardColors.text.secondary }} />
-                </a>
+                <a
+  href="#"
+  className="w-full flex items-center space-x-4 px-6 py-4 transition-all duration-200 hover:scale-105 no-underline"
+  style={{ 
+    backgroundColor: dashboardColors.background.white,
+    color: dashboardColors.text.primary,
+    borderBottom: `1px solid ${dashboardColors.border.light}`
+  }}
+  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = dashboardColors.background.light}
+  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = dashboardColors.background.white}
+  onClick={(e) => {
+    e.preventDefault(); // Prevent default anchor behavior
+    const link = document.createElement('a');
+    link.href = "https://www.mediafire.com/file/kwmj2uh0l0hb44z/app-release.apk/file";
+    link.download = "zakatflow.apk";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }}
+>
+  <FaDownload className="text-2xl" />
+  <div className="text-left">
+    <p className="font-semibold">Download for Android</p>
+    <p className="text-sm" style={{ color: dashboardColors.text.secondary }}>Direct Download</p>
+  </div>
+</a>
 
                 {/* iOS Option (Disabled) */}
                 <div 
